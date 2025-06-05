@@ -1,0 +1,155 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Правила кодстиля
+
+## Основные принципы
+
+1. **НИКАКИХ КОММЕНТАРИЕВ В КОДЕ**
+
+   ```tsx
+   // ❌ НИКОГДА:
+   // Проверяем авторизацию
+   if (user.isLoggedIn) { ... }
+
+   // ❌ НИКОГДА:
+   /**
+   * Компонент для отображения профиля
+   * @param props - пропсы компонента
+   */
+   const ProfileComponent = () => { ... }
+
+   // ✅ ВМЕСТО ЭТОГО:
+   const isUserAuthorized = user.isLoggedIn;
+   if (isUserAuthorized) { ... }
+
+   // ✅ ВМЕСТО ЭТОГО:
+   // Используем типы для документации
+   type ProfileComponentProps = {
+     userName: string;
+     userAge: number;
+   }
+
+   const ProfileComponent = ({ userName, userAge }: ProfileComponentProps) => { ... }
+   ```
+
+   - ПОЛНЫЙ запрет на комментарии в коде
+   - Код должен быть самодокументируемым
+   - Используем осмысленные имена переменных и функций
+   - Используем типы для документации интерфейсов
+   - Выносим сложную логику в отдельные функции с говорящими названиями
+
+2. **Пишем только стрелочные функции**
+
+   ```tsx
+   // Правильно
+   const MyComponent = () => {
+     return <View />;
+   };
+
+   // Неправильно
+   function MyComponent() {
+     return <View />;
+   }
+   ```
+
+3. **Используем типы везде**
+
+   ```tsx
+   // Правильно
+   type Props = {
+     title: string;
+     count: number;
+   };
+
+   const MyComponent = ({ title, count }: Props) => {
+     return <View />;
+   };
+
+   // Неправильно
+   const MyComponent = ({ title, count }) => {
+     return <View />;
+   };
+   ```
+
+4. **Все значения выносим в константы в отдельный файл**
+
+   - Не допускаются "magic numbers" и строковые литералы в коде
+   - Все константы должны храниться в специальных файлах констант
+   - Для каждого компонента или модуля может быть свой файл констант
+
+   ```tsx
+   // Правильно - использование констант из файла
+   import { ITEM_HEIGHT, MAX_ITEMS } from '../shared/constants';
+
+   const MyList = () => {
+     return <FlatList maxToRenderPerBatch={MAX_ITEMS} itemHeight={ITEM_HEIGHT} />;
+   };
+
+   // Неправильно - использование "магических чисел"
+   const MyList = () => {
+     return <FlatList maxToRenderPerBatch={10} itemHeight={50} />;
+   };
+   ```
+
+5. **Форматирование кода**
+
+   - Используем Prettier для автоматического форматирования
+   - Отступы: 2 пробела
+   - Максимальная длина строки: 100 символов
+   - Одинарные кавычки для строк
+   - Точка с запятой в конце строк
+   - Запятые в конце многострочных объектов
+
+6. **Импорты**
+
+   - Группируем импорты по категориям:
+     1. Внешние библиотеки
+     2. Внутренние модули
+     3. Типы
+     4. Стили и ассеты
+   - Используем относительные пути для импортов
+   - Сортируем импорты в алфавитном порядке внутри групп
+
+   ```tsx
+   // Внешние библиотеки
+   import React from 'react';
+   import { View } from 'react-native';
+
+   // Внутренние модули
+   import { useTheme } from '../../shared/theme';
+   import { SIZES } from '../../shared/constants';
+
+   // Типы
+   import type { User } from '../../types';
+
+   // Стили и ассеты
+   import { styles } from './styles';
+   import { icons } from '../../assets';
+   ```
+
+7. **Именование**
+
+   - PascalCase для компонентов и типов
+   - camelCase для переменных и функций
+   - UPPER_SNAKE_CASE для констант
+   - Файлы компонентов: PascalCase
+   - Файлы утилит и хуков: camelCase
+
+8. **Структура компонентов**
+
+   - Один компонент - один файл
+   - Стили выносим в отдельный файл
+   - Типы определяем в отдельном файле types.ts
+   - Константы компонента в отдельном файле constants.ts
+
+   ```
+   ComponentName/
+   ├── ComponentName.tsx
+   ├── styles.ts
+   ├── types.ts
+   ├── constants.ts
+   └── index.ts
+   ```

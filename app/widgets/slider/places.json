@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1",
+    "title": "Центральный Парк",
+    "type": "парк",
+    "description": "Прекрасное место для прогулок и отдыха.",
+    "image": "https://avatars.mds.yandex.net/i?id=118b242f839ca58c252a80bac91e6fef9e475c22-12721850-images-thumbs&n=13",
+    "link": "https://avatars.mds.yandex.net/i?id=118b242f839ca58c252a80bac91e6fef9e475c22-12721850-images-thumbs&n=13"
+  },
+  {
+    "id": "2",
+    "title": "Кафе Какао",
+    "type": "кафе",
+    "description": "Уютное место с лучшим кофе в городе.",
+    "image": "https://avatars.mds.yandex.net/i?id=018f08b3041c8686a21f3c83368ab42fc78a9bfc-5334983-images-thumbs&n=13",
+    "link": "https://example.com/cafe"
+  },
+  {
+    "id": "3",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "34324",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "423423",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "234323",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "354353",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "34324234",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "3412421",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  },
+  {
+    "id": "2313",
+    "title": "Ночной клуб Pulse",
+    "type": "клуб",
+    "description": "Горячие ритмы и отличная атмосфера.",
+    "image": "https://avatars.mds.yandex.net/i?id=eb0d3df6c82a6970509b5801b90f759f76873735-10812120-images-thumbs&n=13",
+    "link": "https://example.com/club"
+  }
+]
