@@ -1,10 +1,10 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-import { ThemeColors } from '../../shared/theme/types';
-import { SIZES, SPACING } from '../../shared/constants';
+import { ThemeColors } from '@/shared/theme/types';
+import { SIZES, SPACING } from '@/shared/constants';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const DAY_HEIGHT = (SCREEN_HEIGHT * 0.8) / 6; 
+const DAY_HEIGHT = (SCREEN_HEIGHT * 0.8) / 6;
 
 export const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({

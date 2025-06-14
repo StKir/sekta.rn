@@ -1,8 +1,8 @@
 import { TextStyle } from 'react-native';
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 
-import { ThemeColors } from '../../shared/theme/types';
-import { SIZES, SPACING } from '../../shared/constants';
+import { ThemeColors } from '@/shared/theme/types';
+import { SIZES, SPACING } from '@/shared/constants';
 
 export const createNavigationOptions = (colors: ThemeColors): BottomTabNavigationOptions => ({
   tabBarActiveTintColor: colors.PRIMARY,

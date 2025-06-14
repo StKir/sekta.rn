@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
-import { ThemeColors } from '../../shared/theme/types';
-import { SIZES, SPACING } from '../../shared/constants';
+import { ThemeColors } from '@/shared/theme/types';
+import { SIZES, SPACING } from '@/shared/constants';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 

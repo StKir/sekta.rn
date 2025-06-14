@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { darkColors, lightColors } from '../../shared/theme/colors';
-import { SIZES, SPACING } from '../../shared/constants';
+import { darkColors, lightColors } from '@/shared/theme/colors';
+import { SIZES, SPACING } from '@/shared/constants';
 
 type ColorsType = typeof lightColors | typeof darkColors;
 

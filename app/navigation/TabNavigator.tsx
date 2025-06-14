@@ -1,16 +1,17 @@
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Platform } from 'react-native';
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { useTheme } from '../shared/theme';
-import { SIZES } from '../shared/constants';
-import WeekSliderDemo from '../pages/WeekSliderDemo';
-import ProfilePage from '../pages/ProfilePage';
-import EventsPage from '../pages/EventsPage';
-// import CalendarPage from '../pages/CalendarPage';
+import ProfilePage from '@/pages/ProfilePage';
+import EventsPage from '@/pages/EventsPage';
+import CalendarPage from '@/pages/CalendarPage';
 
 import { TabParamList } from './types';
 import { createNavigationOptions } from './styles/TabNavigator.styles';
+
+import { useTheme } from '@/shared/theme';
+import { SIZES } from '@/shared/constants';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -35,9 +36,33 @@ const TabNavigator = () => {
         ...baseOptions,
       }}
     >
-      <Tab.Screen component={EventsPage} name='Events' />
-      <Tab.Screen component={WeekSliderDemo} name='Calendar' />
-      <Tab.Screen component={ProfilePage} name='Profile' />
+      <Tab.Screen
+        component={EventsPage}
+        name='Events'
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons color={color} name='list-outline' size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        component={CalendarPage}
+        name='Calendar'
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons color={color} name='calendar-outline' size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        component={ProfilePage}
+        name='Profile'
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons color={color} name='person-outline' size={size} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

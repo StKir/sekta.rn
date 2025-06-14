@@ -38,7 +38,7 @@ export const createStyles = (colors: ColorsType) =>
       height: '100%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.BACKGROUND_SECONDARY,
+      backgroundColor: 'white',
       borderRadius: 20,
     },
     title: {

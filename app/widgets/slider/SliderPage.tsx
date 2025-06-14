@@ -12,12 +12,12 @@ import {
 } from 'react-native';
 import React, { useRef, useEffect, useCallback } from 'react';
 
-import { useTheme } from '../../shared/theme';
-import { OPACITY, SCALE, SIZES } from '../../shared/constants';
-
 import places from './places.json';
 import { Place } from './SliderPage.types';
 import { createStyles } from './SliderPage.styles';
+
+import { useTheme } from '@/shared/theme';
+import { OPACITY, SCALE, SIZES } from '@/shared/constants';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MAX_SWIPE_DISTANCE = SCREEN_WIDTH * 0.4;

@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Calendar: undefined;
   Events: undefined;
   Feed: undefined;
+  Register: undefined;
 };
 
 export type TabParamList = {

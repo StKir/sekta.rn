@@ -1,10 +1,10 @@
 import { Text } from 'react-native';
 import React from 'react';
 
-import ContainerRadial from '../shared/ui/ContainerRadial/ContainerRadial';
-import { useTheme } from '../shared/theme';
-
 import { createStyles } from './styles/ProfilePage.styles';
+
+import ContainerRadial from '@/shared/ui/ContainerRadial/ContainerRadial';
+import { useTheme } from '@/shared/theme';
 
 const ProfilePage = () => {
   const { colors } = useTheme();
