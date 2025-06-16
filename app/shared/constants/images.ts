@@ -1,3 +1,3 @@
 export const IMAGES = {
-  welcomeBanner: { uri: 'welcome-banner' },
+  welcomeBanner: { uri: 'welcome_banner' },
 };

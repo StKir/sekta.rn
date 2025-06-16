@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import React from 'react';
 
 import { lightColors, darkColors, useTheme } from '../../theme';
@@ -10,17 +10,11 @@ type ContainerRadialProps = {
   style?: StyleProp<ViewStyle>;
 } & React.PropsWithChildren;
 
-const ContainerRadial = ({ children, scrollable = true, style }: ContainerRadialProps) => {
+const ContainerRadial = ({ children, style }: ContainerRadialProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  return (
-    <SafeAreaView style={[styles.mainContainer, style]}>
-      <View style={styles.container}>
-        {scrollable ? <ScrollView>{children}</ScrollView> : children}
-      </View>
-    </SafeAreaView>
-  );
+  return <SafeAreaView style={[styles.mainContainer, style]}>{children}</SafeAreaView>;
 };
 
 type ColorsType = typeof lightColors | typeof darkColors;
@@ -30,16 +24,8 @@ export const createStyles = (colors: ColorsType) =>
     mainContainer: {
       flex: 1,
       height: '100%',
-      backgroundColor: colors.BACKGROUND_PRIMARY,
-    },
-    container: {
-      paddingTop: SPACING.XLARGE,
-      flex: 1,
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'white',
-      borderRadius: 20,
+      backgroundColor: colors.DANGER_ALPHA,
+      paddingHorizontal: SPACING.LARGE,
     },
     title: {
       fontSize: SIZES.FONT_SIZE.MEDIUM,

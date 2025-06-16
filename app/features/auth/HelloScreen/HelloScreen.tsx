@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, Dimensions, View } from 'react-native';
 import React from 'react';
 
 import { typography } from '@/theme/typography';
@@ -31,11 +31,11 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
           {'\n'}
           Всё, что ты чувствуешь — важно.
         </Text>
-
         <Text style={styles.question} variant={'body1'}>
           Готов начать?
         </Text>
-
+      </View>
+      <View>
         <Button fullWidth title={'Начать'} onPress={handleStart} />
         <Button
           style={styles.link}
@@ -52,13 +52,15 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 20,
+    height: Dimensions.get('screen').height - 100,
+
+    justifyContent: 'space-between',
   },
-  content: {
-    flex: 1,
-  },
+  content: {},
   banner: {
     width: '100%',
-    height: 365,
+    height: 350,
     marginBottom: 32,
     borderRadius: 14,
   },
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
   },
   question: {
     color: colors.textPrimary,
-    marginBottom: 24,
+
     fontWeight: '600',
   },
 

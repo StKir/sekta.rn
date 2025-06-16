@@ -90,6 +90,7 @@ const CalendarPage = () => {
           <TouchableOpacity style={styles.button} onPress={navigateToRegister}>
             <Text style={styles.buttonText}>Демо регистрации</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
           </TouchableOpacity>

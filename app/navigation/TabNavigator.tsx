@@ -25,26 +25,12 @@ const TabNavigator = () => {
         tabBarActiveTintColor: colors.PRIMARY,
         tabBarInactiveTintColor: colors.GRAY_1,
         headerShown: false,
-        tabBarStyle: {
-          height: SIZES.TAB_BAR_HEIGHT + (Platform.OS === 'ios' ? 30 : 20),
-          backgroundColor: colors.BACKGROUND_PRIMARY,
-          borderTopColor: colors.SEPARATOR,
-        },
         headerStyle: baseOptions.headerStyle,
         headerTitleStyle: baseOptions.headerTitleStyle,
         headerTintColor: baseOptions.headerTintColor,
         ...baseOptions,
       }}
     >
-      <Tab.Screen
-        component={EventsPage}
-        name='Events'
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons color={color} name='list-outline' size={size} />
-          ),
-        }}
-      />
       <Tab.Screen
         component={CalendarPage}
         name='Calendar'

@@ -11,11 +11,12 @@ export const createNavigationOptions = (colors: ThemeColors): BottomTabNavigatio
   tabBarStyle: {
     height: SIZES.TAB_BAR_HEIGHT,
     paddingTop: SPACING.SMALL,
-    backgroundColor: colors.BACKGROUND_PRIMARY,
+    backgroundColor: colors.DANGER,
+    borderRadius: 100,
     borderTopWidth: 0,
   },
   headerStyle: {
-    backgroundColor: colors.BACKGROUND_PRIMARY,
+    backgroundColor: colors.DANGER,
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
