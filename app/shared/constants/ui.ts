@@ -5,24 +5,33 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 export const SPACING = {
   SMALL: 5,
   MEDIUM: 10,
-  LARGE: 20,
+  LARGE: 12,
   XLARGE: 30,
 };
 
 export const SIZES = {
-  TAB_BAR_HEIGHT: 85,
+  TAB_BAR_HEIGHT: 90,
   CARD_WIDTH_RATIO: 0.9,
   CARD_HEIGHT: SCREEN_HEIGHT * 0.7,
   TEXT_CONTAINER_HEIGHT: 'auto',
   ANIMATION_DURATION: 300,
   STACK_SEPARATION: 25,
   STACK_SIZE: 6,
+  ICON_SIZE_MEDIUM: 32,
+  ICON_SIZE_SMALL: 30,
   FONT_SIZE: {
     SMALL: 16,
     MEDIUM: 20,
     LARGE: 22,
+    XLARGE: 24,
+    XXLARGE: 32,
   },
-};
+  FONT_WEIGHT: {
+    REGULAR: '400',
+    MEDIUM: '500',
+    BOLD: '700',
+  },
+} as const;
 
 export const OPACITY = {
   INITIAL: 0.6,

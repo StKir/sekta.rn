@@ -6,14 +6,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-import RegisterStepOne from '../features/auth/RegisterStepOne/RegisterStepOne';
-import HelloScreen from '../features/auth/HelloScreen/HelloScreen';
-
 import { StorageService } from '@/shared/utils/storage';
-import Text from '@/shared/components/Text/Text';
+import Text from '@/shared/ui/Text/Text';
 import { RootStackParamList } from '@/navigation/types';
-import RegisterStepTwo from '@/features/auth/RegisterStepTwo/RegisterStepTwo';
-import RegisterStepFour from '@/features/auth/RegisterStepFour/RegisterStepFour';
+import RegisterStepTwo from '@/features/auth/Register/RegisterStepTwo/RegisterStepTwo';
+import RegisterStepOne from '@/features/auth/Register/RegisterStepOne/RegisterStepOne';
+import RegisterStepFour from '@/features/auth/Register/RegisterStepFour/RegisterStepFour';
+import HelloScreen from '@/features/auth/Register/HelloScreen/HelloScreen';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 

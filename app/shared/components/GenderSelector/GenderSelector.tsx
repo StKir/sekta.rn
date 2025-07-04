@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Selector from '@/shared/components/Selector';
+import Selector from '@/shared/ui/Selector';
 
 type Gender = 'male' | 'female' | 'other';
 

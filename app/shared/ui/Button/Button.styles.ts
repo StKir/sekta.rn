@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { SPACING, SIZES } from '../../constants';
 
-export const createButtonStyles = (colors: any) =>
+export const createButtonStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     button: {
       borderRadius: 22,

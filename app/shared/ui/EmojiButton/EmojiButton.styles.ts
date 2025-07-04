@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import { SPACING, SIZES } from '../../constants';
 
-export const createEmojiButtonStyles = (colors: any) =>
+export const createEmojiButtonStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       aspectRatio: 1,

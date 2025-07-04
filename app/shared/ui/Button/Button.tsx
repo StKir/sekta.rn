@@ -1,9 +1,10 @@
 import { TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import React from 'react';
 
-import { typography } from '@/theme/typography';
-import { colors } from '@/theme/colors';
-import Text from '@/shared/components/Text';
+import Text from '@/shared/ui/Text';
+import { typography } from '@/shared/theme/typography';
+import { ThemeColors } from '@/shared/theme/types';
+import { useTheme } from '@/shared/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
 
@@ -26,6 +27,8 @@ const Button = ({
   style,
   textStyle,
 }: ButtonProps) => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const getButtonStyle = (): ViewStyle[] => {
     const baseStyle: ViewStyle[] = [styles.button];
 
@@ -64,17 +67,17 @@ const Button = ({
 
   const getTextColor = () => {
     if (disabled) {
-      return colors.textPrimary;
+      return colors.BACKGROUND_PRIMARY;
     }
     if (variant === 'outline') {
-      return colors.primary;
+      return colors.PRIMARY;
     }
 
     if (variant === 'text') {
-      return textStyle?.color || colors.primary;
+      return textStyle?.color || colors.TEXT_PRIMARY;
     }
 
-    return colors.white;
+    return colors.BACKGROUND_PRIMARY;
   };
 
   return (
@@ -89,39 +92,39 @@ const Button = ({
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    height: 48,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  primaryButton: {
-    backgroundColor: colors.primary,
-  },
-  secondaryButton: {
-    backgroundColor: colors.background,
-  },
-  outlineButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  textButton: {
-    ...typography.body2,
-    color: colors.primary,
-    width: '100%',
-    justifyContent: 'center',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  disabled: {
-    opacity: 0.7,
-    backgroundColor: colors.button.disabled,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    button: {
+      height: 48,
+      borderRadius: 12,
+      alignSelf: 'flex-start',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 24,
+    },
+    primaryButton: {
+      backgroundColor: colors.PRIMARY,
+    },
+    secondaryButton: {
+      backgroundColor: colors.BACKGROUND_SECONDARY,
+    },
+    outlineButton: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.PRIMARY,
+    },
+    textButton: {
+      ...typography.body2,
+      color: colors.TEXT_PRIMARY,
+      width: '100%',
+      justifyContent: 'center',
+    },
+    fullWidth: {
+      width: '100%',
+    },
+    disabled: {
+      opacity: 0.7,
+    },
+  });
 
 export default Button;

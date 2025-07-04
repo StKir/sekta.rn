@@ -11,5 +11,5 @@ export type TabParamList = {
   Profile: undefined;
   Calendar: undefined;
   Events: undefined;
-  Feed: undefined;
+  CheckIn: undefined;
 };

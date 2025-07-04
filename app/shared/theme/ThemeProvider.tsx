@@ -25,6 +25,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const isDark = colorScheme === 'dark';
   const colors = isDark ? darkColors : lightColors;
   return (
-    <ThemeContext.Provider value={{ isDark, colors: darkColors }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ isDark, colors: lightColors }}>
+      {children}
+    </ThemeContext.Provider>
   );
 };

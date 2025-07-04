@@ -1,11 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { RegisterFormData } from '@/pages/RegisterPage';
+
 const STORAGE_KEYS = {
   USER: 'user',
 };
 
 export const StorageService = {
-  setUser: async (userData: any) => {
+  setUser: async (userData: RegisterFormData) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
     } catch (error) {
@@ -16,7 +18,7 @@ export const StorageService = {
   getUser: async () => {
     try {
       const userData = await AsyncStorage.getItem(STORAGE_KEYS.USER);
-      return userData ? JSON.parse(userData) : null;
+      return userData ? (JSON.parse(userData) as RegisterFormData) : null;
     } catch (error) {
       console.error('Error getting user data:', error);
       return null;

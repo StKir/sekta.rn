@@ -1,5 +1,7 @@
+import { ThemeColors } from './types';
+
 export const lightColors = {
-  PRIMARY: '#dbcbd8',
+  PRIMARY: '#007AFF',
   SECONDARY: '#5AC8FA',
   SUCCESS: '#34C759',
   WARNING: '#FF9500',
@@ -15,8 +17,8 @@ export const lightColors = {
 
   BACKGROUND_PRIMARY: '#F6F6F6',
   BACKGROUND_SECONDARY: '#F6F6F6',
-  TEXT_PRIMARY: '#000000',
-  TEXT_SECONDARY: '#3C3C43',
+  TEXT_PRIMARY: '#2C2C2C',
+  TEXT_SECONDARY: '#4C4C4C',
   TEXT_TERTIARY: '#8E8E93',
 
   SEPARATOR: 'rgba(60, 60, 67, 0.29)',
@@ -31,8 +33,8 @@ export const lightColors = {
   TEAL: '#5AC8FA',
 } as const;
 
-export const darkColors = {
-  PRIMARY: '#dbcbd8',
+export const darkColors: ThemeColors = {
+  PRIMARY: '#007AFF',
   SECONDARY: '#64D2FF',
   SUCCESS: '#30D158',
   WARNING: '#FF9F0A',
@@ -47,9 +49,9 @@ export const darkColors = {
   GRAY_6: '#1C1C1E',
 
   BACKGROUND_PRIMARY: '#F6F6F6',
-  BACKGROUND_SECONDARY: '#1C1C1E',
-  TEXT_PRIMARY: '#fafaff',
-  TEXT_SECONDARY: '#E5E5EA',
+  BACKGROUND_SECONDARY: '#FFFFFF',
+  TEXT_PRIMARY: '#000000',
+  TEXT_SECONDARY: '#A6A6A6',
   TEXT_TERTIARY: '#8E8E93',
 
   SEPARATOR: 'rgba(84, 84, 88, 0.65)',

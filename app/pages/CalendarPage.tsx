@@ -1,34 +1,29 @@
-import { View, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, Alert, ScrollView } from 'react-native';
+import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+import Statistic from '@/widgets/Statistic/Statistic';
+import Feed from '@/widgets/Feed/Feed';
 import { StorageService } from '@/shared/utils/storage';
-import ContainerRadial from '@/shared/ui/ContainerRadial/ContainerRadial';
+import PageContainer from '@/shared/ui/Container/PageContainer';
+import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useUser } from '@/shared/hooks/useUser';
 import { SPACING, SIZES } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
+import TabSelectorTitle from '@/features/auth/TabSelectorTitle/TabSelectorTitle';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
+const tabs = ['Календарь', 'Статистика'];
+
 const CalendarPage = () => {
-  const [userData, setUserData] = useState<any>(null);
+  const { user } = useUser();
+  const [activeTab, setActiveTab] = useState(0);
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const styles = createStyles(colors);
-
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
-    try {
-      const user = await StorageService.getUser();
-      setUserData(user);
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
 
   const navigateToRegister = () => {
     navigation.navigate('Register');
@@ -55,37 +50,24 @@ const CalendarPage = () => {
     ]);
   };
 
-  const getSexLabel = (sex: string) => {
-    switch (sex) {
-      case 'male':
-        return 'Мужской';
-      case 'female':
-        return 'Женский';
-      case 'other':
-        return 'Другой';
-      default:
-        return sex;
+  const renderContent = () => {
+    if (activeTab === 0) {
+      return <Feed />;
     }
+    return <Statistic />;
   };
 
   return (
-    <ContainerRadial>
-      <View style={styles.container}>
-        <Text style={styles.title}>Календарь</Text>
-
-        {userData && (
-          <View style={styles.userCard}>
-            <Text style={styles.avatar}>{userData.avatar}</Text>
-            <Text style={styles.userName}>{userData.name}</Text>
-            <Text style={styles.userInfo}>
-              {userData.age} лет, {getSexLabel(userData.sex)}
-            </Text>
-            <Text style={styles.registrationDate}>
-              Регистрация: {new Date(userData.registeredAt).toLocaleDateString()}
-            </Text>
-          </View>
-        )}
-
+    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+      <PageContainer>
+        <View style={styles.container}>
+          <TabSelectorTitle
+            activeTab={activeTab}
+            tabs={tabs}
+            onTabPress={(tab) => setActiveTab(tab)}
+          />
+        </View>
+        {renderContent()}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={navigateToRegister}>
             <Text style={styles.buttonText}>Демо регистрации</Text>
@@ -95,18 +77,16 @@ const CalendarPage = () => {
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </ContainerRadial>
+      </PageContainer>
+    </ScrollView>
   );
 };
 
-const createStyles = (colors: any) =>
+const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: SPACING.LARGE,
+      paddingHorizontal: SPACING.LARGE,
     },
     title: {
       fontSize: SIZES.FONT_SIZE.LARGE,
