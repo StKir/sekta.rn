@@ -2,17 +2,16 @@ import { StyleSheet, View } from 'react-native';
 import { useFormContext, Controller } from 'react-hook-form';
 import React from 'react';
 
-import { RegisterFormData } from '@/pages/RegisterPage';
-
 import { RegistrationStepProps } from '../../types';
 
 import Selector from '@/shared/ui/Selector';
 import { Button } from '@/shared/ui';
+import { FormAnswers } from '@/shared/types/form.types';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 
 const RegisterStepFour = ({ onNext }: RegistrationStepProps) => {
-  const { control, watch } = useFormContext<RegisterFormData>();
+  const { control, watch } = useFormContext<FormAnswers>();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const watchedValues = watch(['avatar', 'appUsage', 'communicationStyle']);

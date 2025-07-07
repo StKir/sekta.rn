@@ -9,17 +9,17 @@ import { useTheme } from '@/shared/theme';
 import { SIZES, SPACING } from '@/shared/constants';
 
 type DayHeaderProps = {
-  date: Date;
+  date: Date | string;
   dayId: string;
 };
 
-const DayHeader = ({ date, dayId }: DayHeaderProps) => {
+const DayHeader = ({ date }: DayHeaderProps) => {
   const { colors } = useTheme();
 
   return (
     <View>
       <MainContainer alignItems='flex-end' flexDirection='row' justifyContent='space-between'>
-        <Day date={date} />
+        <Day date={new Date(date)} />
         <TouchableOpacity
           style={{
             width: SIZES.ICON_SIZE_SMALL,

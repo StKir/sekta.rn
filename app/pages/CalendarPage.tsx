@@ -9,21 +9,27 @@ import { StorageService } from '@/shared/utils/storage';
 import PageContainer from '@/shared/ui/Container/PageContainer';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
-import { useUser } from '@/shared/hooks/useUser';
 import { SPACING, SIZES } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
 import TabSelectorTitle from '@/features/auth/TabSelectorTitle/TabSelectorTitle';
+import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
+import { useLentStore } from '@/entities/lent/store/store';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const tabs = ['Календарь', 'Статистика'];
 
 const CalendarPage = () => {
-  const { user } = useUser();
   const [activeTab, setActiveTab] = useState(0);
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const { clearAll: clearLentStore } = useLentStore();
+  const { clearResults } = useTestResultsStore();
+
+  const navigateToJsonForm = () => {
+    navigation.navigate('JsonFormPage');
+  };
 
   const navigateToRegister = () => {
     navigation.navigate('Register');
@@ -38,9 +44,9 @@ const CalendarPage = () => {
       {
         text: 'Выйти',
         style: 'destructive',
-        onPress: async () => {
+        onPress: () => {
           try {
-            await StorageService.removeUser();
+            StorageService.removeUser();
             navigation.navigate('Register');
           } catch (error) {
             console.error('Logout error:', error);
@@ -48,6 +54,33 @@ const CalendarPage = () => {
         },
       },
     ]);
+  };
+
+  const handleClearAllData = () => {
+    Alert.alert(
+      'Очистить все данные',
+      'Это действие удалит все посты, результаты тестов и сохраненные данные. Продолжить?',
+      [
+        {
+          text: 'Отмена',
+          style: 'cancel',
+        },
+        {
+          text: 'Очистить',
+          style: 'destructive',
+          onPress: () => {
+            try {
+              clearLentStore();
+              clearResults();
+              Alert.alert('Успешно', 'Все данные очищены');
+            } catch (error) {
+              console.error('Clear data error:', error);
+              Alert.alert('Ошибка', 'Не удалось очистить данные');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const renderContent = () => {
@@ -71,6 +104,16 @@ const CalendarPage = () => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={navigateToRegister}>
             <Text style={styles.buttonText}>Демо регистрации</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={navigateToJsonForm}>
+            <Text style={styles.buttonText}>Демо</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.clearButton]}
+            onPress={handleClearAllData}
+          >
+            <Text style={[styles.buttonText, styles.clearButtonText]}>Очистить все данные</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
@@ -142,6 +185,12 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: colors.DANGER,
     },
     logoutButtonText: {
+      color: 'white',
+    },
+    clearButton: {
+      backgroundColor: colors.WARNING || '#FF9500',
+    },
+    clearButtonText: {
       color: 'white',
     },
   });

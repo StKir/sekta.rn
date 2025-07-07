@@ -15,7 +15,6 @@ import AppNavigator from '../navigation/AppNavigator';
 
 import { styles } from './styles/App.styles';
 
-import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { ThemeProvider } from '@/shared/theme';
 
 const App = (): React.JSX.Element => {
@@ -25,7 +24,6 @@ const App = (): React.JSX.Element => {
         <ThemeProvider>
           <StatusBar barStyle='dark-content' />
           <AppNavigator />
-          <BottomSheet />
         </ThemeProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

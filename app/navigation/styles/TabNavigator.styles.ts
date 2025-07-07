@@ -12,9 +12,10 @@ export const createNavigationOptions = (colors: ThemeColors): BottomTabNavigatio
     position: 'absolute',
     bottom: 0,
     height: SIZES.TAB_BAR_HEIGHT,
-    paddingTop: SPACING.MEDIUM,
+    paddingTop: SPACING.SMALL,
     borderRadius: 24,
     backgroundColor: colors.BACKGROUND_PRIMARY,
+    opacity: 0.95,
     shadowColor: colors.SHADOW,
     shadowOffset: {
       width: 0,

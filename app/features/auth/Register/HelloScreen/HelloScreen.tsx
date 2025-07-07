@@ -1,11 +1,14 @@
-import { StyleSheet, Image, Dimensions, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Image, View } from 'react-native';
 import React from 'react';
 
 import Text from '@/shared/ui/Text/Text';
 import { Button } from '@/shared/ui';
 import { typography } from '@/shared/theme/typography';
+import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { IMAGES } from '@/shared/constants/images';
+import { SPACING } from '@/shared/constants';
 
 const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
   const { colors } = useTheme();
@@ -19,7 +22,7 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Image resizeMode='cover' source={IMAGES.welcomeBanner} style={styles.banner} />
 
@@ -47,7 +50,7 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
           onPress={handleLogin}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -55,12 +58,12 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: 20,
-      height: Dimensions.get('screen').height - 100,
-
-      justifyContent: 'space-between',
+      paddingTop: SPACING.LARGE,
+      paddingHorizontal: SPACING.LARGE,
     },
-    content: {},
+    content: {
+      marginBottom: 40,
+    },
     banner: {
       width: '100%',
       height: 350,

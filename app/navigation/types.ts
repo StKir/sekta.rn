@@ -5,6 +5,8 @@ export type RootStackParamList = {
   Events: undefined;
   Feed: undefined;
   Register: undefined;
+  JsonFormPage: undefined;
+  CheckInPage: undefined;
 };
 
 export type TabParamList = {

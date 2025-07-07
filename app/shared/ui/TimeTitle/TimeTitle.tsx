@@ -7,7 +7,7 @@ import { useTheme } from '@/shared/theme';
 import { SIZES, SPACING } from '@/shared/constants';
 
 type TimeTitleProps = {
-  date: Date;
+  date: Date | string;
 };
 
 const TimeTitle = ({ date }: TimeTitleProps) => {
@@ -26,8 +26,8 @@ const TimeTitle = ({ date }: TimeTitleProps) => {
     return '🌙';
   };
 
-  const hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const hours = new Date(date).getHours();
+  const minutes = new Date(date).getMinutes().toString().padStart(2, '0');
   const timeEmoji = getTimeEmoji(hours);
 
   return (

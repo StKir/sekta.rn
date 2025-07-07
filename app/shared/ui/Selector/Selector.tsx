@@ -13,8 +13,8 @@ type SelectorOption<T = string> = {
 
 type SelectorProps<T = string> = {
   label?: string;
-  value: T | null;
-  onChange: (value: T) => void;
+  value: T | T[] | null;
+  onChange: (value: T | T[]) => void;
   options: Array<SelectorOption<T>>;
   multiSelect?: boolean;
   disabled?: boolean;
@@ -34,13 +34,19 @@ const Selector = <T extends string | number>({
 }: SelectorProps<T>) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+
   const handlePress = (optionValue: T) => {
     if (disabled) {
       return;
     }
 
     if (multiSelect) {
-      onChange(optionValue);
+      const currentValues = Array.isArray(value) ? value : [];
+      if (currentValues.includes(optionValue)) {
+        onChange(currentValues.filter((v) => v !== optionValue));
+      } else {
+        onChange([...currentValues, optionValue]);
+      }
     } else {
       onChange(optionValue);
     }

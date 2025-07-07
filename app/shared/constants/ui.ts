@@ -6,7 +6,14 @@ export const SPACING = {
   SMALL: 5,
   MEDIUM: 10,
   LARGE: 12,
+  LARGE_2: 20,
   XLARGE: 30,
+};
+
+export const Z_INDEX = {
+  HEADER: 100,
+  BACK_BUTTON: 101,
+  CONTENT: 102,
 };
 
 export const SIZES = {
@@ -19,6 +26,7 @@ export const SIZES = {
   STACK_SIZE: 6,
   ICON_SIZE_MEDIUM: 32,
   ICON_SIZE_SMALL: 30,
+  ICON_SIZE_XSMALL: 22,
   FONT_SIZE: {
     SMALL: 16,
     MEDIUM: 20,

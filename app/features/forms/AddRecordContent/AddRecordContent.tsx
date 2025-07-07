@@ -4,11 +4,13 @@ import React from 'react';
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useAppNavigation } from '@/shared/hooks/useAppNavigation';
 import { SPACING, SIZES } from '@/shared/constants';
 
 const AddRecordContent = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const navigation = useAppNavigation();
 
   return (
     <View style={styles.container}>
@@ -17,7 +19,7 @@ const AddRecordContent = () => {
         style={styles.option}
         onPress={() => {
           BottomSheetManager.hide();
-          console.log('Mood pressed');
+          navigation.navigate('CheckInPage');
         }}
       >
         <Text style={styles.optionText}>Настроение</Text>

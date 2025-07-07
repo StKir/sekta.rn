@@ -8,13 +8,12 @@ import MainContainer from '@/shared/ui/Container/MainContainer';
 import { useTheme } from '@/shared/theme';
 
 type MoodCardLentProps = {
-  id: string;
-  color: string;
+  color?: string;
   mood: string;
-  colorText: string;
+  colorText?: string;
 };
 
-const MoodCardLent = ({ id, color, mood, colorText }: MoodCardLentProps) => {
+const MoodCardLent = ({ color, mood, colorText }: MoodCardLentProps) => {
   const { colors } = useTheme();
   return (
     <MainContainer>
@@ -37,7 +36,7 @@ const MoodCardLent = ({ id, color, mood, colorText }: MoodCardLentProps) => {
             justifyContent: 'center',
           }}
         >
-          <Title fontSize={48}>{mood}</Title>
+          <Title fontSize={48}>{mood.slice(0, 2)}</Title>
         </View>
         <View style={{ maxWidth: 135 }}>
           <Text.Body1 color={colors.TEXT_PRIMARY}>{colorText}</Text.Body1>
