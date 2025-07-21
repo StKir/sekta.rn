@@ -1,27 +1,33 @@
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import React from 'react';
+import { NavigationProp } from '@react-navigation/native';
 
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
-import { useAppNavigation } from '@/shared/hooks/useAppNavigation';
 import { SPACING, SIZES } from '@/shared/constants';
+import { RootStackParamList } from '@/navigation/types';
 
-const AddRecordContent = () => {
+interface AddRecordContentProps {
+  navigation?: NavigationProp<RootStackParamList>;
+}
+
+const AddRecordContent = ({ navigation }: AddRecordContentProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const navigation = useAppNavigation();
+
+  const handleNavigateToCheckIn = () => {
+    BottomSheetManager.hide();
+    if (navigation) {
+      navigation.navigate('CheckInPage');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Новая запись</Text>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          navigation.navigate('CheckInPage');
-        }}
-      >
+      <TouchableOpacity style={styles.option} onPress={handleNavigateToCheckIn}>
+        <Text style={styles.optionText}>🐬</Text>
         <Text style={styles.optionText}>Настроение</Text>
       </TouchableOpacity>
     </View>
@@ -39,21 +45,22 @@ const createStyles = (colors: ThemeColors) =>
       fontWeight: 'bold',
       color: colors.TEXT_PRIMARY,
       marginBottom: SPACING.LARGE,
-      textAlign: 'center',
+      textAlign: 'left',
     },
     option: {
-      backgroundColor: colors.BACKGROUND_SECONDARY,
+      borderWidth: 1,
+      borderColor: colors.PRIMARY,
+      backgroundColor: colors.PRIMARY_ALPHA,
       borderRadius: 12,
+      height: 120,
       padding: SPACING.LARGE,
       marginBottom: SPACING.MEDIUM,
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: colors.SEPARATOR,
+      justifyContent: 'flex-end',
     },
     optionText: {
-      fontSize: SIZES.FONT_SIZE.MEDIUM,
-      color: colors.TEXT_PRIMARY,
-      fontWeight: '600',
+      fontSize: SIZES.FONT_SIZE.XXLARGE,
+      color: colors.PRIMARY,
+      fontWeight: '400',
     },
   });
 

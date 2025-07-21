@@ -15,6 +15,7 @@ type FormStepProps = {
   onNext: () => void;
   onPrev?: () => void;
   title?: string;
+  stickyButton?: boolean;
 };
 
 const FormStep = ({
@@ -26,6 +27,7 @@ const FormStep = ({
   onNext,
   onPrev,
   title = 'Тест',
+  stickyButton,
 }: FormStepProps) => {
   const isLastStep = stepIndex === totalSteps - 1;
   const isFirstStep = stepIndex === 0;
@@ -120,31 +122,43 @@ const FormStep = ({
   }
 
   return (
-    <FormStepWrapper
-      showHeader={shouldShowHeader}
-      subtitle={shouldShowHeader ? getSubtitle() : `Шаг ${stepIndex} из ${totalSteps - 1}`}
-      title={shouldShowHeader ? titleBlock?.title || title : title}
-    >
-      {actualQuestions.map((question, index) => (
-        <QuestionRenderer
-          key={question.name || index}
-          question={question}
-          value={answers[question.name]}
-          onChange={(value) => onAnswerChange(question.name, value)}
+    <>
+      <FormStepWrapper
+        showHeader={shouldShowHeader}
+        subtitle={shouldShowHeader ? getSubtitle() : `Шаг ${stepIndex} из ${totalSteps - 1}`}
+        title={shouldShowHeader ? titleBlock?.title || title : title}
+      >
+        {actualQuestions.map((question, index) => (
+          <QuestionRenderer
+            key={question.name || index}
+            question={question}
+            value={answers[question.name]}
+            onChange={(value) => onAnswerChange(question.name, value)}
+          />
+        ))}
+
+        {!stickyButton && (
+          <Button
+            fullWidth
+            disabled={!isStepValid()}
+            sticky={stickyButton}
+            title={isLastStep ? 'Завершить' : 'Далее'}
+            onPress={onNext}
+          />
+        )}
+
+        {!isFirstStep && onPrev && <Button title='Назад' variant='secondary' onPress={onPrev} />}
+      </FormStepWrapper>
+      {stickyButton && (
+        <Button
+          fullWidth
+          disabled={!isStepValid()}
+          sticky={stickyButton}
+          title={isLastStep ? 'Завершить' : 'Далее'}
+          onPress={onNext}
         />
-      ))}
-
-      <Button
-        fullWidth
-        disabled={!isStepValid()}
-        title={isLastStep ? 'Завершить' : 'Далее'}
-        onPress={onNext}
-      />
-
-      {!isFirstStep && onPrev && (
-        <Button fullWidth title='Назад' variant='secondary' onPress={onPrev} />
       )}
-    </FormStepWrapper>
+    </>
   );
 };
 

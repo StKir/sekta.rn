@@ -9,6 +9,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 type DynamicFormProps = {
   formData: FormTest;
+  stickyButton?: boolean;
   onComplete: (answers: FormAnswers) => void;
   customFirstStep?: React.ComponentType<{ onNext: () => void }>;
 };
@@ -17,6 +18,7 @@ const DynamicForm = ({
   formData,
   onComplete,
   customFirstStep: CustomFirstStep,
+  stickyButton,
 }: DynamicFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<FormAnswers>({});
@@ -113,6 +115,7 @@ const DynamicForm = ({
           answers={answers}
           step={currentStepData}
           stepIndex={currentStep}
+          stickyButton={stickyButton}
           title={formData.name}
           totalSteps={totalSteps}
           onAnswerChange={handleAnswerChange}

@@ -1,3 +1,4 @@
+import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import React from 'react';
 
@@ -5,6 +6,7 @@ import Text from '@/shared/ui/Text';
 import { typography } from '@/shared/theme/typography';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { SPACING } from '@/shared/constants';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
 
@@ -16,6 +18,7 @@ type ButtonProps = {
   fullWidth?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  sticky?: boolean;
 };
 
 const Button = ({
@@ -26,15 +29,14 @@ const Button = ({
   fullWidth = false,
   style,
   textStyle,
+  sticky = true,
 }: ButtonProps) => {
   const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const insets = useSafeAreaInsets();
+  const styles = createStyles(colors, insets);
+
   const getButtonStyle = (): ViewStyle[] => {
     const baseStyle: ViewStyle[] = [styles.button];
-
-    if (style) {
-      baseStyle.push(style);
-    }
 
     if (variant === 'primary') {
       baseStyle.push(styles.primaryButton);
@@ -45,13 +47,8 @@ const Button = ({
     if (variant === 'outline') {
       baseStyle.push(styles.outlineButton);
     }
-
     if (variant === 'text') {
-      if (style) {
-        return [styles.textButton, style];
-      }
-
-      return [styles.textButton];
+      baseStyle.push(styles.textButton);
     }
 
     if (fullWidth) {
@@ -60,6 +57,14 @@ const Button = ({
 
     if (disabled) {
       baseStyle.push(styles.disabled);
+    }
+
+    if (sticky) {
+      baseStyle.push(styles.sticky);
+    }
+
+    if (style) {
+      baseStyle.push(style);
     }
 
     return baseStyle;
@@ -92,7 +97,7 @@ const Button = ({
   );
 };
 
-const createStyles = (colors: ThemeColors) =>
+const createStyles = (colors: ThemeColors, insets: EdgeInsets) =>
   StyleSheet.create({
     button: {
       height: 48,
@@ -106,7 +111,7 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: colors.PRIMARY,
     },
     secondaryButton: {
-      backgroundColor: colors.BACKGROUND_SECONDARY,
+      backgroundColor: colors.GRAY_3,
     },
     outlineButton: {
       backgroundColor: 'transparent',
@@ -116,6 +121,7 @@ const createStyles = (colors: ThemeColors) =>
     textButton: {
       ...typography.body2,
       color: colors.TEXT_PRIMARY,
+      textAlign: 'center',
       width: '100%',
       justifyContent: 'center',
     },
@@ -124,6 +130,17 @@ const createStyles = (colors: ThemeColors) =>
     },
     disabled: {
       opacity: 0.7,
+    },
+    sticky: {
+      position: 'absolute',
+      bottom: insets.bottom + 10,
+      left: SPACING.LARGE,
+      right: SPACING.LARGE,
+      width: undefined,
+      alignSelf: 'stretch',
+      zIndex: 1000,
+      shadowColor: '#000',
+      elevation: 8,
     },
   });
 

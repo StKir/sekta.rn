@@ -10,7 +10,8 @@ export type FormQuestionType =
   | 'avatar'
   | 'multi_select'
   | 'title'
-  | 'area';
+  | 'area'
+  | 'range';
 
 export interface FormOption {
   id: number;
@@ -24,6 +25,7 @@ export interface FormColor extends FormOption {
 export interface FormQuestion {
   id?: number | string;
   name: string;
+  color?: string;
   type: FormQuestionType;
   question: string;
   title?: string;

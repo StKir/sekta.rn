@@ -4,11 +4,13 @@ import React from 'react';
 import TextArea from '@/shared/ui/TextArea';
 import Text from '@/shared/ui/Text';
 import Selector from '@/shared/ui/Selector';
+import Range from '@/shared/ui/Range';
 import MediaPicker from '@/shared/ui/MediaPicker';
 import Input from '@/shared/ui/Input';
 import ColorPicker from '@/shared/ui/ColorPicker/ColorPicker';
 import { Button } from '@/shared/ui';
 import { FormQuestion } from '@/shared/types/form.types';
+import { RecordType } from '@/entities/records/store/recordsStore';
 
 type QuestionRendererProps = {
   question: FormQuestion;
@@ -101,6 +103,19 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
           />
         );
 
+      case 'range':
+        return (
+          <Range
+            color={question.color}
+            label={question.question}
+            max={100}
+            min={0}
+            showValue={true}
+            value={value || 0}
+            onChange={onChange}
+          />
+        );
+
       case 'gender':
         return (
           <Selector
@@ -145,6 +160,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
           <Selector
             multiSelect
             label={question.question}
+            name={question.name as RecordType}
             options={
               question.options?.map((opt) => ({
                 value: opt.name,
@@ -160,6 +176,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
         return (
           <Selector
             label={question.question}
+            name={question.name as RecordType}
             options={
               question.options?.map((opt) => ({
                 value: opt.name,
@@ -171,10 +188,11 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
           />
         );
 
-      case 'tags':
+      case 'tags': {
         return (
           <Selector
             label={question.question}
+            name={question.name as RecordType}
             options={
               question.tags?.map((tag) => ({
                 value: tag.name,
@@ -185,7 +203,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
             onChange={onChange}
           />
         );
-
+      }
       case 'color':
         return <ColorPicker question={question} value={value} onChange={onChange} />;
 

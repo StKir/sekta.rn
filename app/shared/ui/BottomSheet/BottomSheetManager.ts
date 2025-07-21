@@ -2,10 +2,25 @@
 import React from 'react';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
+interface ShowOptions {
+  snapPoints?: (string | number)[];
+  detached?: boolean;
+  topInset?: number;
+  bottomInset?: number;
+}
+
+const DEFAULT_OPTIONS: ShowOptions = {
+  snapPoints: ['60%'],
+  detached: false,
+  topInset: 0,
+  bottomInset: 0,
+};
+
 class BottomSheetManager {
   private static instance: BottomSheetManager;
   private bottomSheetRef: React.MutableRefObject<BottomSheetModal | null> | null = null;
   private setContent: ((content: React.ReactNode | null) => void) | null = null;
+  private setOptions: ((options: ShowOptions) => void) | null = null;
 
   private constructor() {}
 
@@ -24,9 +39,20 @@ class BottomSheetManager {
     this.setContent = setter;
   }
 
-  show(content: React.ReactNode) {
+  setOptionsSetter(setter: (options: ShowOptions) => void) {
+    this.setOptions = setter;
+  }
+
+  show(content: React.ReactNode, options?: ShowOptions) {
     if (!this.bottomSheetRef?.current || !this.setContent) {
       return;
+    }
+
+    // Всегда устанавливаем опции, либо переданные, либо дефолтные
+    const finalOptions = { ...DEFAULT_OPTIONS, ...options };
+
+    if (this.setOptions) {
+      this.setOptions(finalOptions);
     }
 
     this.setContent(content);
@@ -40,6 +66,11 @@ class BottomSheetManager {
 
     this.setContent(null);
     this.bottomSheetRef.current.dismiss();
+
+    // Сбрасываем опции на дефолтные после закрытия
+    if (this.setOptions) {
+      this.setOptions(DEFAULT_OPTIONS);
+    }
   }
 }
 

@@ -1,26 +1,19 @@
-/* eslint-disable react-native/split-platform-components */
+import Icon from 'react-native-vector-icons/Ionicons';
 import {
   launchImageLibrary,
   launchCamera,
   ImagePickerResponse,
   MediaType,
 } from 'react-native-image-picker';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Alert,
-  FlatList,
-  Platform,
-  PermissionsAndroid,
-} from 'react-native';
+import { View, TouchableOpacity, Image, FlatList } from 'react-native';
 import React from 'react';
 
+import { createStyles } from './MediaPicker.styles';
+
+import { CameraPermissions, StoragePermissions } from '@/shared/utils/permissions';
 import Text from '@/shared/ui/Text/Text';
-import { Button } from '@/shared/ui';
-import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { SIZES } from '@/shared/constants';
 
 export type MediaItem = {
   id: string;
@@ -39,111 +32,25 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  const requestCameraPermission = async (includeAudio = false): Promise<boolean> => {
-    if (Platform.OS === 'ios') {
-      return true;
-    }
-
-    try {
-      const permissions = [PermissionsAndroid.PERMISSIONS.CAMERA];
-      if (includeAudio) {
-        permissions.push(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
-      }
-
-      if (permissions.length === 1) {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
-          title: 'Разрешение на камеру',
-          message: 'Приложению нужен доступ к камере для съемки фото и видео',
-          buttonNeutral: 'Спросить позже',
-          buttonNegative: 'Отмена',
-          buttonPositive: 'Разрешить',
-        });
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } else {
-        const results = await PermissionsAndroid.requestMultiple(permissions);
-        return (
-          results[PermissionsAndroid.PERMISSIONS.CAMERA] === PermissionsAndroid.RESULTS.GRANTED &&
-          (!includeAudio ||
-            results[PermissionsAndroid.PERMISSIONS.RECORD_AUDIO] ===
-              PermissionsAndroid.RESULTS.GRANTED)
-        );
-      }
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  };
-
-  const requestStoragePermission = async (): Promise<boolean> => {
-    if (Platform.OS === 'ios') {
-      return true;
-    }
-
-    try {
-      if (typeof Platform.Version === 'number' && Platform.Version >= 33) {
-        const permissions = [
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
-        ];
-
-        const results = await PermissionsAndroid.requestMultiple(permissions);
-        return (
-          results[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
-            PermissionsAndroid.RESULTS.GRANTED ||
-          results[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
-            PermissionsAndroid.RESULTS.GRANTED
-        );
-      } else {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: 'Разрешение на доступ к галерее',
-            message: 'Приложению нужен доступ к галерее для выбора фото и видео',
-            buttonNeutral: 'Спросить позже',
-            buttonNegative: 'Отмена',
-            buttonPositive: 'Разрешить',
-          }
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      }
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  };
-
-  const handlePickMedia = () => pickFromGallery();
-
-  const pickFromCamera = async () => {
-    Alert.alert('Тип медиа', 'Что хотите снять?', [
-      { text: 'Фото', onPress: () => handleCameraPhoto() },
-      { text: 'Видео', onPress: () => handleCameraVideo() },
-      { text: 'Отмена', style: 'cancel' },
-    ]);
+  const handlePickFromGallery = async () => {
+    await StoragePermissions.request();
+    launchGalleryWithType('mixed');
   };
 
   const handleCameraPhoto = async () => {
-    const hasPermission = await requestCameraPermission(false);
+    const hasPermission = await CameraPermissions.requestWithAlert(false);
     if (!hasPermission) {
-      Alert.alert('Ошибка', 'Нет доступа к камере');
       return;
     }
     launchCameraWithType('photo');
   };
 
   const handleCameraVideo = async () => {
-    const hasPermission = await requestCameraPermission(true);
+    const hasPermission = await CameraPermissions.requestWithAlert(true);
     if (!hasPermission) {
-      Alert.alert('Ошибка', 'Нет доступа к камере и микрофону');
       return;
     }
     launchCameraWithType('video');
-  };
-
-  const pickFromGallery = async () => {
-    await requestStoragePermission();
-
-    launchGalleryWithType('photo');
   };
 
   const launchCameraWithType = (mediaType: 'photo' | 'video') => {
@@ -153,6 +60,8 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       maxWidth: 1920,
       maxHeight: 1920,
       includeBase64: false,
+      videoQuality: 'medium' as const,
+      durationLimit: 60,
     };
 
     launchCamera(options, (response: ImagePickerResponse) => {
@@ -174,7 +83,7 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
     });
   };
 
-  const launchGalleryWithType = (mediaType: 'photo' | 'video') => {
+  const launchGalleryWithType = (mediaType: 'photo' | 'video' | 'mixed') => {
     const options = {
       mediaType: mediaType as MediaType,
       quality: 0.8 as const,
@@ -182,6 +91,7 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       maxHeight: 1920,
       includeBase64: false,
       selectionLimit: 1,
+      videoQuality: 'medium' as const,
     };
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
@@ -191,11 +101,12 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
 
       if (response.assets && response.assets[0]) {
         const asset = response.assets[0];
+        const isVideo = asset.type?.startsWith('video/');
         const newMedia: MediaItem = {
           id: Date.now().toString(),
           uri: asset.uri || '',
-          type: mediaType === 'photo' ? 'image' : 'video',
-          fileName: asset.fileName || `gallery_${mediaType}_${Date.now()}`,
+          type: isVideo ? 'video' : 'image',
+          fileName: asset.fileName || `gallery_${isVideo ? 'video' : 'photo'}_${Date.now()}`,
         };
 
         onChange([...value, newMedia]);
@@ -213,22 +124,40 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
         <Image source={{ uri: item.uri }} style={styles.mediaPreview} />
       ) : (
         <View style={[styles.mediaPreview, styles.videoPreview]}>
-          <Text color='textPrimary' variant='body2'>
-            📹
-          </Text>
+          <Icon color={colors.TEXT_PRIMARY} name='play-circle' size={32} />
         </View>
       )}
 
       <TouchableOpacity style={styles.removeButton} onPress={() => removeMedia(item.id)}>
-        <Text color='textPrimary' variant='body2'>
-          ✕
-        </Text>
+        <Icon color='white' name='close' size={14} />
       </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
+      <Text color='primary' variant='body1'>
+        Добавить медиа
+      </Text>
+      {value.length < maxItems && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.actionButton} onPress={handlePickFromGallery}>
+            <Icon color={colors.TEXT_PRIMARY} name='images' size={SIZES.ICON_SIZE_SMALL} />
+            <Text color='textPrimary' variant='body2'>
+              Галерея
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton} onPress={handleCameraPhoto}>
+            <Icon color={colors.TEXT_PRIMARY} name='camera' size={SIZES.ICON_SIZE_SMALL} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton} onPress={handleCameraVideo}>
+            <Icon color={colors.TEXT_PRIMARY} name='videocam' size={SIZES.ICON_SIZE_SMALL} />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {value.length > 0 && (
         <FlatList
           horizontal
@@ -239,51 +168,8 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
           style={styles.mediaList}
         />
       )}
-
-      {value.length < maxItems && (
-        <View style={{ flexDirection: 'row', gap: 16 }}>
-          <Button title='Добавить медиа' variant='outline' onPress={handlePickMedia} />
-          <Button title='Снять видео' variant='outline' onPress={pickFromCamera} />
-        </View>
-      )}
     </View>
   );
 };
-
-const createStyles = (colors: ThemeColors) =>
-  StyleSheet.create({
-    container: {
-      gap: 16,
-    },
-    mediaList: {
-      flexDirection: 'row',
-    },
-    mediaItem: {
-      position: 'relative',
-      marginRight: 12,
-    },
-    mediaPreview: {
-      width: 80,
-      height: 80,
-      borderRadius: 8,
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-    },
-    videoPreview: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: colors.TEXT_SECONDARY,
-    },
-    removeButton: {
-      position: 'absolute',
-      top: -8,
-      right: -8,
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-      backgroundColor: '#FF3B30',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  });
 
 export default MediaPicker;

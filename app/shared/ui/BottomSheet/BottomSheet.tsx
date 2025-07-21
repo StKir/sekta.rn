@@ -1,7 +1,6 @@
-import { TouchableOpacity } from 'react-native';
 import React, { useRef, useMemo, useCallback } from 'react';
 import {
-  BottomSheetBackdropProps,
+  BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
   BottomSheetView,
@@ -10,36 +9,59 @@ import {
 import BottomSheetManager from './BottomSheetManager';
 import { styles } from './BottomSheet.styles';
 
+interface ShowOptions {
+  snapPoints?: (string | number)[];
+  detached?: boolean;
+  topInset?: number;
+  bottomInset?: number;
+}
+
 const BottomSheet = () => {
   const bottomSheetRef = useRef<BottomSheetModal | null>(null);
-  const snapPoints = useMemo(() => ['60%'], []);
   const [content, setContent] = React.useState<React.ReactNode | null>(null);
+  const [options, setOptions] = React.useState<ShowOptions>({
+    snapPoints: ['60%'],
+    detached: false,
+    topInset: 0,
+    bottomInset: 0,
+  });
+
+  const snapPoints = useMemo(() => {
+    return options.snapPoints || ['60%'];
+  }, [options.snapPoints]);
 
   React.useEffect(() => {
     BottomSheetManager.setBottomSheetRef(bottomSheetRef);
     BottomSheetManager.setContentSetter(setContent);
+    BottomSheetManager.setOptionsSetter(setOptions);
   }, []);
 
-  const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
-    return (
-      <TouchableOpacity
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
         {...props}
-        activeOpacity={1}
-        style={styles.backdrop}
-        onPress={() => {
-          BottomSheetManager.hide();
-        }}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        onPress={() => BottomSheetManager.hide()}
       />
-    );
-  }, []);
+    ),
+    []
+  );
 
   return (
     <BottomSheetModalProvider>
       <BottomSheetModal
-        enablePanDownToClose
         backdropComponent={renderBackdrop}
+        enablePanDownToClose={true}
         ref={bottomSheetRef}
         snapPoints={snapPoints}
+        {...(options.detached && {
+          detached: true,
+          topInset: options.topInset || 0,
+          bottomInset: options.bottomInset || 0,
+          style: { marginHorizontal: 0 },
+        })}
+        enableDynamicSizing={false}
       >
         <BottomSheetView style={styles.content}>{content}</BottomSheetView>
       </BottomSheetModal>

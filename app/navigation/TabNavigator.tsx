@@ -2,13 +2,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import React from 'react';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import ProfilePage from '@/pages/ProfilePage';
 import CheckInPage from '@/pages/CheckInPage';
 import CalendarPage from '@/pages/CalendarPage';
 
-import { TabParamList } from './types';
+import { TabParamList, RootStackParamList } from './types';
 import { createNavigationOptions } from './styles/TabNavigator.styles';
 
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
@@ -22,6 +23,7 @@ const TabNavigator = () => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const baseOptions = createNavigationOptions(colors, insets);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <Tab.Navigator
@@ -57,7 +59,10 @@ const TabNavigator = () => {
                 borderRadius: 30,
               }}
               onPress={() => {
-                BottomSheetManager.show(<AddRecordContent />);
+                BottomSheetManager.show(<AddRecordContent navigation={navigation} />, {
+                  snapPoints: ['40%', '90%'],
+                  detached: true,
+                });
               }}
             >
               {props.children}

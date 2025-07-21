@@ -28,7 +28,7 @@ const CheckInPage = () => {
     navigation.goBack();
   };
 
-  return <DynamicForm formData={formData} onComplete={handleFormComplete} />;
+  return <DynamicForm stickyButton formData={formData} onComplete={handleFormComplete} />;
 };
 
 export default CheckInPage;
