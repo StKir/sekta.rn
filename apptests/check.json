@@ -81,7 +81,7 @@
         },
         {
           "name": "note",
-          "type": "text",
+          "type": "area",
           "question": "Заметка"
         },
         {

@@ -1,9 +1,12 @@
 import { View, StyleSheet } from 'react-native';
 import React from 'react';
 
+import TextArea from '@/shared/ui/TextArea';
 import Text from '@/shared/ui/Text';
 import Selector from '@/shared/ui/Selector';
+import MediaPicker from '@/shared/ui/MediaPicker';
 import Input from '@/shared/ui/Input';
+import ColorPicker from '@/shared/ui/ColorPicker/ColorPicker';
 import { Button } from '@/shared/ui';
 import { FormQuestion } from '@/shared/types/form.types';
 
@@ -74,8 +77,21 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
         );
       }
 
-      case 'quote':
+      case 'area': {
+        return (
+          <TextArea
+            label={question.question}
+            placeholder='Введите ответ'
+            value={value || ''}
+            onChangeText={onChange}
+          />
+        );
+      }
+
       case 'media':
+        return <MediaPicker value={value} onChange={onChange} />;
+
+      case 'quote':
         return (
           <Input
             label={question.question}
@@ -103,7 +119,14 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
       case 'avatar':
         return (
           <Selector
-            buttonStyle={styles.avatarButton}
+            buttonStyle={() => ({
+              width: 64,
+              height: 64,
+              borderRadius: 14,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 0,
+            })}
             buttonTextStyle={styles.avatarText}
             label={question.question}
             options={
@@ -164,26 +187,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
         );
 
       case 'color':
-        return (
-          <Selector
-            label={question.question}
-            options={
-              question.colors?.map((color) => ({
-                value: JSON.stringify(color),
-                label: color.name,
-              })) || []
-            }
-            value={value ? JSON.stringify(value) : value}
-            onChange={(stringValue) => {
-              try {
-                const colorObject = JSON.parse(stringValue);
-                onChange(colorObject);
-              } catch {
-                onChange(stringValue);
-              }
-            }}
-          />
-        );
+        return <ColorPicker question={question} value={value} onChange={onChange} />;
 
       default:
         return null;

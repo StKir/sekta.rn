@@ -1,135 +1,69 @@
-import { View, TouchableOpacity, Text, StyleSheet, Alert, ScrollView } from 'react-native';
-import React, { useState } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
 
 import Statistic from '@/widgets/Statistic/Statistic';
 import Feed from '@/widgets/Feed/Feed';
-import { StorageService } from '@/shared/utils/storage';
-import PageContainer from '@/shared/ui/Container/PageContainer';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { SPACING, SIZES } from '@/shared/constants';
-import { RootStackParamList } from '@/navigation/types';
+import SwipeableTabView, { SwipeableTabViewRef } from '@/shared/components/SwipeableTabView';
 import TabSelectorTitle from '@/features/auth/TabSelectorTitle/TabSelectorTitle';
-import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
-import { useLentStore } from '@/entities/lent/store/store';
-
-type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const tabs = ['Календарь', 'Статистика'];
 
 const CalendarPage = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const navigation = useNavigation<NavigationProp>();
+  const swipeableRef = useRef<SwipeableTabViewRef>(null);
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { clearAll: clearLentStore } = useLentStore();
-  const { clearResults } = useTestResultsStore();
 
-  const navigateToJsonForm = () => {
-    navigation.navigate('JsonFormPage');
+  const handleTabPress = (tab: number) => {
+    setActiveTab(tab);
+    swipeableRef.current?.setPage(tab);
   };
 
-  const navigateToRegister = () => {
-    navigation.navigate('Register');
+  const handlePageSelected = (index: number) => {
+    setActiveTab(index);
   };
 
-  const handleLogout = () => {
-    Alert.alert('Выход', 'Вы уверены, что хотите выйти?', [
-      {
-        text: 'Отмена',
-        style: 'cancel',
-      },
-      {
-        text: 'Выйти',
-        style: 'destructive',
-        onPress: () => {
-          try {
-            StorageService.removeUser();
-            navigation.navigate('Register');
-          } catch (error) {
-            console.error('Logout error:', error);
-          }
-        },
-      },
-    ]);
-  };
-
-  const handleClearAllData = () => {
-    Alert.alert(
-      'Очистить все данные',
-      'Это действие удалит все посты, результаты тестов и сохраненные данные. Продолжить?',
-      [
-        {
-          text: 'Отмена',
-          style: 'cancel',
-        },
-        {
-          text: 'Очистить',
-          style: 'destructive',
-          onPress: () => {
-            try {
-              clearLentStore();
-              clearResults();
-              Alert.alert('Успешно', 'Все данные очищены');
-            } catch (error) {
-              console.error('Clear data error:', error);
-              Alert.alert('Ошибка', 'Не удалось очистить данные');
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const renderContent = () => {
-    if (activeTab === 0) {
-      return <Feed />;
-    }
-    return <Statistic />;
-  };
+  useEffect(() => {
+    swipeableRef.current?.setPage(activeTab);
+  }, []);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-      <PageContainer>
-        <View style={styles.container}>
-          <TabSelectorTitle
-            activeTab={activeTab}
-            tabs={tabs}
-            onTabPress={(tab) => setActiveTab(tab)}
-          />
+    <SafeAreaView edges={['top', 'bottom']} style={styles.wrapper}>
+      <View style={styles.container}>
+        <TabSelectorTitle activeTab={activeTab} tabs={tabs} onTabPress={handleTabPress} />
+      </View>
+      <SwipeableTabView
+        activeIndex={activeTab}
+        ref={swipeableRef}
+        style={styles.swipeableContainer}
+        onPageSelected={handlePageSelected}
+      >
+        <View>
+          <Feed />
         </View>
-        {renderContent()}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={navigateToRegister}>
-            <Text style={styles.buttonText}>Демо регистрации</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={navigateToJsonForm}>
-            <Text style={styles.buttonText}>Демо</Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.clearButton]}
-            onPress={handleClearAllData}
-          >
-            <Text style={[styles.buttonText, styles.clearButtonText]}>Очистить все данные</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-            <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
-          </TouchableOpacity>
+        <View>
+          <Statistic />
         </View>
-      </PageContainer>
-    </ScrollView>
+      </SwipeableTabView>
+    </SafeAreaView>
   );
 };
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-    container: {
+    wrapper: {
       flex: 1,
+    },
+    container: {
       paddingHorizontal: SPACING.LARGE,
+    },
+    swipeableContainer: {
+      flex: 1,
     },
     title: {
       fontSize: SIZES.FONT_SIZE.LARGE,

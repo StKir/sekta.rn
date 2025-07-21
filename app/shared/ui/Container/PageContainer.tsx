@@ -16,7 +16,6 @@ const PageContainer = ({ children }: PageContainerProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingBottom: 100,
   },
 });

@@ -1,30 +1,33 @@
+import { EdgeInsets } from 'react-native-safe-area-context';
 import { TextStyle } from 'react-native';
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 
 import { ThemeColors } from '@/shared/theme/types';
-import { SIZES, SPACING } from '@/shared/constants';
+import { SIZES } from '@/shared/constants';
 
-export const createNavigationOptions = (colors: ThemeColors): BottomTabNavigationOptions => ({
+export const createNavigationOptions = (
+  colors: ThemeColors,
+  insets: EdgeInsets
+): BottomTabNavigationOptions => ({
   tabBarActiveTintColor: colors.PRIMARY,
   tabBarInactiveTintColor: colors.GRAY_1,
   headerShown: false,
   tabBarStyle: {
     position: 'absolute',
-    bottom: 0,
-    height: SIZES.TAB_BAR_HEIGHT,
-    paddingTop: SPACING.SMALL,
-    borderRadius: 24,
-    backgroundColor: colors.BACKGROUND_PRIMARY,
+    height: SIZES.TAB_BAR_HEIGHT + insets.bottom,
+    padding: 0,
+    paddingTop: 10,
     opacity: 0.95,
-    shadowColor: colors.SHADOW,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+
+    borderBottomEndRadius: 0,
+    borderBottomStartRadius: 0,
+    borderRadius: 24,
+
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     shadowOpacity: 0.1,
-    shadowRadius: 8,
     elevation: 5,
-    borderTopWidth: 0,
   },
   headerStyle: {
     backgroundColor: colors.BACKGROUND_PRIMARY,

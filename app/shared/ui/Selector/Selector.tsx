@@ -1,5 +1,4 @@
 import { View, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
-import React from 'react';
 
 import Text from '@/shared/ui/Text/Text';
 import { typography } from '@/shared/theme/typography';
@@ -18,7 +17,8 @@ type SelectorProps<T = string> = {
   options: Array<SelectorOption<T>>;
   multiSelect?: boolean;
   disabled?: boolean;
-  buttonStyle?: ViewStyle;
+  labelStyle?: TextStyle;
+  buttonStyle?: (option: SelectorOption<T>, isSelected: boolean) => ViewStyle;
   buttonTextStyle?: TextStyle;
 };
 
@@ -28,6 +28,7 @@ const Selector = <T extends string | number>({
   onChange,
   options,
   multiSelect = false,
+  labelStyle,
   disabled = false,
   buttonStyle,
   buttonTextStyle,
@@ -62,7 +63,7 @@ const Selector = <T extends string | number>({
   return (
     <View>
       {label && (
-        <Text color='primary' style={styles.label} variant='body1'>
+        <Text color='primary' style={[styles.label, labelStyle]} variant='body1'>
           {label}
         </Text>
       )}
@@ -73,7 +74,7 @@ const Selector = <T extends string | number>({
             key={String(option.value)}
             style={[
               styles.button,
-              buttonStyle,
+              buttonStyle?.(option, isSelected(option.value)),
               isSelected(option.value) && styles.buttonActive,
               disabled && styles.buttonDisabled,
             ]}
@@ -84,6 +85,7 @@ const Selector = <T extends string | number>({
                 styles.buttonText,
                 buttonTextStyle,
                 isSelected(option.value) && styles.buttonTextActive,
+                labelStyle,
                 disabled && styles.buttonTextDisabled,
               ]}
             >

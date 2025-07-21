@@ -34,6 +34,12 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>Приложению требуется доступ к камере для съемки фото и видео</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Приложению требуется доступ к галерее для выбора фото и видео</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Приложению требуется доступ к микрофону для записи видео со звуком</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ionicons.ttf</string>

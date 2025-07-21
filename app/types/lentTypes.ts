@@ -1,3 +1,5 @@
+import { MediaItem } from '@/shared/ui/MediaPicker/MediaPicker';
+
 export interface ColorObject {
   id: number;
   name: string;
@@ -17,7 +19,7 @@ export type CheckInPostData = {
   color?: ColorObject;
   quote?: string;
   note?: string;
-  media?: string;
+  media?: MediaItem[];
   activities: string[];
   emotions: string[];
 };

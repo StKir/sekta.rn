@@ -8,7 +8,7 @@ import { Post as PostType } from '@/types/lentTypes';
 const Post = ({ post }: { post: PostType }) => {
   return (
     <DateWrapper date={post.date}>
-      {post.data.map((item) => {
+      {post?.data.map((item) => {
         if (item.type === 'check-in') {
           return <CheckInPost key={item.id} post={item} />;
         }

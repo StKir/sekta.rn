@@ -1,4 +1,5 @@
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -19,7 +20,8 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabNavigator = () => {
   const { colors } = useTheme();
-  const baseOptions = createNavigationOptions(colors);
+  const insets = useSafeAreaInsets();
+  const baseOptions = createNavigationOptions(colors, insets);
 
   return (
     <Tab.Navigator
@@ -53,8 +55,6 @@ const TabNavigator = () => {
                 width: 60,
                 height: 60,
                 borderRadius: 30,
-                alignItems: 'center',
-                justifyContent: 'center',
               }}
               onPress={() => {
                 BottomSheetManager.show(<AddRecordContent />);

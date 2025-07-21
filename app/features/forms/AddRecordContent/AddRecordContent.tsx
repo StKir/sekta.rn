@@ -24,60 +24,6 @@ const AddRecordContent = () => {
       >
         <Text style={styles.optionText}>Настроение</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          console.log('Thoughts pressed');
-        }}
-      >
-        <Text style={styles.optionText}>Мысли</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          console.log('Thoughts pressed');
-        }}
-      >
-        <Text style={styles.optionText}>Мысли</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          console.log('Thoughts pressed');
-        }}
-      >
-        <Text style={styles.optionText}>Мысли</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          console.log('Thoughts pressed');
-        }}
-      >
-        <Text style={styles.optionText}>Мысли</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          console.log('Thoughts pressed');
-        }}
-      >
-        <Text style={styles.optionText}>Мысли</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.option}
-        onPress={() => {
-          BottomSheetManager.hide();
-          console.log('Thoughts pressed');
-        }}
-      >
-        <Text style={styles.optionText}>Мысли</Text>
-      </TouchableOpacity>
     </View>
   );
 };

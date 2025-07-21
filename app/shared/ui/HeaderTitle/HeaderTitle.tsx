@@ -27,11 +27,10 @@ const HeaderTitle = ({ title, subtitle, showBackButton = true, style }: HeaderTi
             <Ionicons color={colors.GRAY_1} name='chevron-back' size={SIZES.ICON_SIZE_XSMALL} />
           </TouchableOpacity>
         )}
-        <Text color={colors.GRAY_1} variant='h2'>
+        <Text color={colors.GRAY_2} variant='h2'>
           {title}
         </Text>
       </View>
-
       <Text color={colors.GRAY_2} variant='body1'>
         {subtitle}
       </Text>
@@ -52,7 +51,6 @@ const createStyles = (colors: ThemeColors) =>
       gap: SPACING.SMALL,
     },
     backButton: {
-      zIndex: 1,
       width: SIZES.ICON_SIZE_MEDIUM,
       height: SIZES.ICON_SIZE_MEDIUM,
       borderRadius: 100,

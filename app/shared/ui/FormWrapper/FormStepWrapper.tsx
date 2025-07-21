@@ -29,16 +29,13 @@ const FormStepWrapper = ({
 
   return (
     <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
-      {showHeader && (
-        <View>
-          <View style={styles.headerContainer}>
-            <HeaderTitle subtitle={subtitle || ''} title={title} />
-          </View>
-        </View>
-      )}
-      <ScrollView showsVerticalScrollIndicator={true}>
-        {showHeader && <View style={{ height: 100 }} />}
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={[styles.container, containerStyle]}>
+          {showHeader && (
+            <View style={styles.headerContainer}>
+              <HeaderTitle subtitle={subtitle || ''} title={title} />
+            </View>
+          )}
           <View style={[styles.content, contentStyle]}>{children}</View>
         </View>
       </ScrollView>
@@ -52,11 +49,6 @@ const createStyles = (colors: ThemeColors) =>
       flex: 1,
     },
     headerContainer: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      paddingHorizontal: SPACING.LARGE,
       paddingVertical: SPACING.MEDIUM,
     },
     container: {

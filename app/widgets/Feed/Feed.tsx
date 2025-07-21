@@ -1,39 +1,58 @@
-import { FlatList, View } from 'react-native';
+import { FlatList, View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 
-import TimeTitle from '@/shared/ui/TimeTitle/TimeTitle';
-import MainContainer from '@/shared/ui/Container/MainContainer';
+import { ThemeColors } from '@/shared/theme/types';
+import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
 import Post from '@/features/lent/Post';
-import TextLent from '@/entities/lent/ui/TextLent/TextLent';
-import TagListLent from '@/entities/lent/ui/TagListLent/TagListLent';
-import PhotoLent from '@/entities/lent/ui/PhotoLent/PhotoLent';
-import MoodCardLent from '@/entities/lent/ui/MoodCardLent/MoodCardLent';
-import DayHeader from '@/entities/lent/ui/DayHeader/DayHeader';
 import { useLentStore } from '@/entities/lent/store/store';
 
 const Feed = () => {
   const { posts } = useLentStore();
-  console.log(posts);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   if (posts.length === 0) {
-    return <View />;
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>Пока нет записей</Text>
+        <Text style={styles.emptySubtext}>Начните с создания первой записи</Text>
+      </View>
+    );
   }
 
   return (
-    <View>
-      <FlatList data={posts} renderItem={({ item }) => <Post key={item.id} post={item} />} />
-      {/* <MainContainer>
-        <TimeTitle date={posts[0].date} />
-      </MainContainer>
-      <View style={{ gap: SPACING.LARGE }}>
-        <MoodCardLent color='#7700ff' colorText='Загадочная синева' id='1' mood='🥳' />
-        <PhotoLent photoUrl='https://avatars.mds.yandex.net/get-mpic/11532558/2a0000018b43788a1a1069b6cb1d6a50f47a/orig' />
-        <TextLent text='Я чувствую себя прекрасно' type='quote' />
-        <TagListLent tags={['😡 Все бесит', '🧠 Учеба']} />
-      </View> */}
-    </View>
+    <FlatList
+      contentContainerStyle={{ gap: SPACING.LARGE }}
+      data={posts}
+      keyExtractor={(item) => item.id.toString()}
+      ListFooterComponent={<View style={{ height: 100 }} />}
+      renderItem={({ item }) => <Post key={item.id} post={item} />}
+      showsVerticalScrollIndicator={false}
+    />
   );
 };
+
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: SPACING.LARGE,
+    },
+    emptyText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.TEXT_PRIMARY,
+      marginBottom: SPACING.SMALL,
+      textAlign: 'center',
+    },
+    emptySubtext: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+      textAlign: 'center',
+    },
+  });
 
 export default Feed;

@@ -9,7 +9,8 @@ export type FormQuestionType =
   | 'welcome'
   | 'avatar'
   | 'multi_select'
-  | 'title';
+  | 'title'
+  | 'area';
 
 export interface FormOption {
   id: number;

@@ -6,7 +6,7 @@
  */
 
 import 'react-native-reanimated';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'react-native';
 import React from 'react';
@@ -19,7 +19,7 @@ import { ThemeProvider } from '@/shared/theme';
 
 const App = (): React.JSX.Element => {
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <GestureHandlerRootView style={styles.container}>
         <ThemeProvider>
           <StatusBar barStyle='dark-content' />

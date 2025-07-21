@@ -3,6 +3,7 @@ import React from 'react';
 
 import { CheckInPost as CheckInPostType } from '@/types/lentTypes';
 import TimeTitle from '@/shared/ui/TimeTitle/TimeTitle';
+import MainContainer from '@/shared/ui/Container/MainContainer';
 import { SPACING } from '@/shared/constants';
 import TextLent from '@/entities/lent/ui/TextLent/TextLent';
 import TagListLent from '@/entities/lent/ui/TagListLent/TagListLent';
@@ -20,12 +21,14 @@ const CheckInPost = ({ post }: CheckInPostProps) => {
     <View
       style={{
         gap: SPACING.LARGE,
-        paddingBottom: SPACING.LARGE_2,
+        paddingBottom: SPACING.LARGE,
       }}
     >
-      <TimeTitle date={post.date} />
+      <MainContainer>
+        <TimeTitle date={post.date} />
+      </MainContainer>
       <MoodCardLent color={color?.color} colorText={color?.name} mood={mood} />
-      <PhotoLent photoUrl='https://avatars.mds.yandex.net/get-mpic/11532558/2a0000018b43788a1a1069b6cb1d6a50f47a/orig' />
+      {media && <PhotoLent photoUrl={media[0].uri} />}
       {quote && <TextLent text={quote} type='quote' />}
       {note && <TextLent text={note} type='text' />}
       {activities.length > 0 && <TagListLent tags={activities} />}
