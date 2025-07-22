@@ -22,6 +22,8 @@ export type CheckInPostData = {
   media?: MediaItem[];
   activities: string[];
   emotions: string[];
+  power?: number;
+  stress?: number;
 };
 
 export type CustomPostData = {

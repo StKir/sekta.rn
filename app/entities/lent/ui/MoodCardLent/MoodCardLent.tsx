@@ -36,7 +36,7 @@ const MoodCardLent = ({ color, mood, colorText }: MoodCardLentProps) => {
             justifyContent: 'center',
           }}
         >
-          <Title fontSize={48}>{mood.slice(0, 2)}</Title>
+          <Title fontSize={48}>{mood?.slice(0, 2)}</Title>
         </View>
         <View style={{ maxWidth: 135 }}>
           <Text.Body1 color={colors.TEXT_PRIMARY}>{colorText}</Text.Body1>

@@ -45,13 +45,11 @@ const Share = ({
       if (Platform.OS === 'ios') {
         // iOS - отправляем изображение через url как data URI
         await RNShare.share({
-          message: message,
           url: imageDataUri,
         });
       } else {
         // Android - отправляем через url как data URI
         await RNShare.share({
-          message: message,
           url: imageDataUri,
         });
       }
@@ -96,7 +94,6 @@ const Share = ({
           result: 'base64',
         }}
         ref={viewShotRef}
-        style={{ backgroundColor: colors.BACKGROUND_PRIMARY }}
       >
         {children}
       </ViewShot>

@@ -16,8 +16,7 @@ type CheckInPostProps = {
 };
 
 const CheckInPost = ({ post }: CheckInPostProps) => {
-  const { mood, color, quote, note, media, activities, emotions } = post.data;
-
+  const { mood, color, quote, note, media, activities, emotions, power, stress } = post.data;
   return (
     <Share message='Посмотри на мой пост в приложении!' title='Мой пост'>
       <View
@@ -33,8 +32,8 @@ const CheckInPost = ({ post }: CheckInPostProps) => {
         {media && <MediaLent media={media} />}
         {quote && <TextLent text={quote} type='quote' />}
         {note && <TextLent text={note} type='text' />}
-        {activities.length > 0 && <TagListLent tags={activities} />}
-        {emotions.length > 0 && <TagListLent tags={emotions} />}
+        {activities?.length > 0 && <TagListLent tags={activities} />}
+        {emotions?.length > 0 && <TagListLent tags={emotions} />}
       </View>
     </Share>
   );

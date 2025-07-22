@@ -29,7 +29,7 @@ const Button = ({
   fullWidth = false,
   style,
   textStyle,
-  sticky = true,
+  sticky = false,
 }: ButtonProps) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();

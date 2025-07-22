@@ -69,42 +69,20 @@ export const formatAnswersToTestResult = (formData: FormTest, answers: FormAnswe
 };
 
 export const convertTestResultToCheckInPost = (testResult: TestResult): CheckInPost => {
-  const checkInData: CheckInPostData = {
+  const data: CheckInPostData = {
     mood: '',
     activities: [],
     emotions: [],
   };
 
   testResult.data.forEach((question) => {
-    switch (question.name) {
-      case 'mood':
-        checkInData.mood = question.answer;
-        break;
-      case 'color':
-        checkInData.color = question.answer;
-        break;
-      case 'quote':
-        checkInData.quote = question.answer;
-        break;
-      case 'note':
-        checkInData.note = question.answer;
-        break;
-      case 'media':
-        checkInData.media = question.answer;
-        break;
-      case 'activities':
-        checkInData.activities = Array.isArray(question.answer) ? question.answer : [];
-        break;
-      case 'emotions':
-        checkInData.emotions = Array.isArray(question.answer) ? question.answer : [];
-        break;
-    }
+    data[question.name as keyof CheckInPostData] = question.answer;
   });
 
   return {
     date: testResult.date,
     id: `checkin_${Date.now()}`,
     type: 'check-in',
-    data: checkInData,
+    data,
   };
 };
