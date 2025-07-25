@@ -69,8 +69,6 @@ const Share = ({
       }
 
       const uri = await viewShot.capture();
-
-      console.log('Screenshot created:', uri);
       return uri;
     } catch (error: any) {
       console.error('Ошибка при создании скриншота:', error);
@@ -79,7 +77,6 @@ const Share = ({
     }
   };
 
-  // Сохранение в галерею
   const saveToGallery = async (uri: string): Promise<boolean> => {
     try {
       const hasPermission = await requestStoragePermission();
@@ -105,7 +102,6 @@ const Share = ({
     }
   };
 
-  // Обработчик нажатия (по умолчанию - сохранение и шаринг)
   const handleShare = async () => {
     const uri = await createScreenshot();
     if (uri) {
@@ -115,11 +111,10 @@ const Share = ({
 
   return (
     <View style={{ position: 'relative' }}>
-      {/* Скриншот контейнер */}
       <ViewShot
         options={{
           format: 'png',
-          quality: 0.9,
+          quality: 1,
           result: 'tmpfile',
         }}
         ref={viewShotRef}
@@ -146,7 +141,7 @@ const Share = ({
         ]}
         onPress={handleShare}
       >
-        <Icon color={iconColor || colors.PRIMARY} name='share' size={iconSize} />
+        <Icon color={iconColor || colors.GRAY_2} name='share' size={iconSize} />
       </TouchableOpacity>
     </View>
   );
