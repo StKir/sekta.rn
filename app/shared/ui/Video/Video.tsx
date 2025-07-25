@@ -23,6 +23,8 @@ const Video = ({
   repeat = true,
 }: VideoProps) => {
   const { colors } = useTheme();
+  const [isFullScreen, setFullScreen] = useState(false);
+  const [isShow, setShow] = useState(false);
   const [isMuted, setIsMuted] = useState(muted);
   const videoRef = useRef<any>(null);
 
@@ -42,23 +44,41 @@ const Video = ({
 
   return (
     <View style={[{ position: 'relative' }, style]}>
-      <RNVideo
-        controls={true}
-        fullscreenAutorotate={true}
-        fullscreenOrientation='all'
-        muted={isMuted}
-        paused={!autoPlay}
-        playInBackground={false}
-        playWhenInactive={false}
-        ref={videoRef}
-        repeat={repeat}
-        resizeMode='cover'
-        source={{ uri }}
-        style={{ width: '100%', height: '100%' }}
-        onError={(error: any) => console.log('Video error:', error)}
-      />
+      {isShow ? (
+        <RNVideo
+          controls={isFullScreen}
+          fullscreenAutorotate={true}
+          fullscreenOrientation='all'
+          muted={isMuted}
+          paused={!autoPlay}
+          playInBackground={false}
+          playWhenInactive={false}
+          ref={videoRef}
+          repeat={repeat}
+          resizeMode='cover'
+          source={{ uri }}
+          style={{ width: '100%', height: '100%' }}
+          onEnd={() => !isFullScreen && setShow(false)}
+          onError={(error: any) => console.log('Video error:', error)}
+          onFullscreenPlayerDidDismiss={() => setFullScreen(false)}
+          onFullscreenPlayerDidPresent={() => setFullScreen(true)}
+        />
+      ) : (
+        <TouchableOpacity
+          style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: colors.PRIMARY_ALPHA,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => setShow(true)}
+        >
+          <Icon name='play' size={48} />
+        </TouchableOpacity>
+      )}
 
-      {showControls && (
+      {isShow && showControls && (
         <>
           {/* Контролы видео */}
           <View

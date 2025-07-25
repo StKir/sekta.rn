@@ -23,7 +23,7 @@ const MomentPost = ({ post }: MomentPostProps) => {
   return (
     <View
       style={{
-        gap: SPACING.LARGE_2,
+        gap: SPACING.MEDIUM,
         borderRadius: 14,
         backgroundColor: colors.BACKGROUND_SECONDARY,
         paddingVertical: SPACING.LARGE,
@@ -33,39 +33,15 @@ const MomentPost = ({ post }: MomentPostProps) => {
       <MainContainer>
         <TimeTitle date={date} />
       </MainContainer>
-      <View style={{}}>
-        {name && (
-          <MainContainer>
-            <Title>{name}</Title>
-          </MainContainer>
-        )}
-        {note && <TextLent text={note} type='text' />}
-        {emotions && !media && emotions?.length > 0 && (
-          <TagListLent tags={emotions} variant='small' />
-        )}
-      </View>
-      {media && (
-        <View>
-          <MediaLent
-            containerStyle={{ height: Dimensions.get('screen').height - 300 }}
-            media={media}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 12,
-              width: '100%',
-              backgroundColor: colors.BACKGROUND_PRIMARY,
-              opacity: 0.7,
-              paddingVertical: 20,
-              paddingHorizontal: 20,
-            }}
-          >
-            {emotions && emotions?.length > 0 && <TagListLent tags={emotions} variant='small' />}
-          </View>
-        </View>
+
+      {name && (
+        <MainContainer>
+          <Title marginBottom={0}>{name}</Title>
+        </MainContainer>
       )}
+      {note && <TextLent text={note} type='text' />}
+      <MediaLent containerStyle={{ height: Dimensions.get('screen').height - 300 }} media={media} />
+      {emotions && emotions?.length > 0 && <TagListLent tags={emotions} variant='small' />}
     </View>
   );
 };

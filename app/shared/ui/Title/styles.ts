@@ -1,5 +1,6 @@
 import { StyleSheet, TextStyle } from 'react-native';
 
+import { ThemeColors } from '@/shared/theme/types';
 import { SIZES, SPACING } from '@/shared/constants';
 
 export const createStyles = (colors: ThemeColors, styles?: TextStyle) =>

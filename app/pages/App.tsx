@@ -8,7 +8,6 @@
 import 'react-native-reanimated';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StatusBar } from 'react-native';
 import React from 'react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
@@ -25,7 +24,6 @@ const App = (): React.JSX.Element => {
       <GestureHandlerRootView style={styles.container}>
         <BottomSheetModalProvider>
           <ThemeProvider>
-            <StatusBar barStyle='dark-content' />
             <AppNavigator />
             <BottomSheet />
           </ThemeProvider>

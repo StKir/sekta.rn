@@ -4,7 +4,7 @@ import React from 'react';
 import Title from '../Title';
 
 import { useTheme } from '@/shared/theme';
-import { SIZES, SPACING } from '@/shared/constants';
+import { SIZES } from '@/shared/constants';
 
 type TimeTitleProps = {
   date: Date | string;
@@ -36,7 +36,7 @@ const TimeTitle = ({ date }: TimeTitleProps) => {
         color={colors.TEXT_PRIMARY}
         fontSize={SIZES.FONT_SIZE.XLARGE}
         fontWeight={SIZES.FONT_WEIGHT.REGULAR}
-        marginBottom={SPACING.MEDIUM}
+        marginBottom={0}
       >
         {`${timeEmoji} ${hours}:${minutes}`}
       </Title>
