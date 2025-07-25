@@ -34,7 +34,7 @@ const DayHeader = ({ date }: DayHeaderProps) => {
           <Ionicons color='black' name='share-social-outline' size={16} />
         </TouchableOpacity>
       </MainContainer>
-      <PointerLine offsetBottom={SPACING.LARGE} offsetTop={SPACING.MEDIUM} />
+      <PointerLine offsetTop={SPACING.MEDIUM} />
     </View>
   );
 };

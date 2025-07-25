@@ -26,6 +26,13 @@ export type CheckInPostData = {
   stress?: number;
 };
 
+export type MomentPostData = {
+  note?: string;
+  media?: MediaItem[];
+  emotions?: string[];
+  name?: string;
+};
+
 export type CustomPostData = {
   title: string;
   content: string;
@@ -39,9 +46,18 @@ export type CheckInPost = {
   data: CheckInPostData;
 };
 
-export type CustomPost = {
+export type MomentInPost = {
   date: string;
   id: string | number;
-  type: 'custom';
-  data: CustomPostData;
+  type: 'moment';
+  data: MomentPostData;
 };
+
+export type CustomPost =
+  | {
+      date: string;
+      id: string | number;
+      type: 'custom';
+      data: CustomPostData;
+    }
+  | MomentInPost;

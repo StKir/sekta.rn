@@ -31,9 +31,11 @@ const HeaderTitle = ({ title, subtitle, showBackButton = true, style }: HeaderTi
           {title}
         </Text>
       </View>
-      <Text color={colors.GRAY_2} variant='body1'>
-        {subtitle}
-      </Text>
+      {subtitle && (
+        <Text color={colors.GRAY_2} variant='body1'>
+          {subtitle}
+        </Text>
+      )}
     </View>
   );
 };

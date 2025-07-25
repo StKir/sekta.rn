@@ -72,7 +72,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
             error={value && !isValid ? 'Некорректное значение' : undefined}
             keyboardType={question.name === 'age' ? 'numeric' : 'default'}
             label={question.question}
-            placeholder={question.name === 'age' ? 'Возраст' : 'Введите ответ'}
+            placeholder={question.name === 'age' ? 'Возраст' : '| '}
             value={value || ''}
             onChangeText={onChange}
           />
@@ -83,7 +83,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
         return (
           <TextArea
             label={question.question}
-            placeholder='Введите ответ'
+            placeholder='Введите текст'
             value={value || ''}
             onChangeText={onChange}
           />

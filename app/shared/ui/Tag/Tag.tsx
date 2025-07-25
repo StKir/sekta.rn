@@ -7,10 +7,27 @@ import { useTheme } from '@/shared/theme';
 
 type TagProps = {
   text: string;
+  variant?: 'small' | 'normal';
 };
 
-const Tag = ({ text }: TagProps) => {
+const Tag = ({ text, variant = 'normal' }: TagProps) => {
   const { colors } = useTheme();
+
+  if (variant === 'small') {
+    return (
+      <View
+        style={{
+          backgroundColor: colors.PRIMARY_ALPHA,
+          paddingHorizontal: 15,
+          paddingVertical: 12,
+          borderRadius: 14,
+        }}
+      >
+        <Text.Body2>{text}</Text.Body2>
+      </View>
+    );
+  }
+
   return (
     <View
       style={{

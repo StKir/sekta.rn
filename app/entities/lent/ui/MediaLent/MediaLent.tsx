@@ -1,5 +1,5 @@
 import Icon from 'react-native-vector-icons/Ionicons';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ViewStyle } from 'react-native';
 import React from 'react';
 
 import Video from '@/shared/ui/Video';
@@ -10,9 +10,10 @@ import { useTheme } from '@/shared/theme';
 
 type MediaLentProps = {
   media?: MediaItem[] | MediaItem;
+  containerStyle?: ViewStyle;
 };
 
-const MediaLent = ({ media }: MediaLentProps) => {
+const MediaLent = ({ media, containerStyle }: MediaLentProps) => {
   const { colors } = useTheme();
 
   if (!media) {
@@ -42,7 +43,7 @@ const MediaLent = ({ media }: MediaLentProps) => {
 
   return (
     <MainContainer>
-      <View style={styles.container}>
+      <View style={[styles.container, containerStyle]}>
         {renderMediaItem(currentMedia)}
 
         {mediaItems.length > 1 && (
@@ -63,13 +64,15 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     height: 272,
-    borderRadius: 24,
+    borderRadius: 25,
+    borderTopLeftRadius: 0,
+    borderBottomRightRadius: 0,
     overflow: 'hidden',
   },
   defaultImage: {
     width: '100%',
     height: 272,
-    borderRadius: 24,
+    borderRadius: 25,
   },
   mediaImage: {
     width: '100%',

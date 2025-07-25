@@ -1,8 +1,8 @@
 import ViewShot from 'react-native-view-shot';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { View, TouchableOpacity, Alert, Platform } from 'react-native';
-import { Share as RNShare } from 'react-native';
+import { View, TouchableOpacity, Alert, Platform, PermissionsAndroid, Linking } from 'react-native';
 import React, { useRef } from 'react';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
 import { useTheme } from '@/shared/theme';
 
@@ -13,74 +13,103 @@ type ShareProps = {
   iconSize?: number;
   iconColor?: string;
   buttonStyle?: any;
+  showOptionsMenu?: boolean; // Показывать ли меню выбора действий
+  openGalleryAfterSave?: boolean; // Открывать ли галерею после сохранения
 };
 
 const Share = ({
   children,
-  title = 'Поделиться постом',
-  message = 'Посмотри на мой пост!',
   iconSize = 24,
   iconColor,
   buttonStyle,
+  openGalleryAfterSave = true, // По умолчанию открываем галерею после сохранения
 }: ShareProps) => {
   const { colors } = useTheme();
   const viewShotRef = useRef<ViewShot>(null);
 
-  const handleShare = async () => {
+  // Запрос разрешений для Android
+  const requestStoragePermission = async (): Promise<boolean> => {
+    if (Platform.OS !== 'android') {
+      return true;
+    }
+
+    try {
+      if (Platform.Version >= 33) {
+        // Android 13+ не требует разрешения для сохранения в медиа
+        return true;
+      } else if (Platform.Version >= 29) {
+        // Android 10-12 - используем scoped storage
+        return true;
+      } else {
+        // Android 9 и ниже - требуется разрешение
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Разрешение на сохранение',
+            message: 'Приложению нужно разрешение для сохранения изображений в галерею',
+            buttonPositive: 'Разрешить',
+            buttonNegative: 'Отмена',
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
+  // Создание скриншота
+  const createScreenshot = async (): Promise<string | null> => {
     try {
       const viewShot = viewShotRef.current;
       if (!viewShot || !viewShot.capture) {
         Alert.alert('Ошибка', 'Не удается создать скриншот');
-        return;
+        return null;
       }
 
-      // Создаем скриншот в base64 для лучшей совместимости
-      const base64 = await viewShot.capture();
+      const uri = await viewShot.capture();
 
-      console.log('Screenshot created (base64):', base64.substring(0, 50) + '...');
-
-      // Для отправки изображения используем data URI
-      const imageDataUri = `data:image/png;base64,${base64}`;
-
-      if (Platform.OS === 'ios') {
-        // iOS - отправляем изображение через url как data URI
-        await RNShare.share({
-          url: imageDataUri,
-        });
-      } else {
-        // Android - отправляем через url как data URI
-        await RNShare.share({
-          url: imageDataUri,
-        });
-      }
-
-      console.log('Изображение успешно отправлено');
+      console.log('Screenshot created:', uri);
+      return uri;
     } catch (error: any) {
-      console.error('Ошибка при отправке изображения:', error);
+      console.error('Ошибка при создании скриншота:', error);
+      Alert.alert('Ошибка', 'Не удалось создать скриншот. Попробуйте еще раз.');
+      return null;
+    }
+  };
 
-      // Fallback - создаем файл и пробуем еще раз
-      try {
-        const viewShot = viewShotRef.current;
-        if (viewShot && viewShot.capture) {
-          // Пробуем создать временный файл
-          const uri = await viewShot.capture();
-
-          await RNShare.share({
-            message: message,
-            url: Platform.OS === 'ios' ? uri : `file://${uri}`,
-          });
-        }
-      } catch {
-        // Последний fallback - только текст
-        try {
-          await RNShare.share({
-            message: message,
-            title: title,
-          });
-        } catch {
-          Alert.alert('Ошибка', 'Не удалось поделиться изображением. Попробуйте еще раз.');
-        }
+  // Сохранение в галерею
+  const saveToGallery = async (uri: string): Promise<boolean> => {
+    try {
+      const hasPermission = await requestStoragePermission();
+      if (!hasPermission) {
+        Alert.alert('Ошибка', 'Необходимо разрешение для сохранения в галерею');
+        return false;
       }
+
+      const file = await CameraRoll.saveAsset(uri, {
+        type: 'photo',
+        album: 'Camera Roll',
+      });
+
+      if (openGalleryAfterSave) {
+        Linking.openURL(file.node.image.uri);
+      }
+
+      return true;
+    } catch (saveError: any) {
+      console.error('Ошибка при сохранении в галерею:', saveError);
+      Alert.alert('Ошибка', 'Не удалось сохранить изображение в галерею');
+      return false;
+    }
+  };
+
+  // Обработчик нажатия (по умолчанию - сохранение и шаринг)
+  const handleShare = async () => {
+    const uri = await createScreenshot();
+    if (uri) {
+      await saveToGallery(uri);
     }
   };
 
@@ -91,7 +120,7 @@ const Share = ({
         options={{
           format: 'png',
           quality: 0.9,
-          result: 'base64',
+          result: 'tmpfile',
         }}
         ref={viewShotRef}
       >
@@ -108,23 +137,16 @@ const Share = ({
             width: 30,
             height: 30,
             borderRadius: 5,
-            backgroundColor: colors.BACKGROUND_PRIMARY,
+            borderColor: colors.PRIMARY_ALPHA,
+            borderWidth: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
           },
           buttonStyle,
         ]}
         onPress={handleShare}
       >
-        <Icon color={iconColor || colors.GRAY_1} name='share-social' size={iconSize} />
+        <Icon color={iconColor || colors.PRIMARY} name='share' size={iconSize} />
       </TouchableOpacity>
     </View>
   );

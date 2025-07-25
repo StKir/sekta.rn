@@ -40,6 +40,7 @@ export const createStyles = (colors: ThemeColors) =>
     },
     buttonContainer: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       justifyContent: 'space-between',
       gap: SPACING.SMALL,
     },

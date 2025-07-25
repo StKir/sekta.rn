@@ -1,3 +1,4 @@
+import Icon from 'react-native-vector-icons/Ionicons';
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import React from 'react';
@@ -8,15 +9,16 @@ import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text' | 'primary-light';
 
 type ButtonProps = {
-  title: string;
+  title?: string;
   onPress: () => void;
   disabled?: boolean;
   variant?: ButtonVariant;
   fullWidth?: boolean;
   style?: ViewStyle;
+  icon?: string;
   textStyle?: TextStyle;
   sticky?: boolean;
 };
@@ -30,6 +32,7 @@ const Button = ({
   style,
   textStyle,
   sticky = false,
+  icon,
 }: ButtonProps) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -40,6 +43,9 @@ const Button = ({
 
     if (variant === 'primary') {
       baseStyle.push(styles.primaryButton);
+    }
+    if (variant === 'primary-light') {
+      baseStyle.push(styles.primaryLightButton);
     }
     if (variant === 'secondary') {
       baseStyle.push(styles.secondaryButton);
@@ -82,6 +88,10 @@ const Button = ({
       return textStyle?.color || colors.TEXT_PRIMARY;
     }
 
+    if (variant === 'primary-light') {
+      return colors.PRIMARY;
+    }
+
     return colors.BACKGROUND_PRIMARY;
   };
 
@@ -92,7 +102,8 @@ const Button = ({
       style={getButtonStyle()}
       onPress={onPress}
     >
-      <Text.Button style={[textStyle, { color: getTextColor() }]}>{title}</Text.Button>
+      {title && <Text.Button style={[textStyle, { color: getTextColor() }]}>{title}</Text.Button>}
+      {icon && <Icon color={getTextColor()} name={icon} size={24} />}
     </TouchableOpacity>
   );
 };
@@ -106,9 +117,14 @@ const createStyles = (colors: ThemeColors, insets: EdgeInsets) =>
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 24,
+      flexDirection: 'row',
+      gap: 10,
     },
     primaryButton: {
       backgroundColor: colors.PRIMARY,
+    },
+    primaryLightButton: {
+      backgroundColor: colors.PRIMARY_ALPHA,
     },
     secondaryButton: {
       backgroundColor: colors.GRAY_3,

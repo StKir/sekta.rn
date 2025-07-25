@@ -1,4 +1,6 @@
-import { View, StyleSheet, Animated, Dimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CarouselLib, { ICarouselInstance } from 'react-native-reanimated-carousel';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import React, { useState, useRef } from 'react';
 
 import FormStep from './FormStep';
@@ -14,16 +16,20 @@ type DynamicFormProps = {
   customFirstStep?: React.ComponentType<{ onNext: () => void }>;
 };
 
+type CarouselItemData = {
+  type: 'custom' | 'form';
+  stepData?: any;
+  stepIndex: number;
+};
+
 const DynamicForm = ({
   formData,
   onComplete,
   customFirstStep: CustomFirstStep,
   stickyButton,
 }: DynamicFormProps) => {
-  const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<FormAnswers>({});
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const carouselRef = useRef<ICarouselInstance>(null);
 
   const handleAnswerChange = (questionName: string, answer: any) => {
     setAnswers((prev) => ({
@@ -32,98 +38,82 @@ const DynamicForm = ({
     }));
   };
 
-  const animateTransition = (direction: 'next' | 'prev', callback: () => void) => {
-    const slideValue = direction === 'next' ? -SCREEN_WIDTH : SCREEN_WIDTH;
-
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: slideValue,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      callback();
-      slideAnim.setValue(direction === 'next' ? SCREEN_WIDTH : -SCREEN_WIDTH);
-
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    });
-  };
-
   const nextStep = () => {
-    if (CustomFirstStep && currentStep === 0) {
-      animateTransition('next', () => setCurrentStep(1));
-      return;
-    }
-
-    const formStepIndex = CustomFirstStep ? currentStep - 1 : currentStep;
-
-    if (formStepIndex === formData.data.length - 1) {
-      onComplete(answers);
-      return;
-    }
-
-    if (formStepIndex < formData.data.length - 1) {
-      animateTransition('next', () => setCurrentStep(currentStep + 1));
-    }
+    carouselRef.current?.next();
   };
 
   const prevStep = () => {
-    if (currentStep > 0) {
-      animateTransition('prev', () => setCurrentStep(currentStep - 1));
-    }
+    carouselRef.current?.prev();
   };
 
-  const animatedStyle = {
-    transform: [{ translateX: slideAnim }],
-    opacity: fadeAnim,
-  };
+  const carouselData: CarouselItemData[] = formData.data.map((step, index) => ({
+    type: 'form',
+    stepData: step,
+    stepIndex: CustomFirstStep ? index + 1 : index,
+  }));
 
-  if (CustomFirstStep && currentStep === 0) {
-    return (
-      <View style={styles.container}>
-        <Animated.View style={[styles.animatedContainer, animatedStyle]}>
+  const renderItem = ({ item }: { item: CarouselItemData }) => {
+    if (item.type === 'custom' && CustomFirstStep) {
+      return (
+        <View style={styles.carouselItem}>
           <CustomFirstStep onNext={nextStep} />
-        </Animated.View>
-      </View>
-    );
-  }
+        </View>
+      );
+    }
 
-  const formStepIndex = CustomFirstStep ? currentStep - 1 : currentStep;
-  const currentStepData = formData.data[formStepIndex];
-  const totalSteps = formData.data.length + (CustomFirstStep ? 1 : 0);
+    if (item.type === 'form') {
+      const isLastStep = item.stepIndex === carouselData.length - 1;
+
+      const handleNext = () => {
+        if (isLastStep) {
+          onComplete(answers);
+        } else {
+          nextStep();
+        }
+      };
+
+      const handlePrev = item.stepIndex > 0 ? prevStep : undefined;
+
+      return (
+        <View style={styles.carouselItem}>
+          <FormStep
+            answers={answers}
+            step={item.stepData}
+            stepIndex={item.stepIndex}
+            stickyButton={stickyButton}
+            title={formData.name}
+            totalSteps={carouselData.length}
+            onAnswerChange={handleAnswerChange}
+            onNext={handleNext}
+            onPrev={handlePrev}
+          />
+        </View>
+      );
+    }
+
+    return <View style={styles.carouselItem} />;
+  };
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.animatedContainer, animatedStyle]}>
-        <FormStep
-          answers={answers}
-          step={currentStepData}
-          stepIndex={currentStep}
-          stickyButton={stickyButton}
-          title={formData.name}
-          totalSteps={totalSteps}
-          onAnswerChange={handleAnswerChange}
-          onNext={nextStep}
-          onPrev={currentStep > 0 ? prevStep : undefined}
-        />
-      </Animated.View>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <CarouselLib
+        containerStyle={styles.containerStyle}
+        data={carouselData}
+        enabled={false}
+        height={Dimensions.get('screen').height}
+        loop={false}
+        mode='parallax'
+        modeConfig={{
+          parallaxScrollingScale: 1,
+          parallaxScrollingOffset: 0.5,
+          parallaxAdjacentItemScale: 0.6,
+        }}
+        ref={carouselRef}
+        renderItem={renderItem}
+        style={styles.carousel}
+        width={SCREEN_WIDTH}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -131,8 +121,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  animatedContainer: {
+  carousel: {
     flex: 1,
+    height: Dimensions.get('screen').height,
+  },
+  carouselItem: {
+    flex: 1,
+    height: Dimensions.get('screen').height,
+    width: SCREEN_WIDTH,
+  },
+  containerStyle: {
+    width: '100%',
+    height: Dimensions.get('screen').height,
+    position: 'absolute',
+    top: 0,
   },
 });
 

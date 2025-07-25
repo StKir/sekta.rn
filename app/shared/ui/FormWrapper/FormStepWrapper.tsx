@@ -33,7 +33,7 @@ const FormStepWrapper = ({
         <View style={[styles.container, containerStyle]}>
           {showHeader && (
             <View style={styles.headerContainer}>
-              <HeaderTitle subtitle={subtitle || ''} title={title} />
+              <HeaderTitle showBackButton={false} subtitle={subtitle || ''} title={title} />
             </View>
           )}
           <View style={[styles.content, contentStyle]}>{children}</View>

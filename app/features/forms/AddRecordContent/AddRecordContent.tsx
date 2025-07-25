@@ -16,20 +16,29 @@ const AddRecordContent = ({ navigation }: AddRecordContentProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  const handleNavigateToCheckIn = () => {
+  const handleNavigate = (type: 'check-in' | 'moment') => {
     BottomSheetManager.hide();
-    if (navigation) {
-      navigation.navigate('CheckInPage');
+
+    if (type === 'check-in') {
+      navigation?.navigate('CheckInPage');
+    }
+
+    if (type === 'moment') {
+      navigation?.navigate('MomentPage');
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Новая запись</Text>
-      <TouchableOpacity style={styles.option} onPress={handleNavigateToCheckIn}>
-        <Text style={styles.optionText}>🐬</Text>
-        <Text style={styles.optionText}>Настроение</Text>
-      </TouchableOpacity>
+      <View style={styles.optionsContainer}>
+        <TouchableOpacity style={styles.option} onPress={() => handleNavigate('check-in')}>
+          <Text style={styles.optionText}>🐬 Чек-ин</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.option} onPress={() => handleNavigate('moment')}>
+          <Text style={styles.optionText}>Момент</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -38,7 +47,12 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: SPACING.LARGE,
+    },
+    optionsContainer: {
+      flexDirection: 'row',
+      gap: SPACING.LARGE,
+      flexWrap: 'wrap',
+      width: '100%',
     },
     title: {
       fontSize: SIZES.FONT_SIZE.LARGE,
@@ -52,13 +66,13 @@ const createStyles = (colors: ThemeColors) =>
       borderColor: colors.PRIMARY,
       backgroundColor: colors.PRIMARY_ALPHA,
       borderRadius: 12,
-      height: 120,
+      height: 70,
       padding: SPACING.LARGE,
       marginBottom: SPACING.MEDIUM,
       justifyContent: 'flex-end',
     },
     optionText: {
-      fontSize: SIZES.FONT_SIZE.XXLARGE,
+      fontSize: SIZES.FONT_SIZE.XLARGE,
       color: colors.PRIMARY,
       fontWeight: '400',
     },

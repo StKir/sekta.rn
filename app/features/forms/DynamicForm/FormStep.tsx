@@ -1,3 +1,4 @@
+import { View } from 'react-native';
 import React from 'react';
 
 import QuestionRenderer from './QuestionRenderer';
@@ -5,6 +6,7 @@ import QuestionRenderer from './QuestionRenderer';
 import FormStepWrapper from '@/shared/ui/FormWrapper/FormStepWrapper';
 import { Button } from '@/shared/ui';
 import { FormStep as FormStepType, FormAnswers, FormQuestion } from '@/shared/types/form.types';
+import { SPACING } from '@/shared/constants';
 
 type FormStepProps = {
   step: FormStepType;
@@ -146,18 +148,30 @@ const FormStep = ({
             onPress={onNext}
           />
         )}
-
-        {!isFirstStep && onPrev && <Button title='Назад' variant='secondary' onPress={onPrev} />}
       </FormStepWrapper>
-      {stickyButton && (
-        <Button
-          fullWidth
-          disabled={!isStepValid()}
-          sticky={stickyButton}
-          title={isLastStep ? 'Завершить' : 'Далее'}
-          onPress={onNext}
-        />
-      )}
+      <View
+        style={{
+          position: 'absolute',
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          width: '100%',
+          paddingHorizontal: SPACING.LARGE_2,
+          gap: SPACING.LARGE,
+          bottom: 60,
+          padding: 5,
+        }}
+      >
+        {!isFirstStep && onPrev && (
+          <Button icon='arrow-back' variant='primary-light' onPress={onPrev} />
+        )}
+        {stickyButton && (
+          <Button
+            disabled={!isStepValid()}
+            title={isLastStep ? 'Завершить' : 'Далее'}
+            onPress={onNext}
+          />
+        )}
+      </View>
     </>
   );
 };

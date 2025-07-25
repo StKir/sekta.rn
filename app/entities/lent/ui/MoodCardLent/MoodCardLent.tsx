@@ -26,20 +26,25 @@ const MoodCardLent = ({ color, mood, colorText }: MoodCardLentProps) => {
         }}
       >
         <View
-          style={{
-            backgroundColor: color,
-            width: 140,
-            height: 86,
-            borderRadius: 25,
-            borderTopLeftRadius: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={
+            colorText
+              ? {
+                  backgroundColor: color,
+                  width: 170,
+                  height: 90,
+                  borderRadius: 25,
+                  borderTopRightRadius: 0,
+                  borderBottomLeftRadius: 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }
+              : {}
+          }
         >
           <Title fontSize={48}>{mood?.slice(0, 2)}</Title>
         </View>
         <View style={{ maxWidth: 135 }}>
-          <Text.Body1 color={colors.TEXT_PRIMARY}>{colorText}</Text.Body1>
+          <Text.Body1 color={colors.TEXT_PRIMARY}>{mood?.slice(2, 100)}</Text.Body1>
         </View>
       </View>
     </MainContainer>

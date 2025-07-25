@@ -1,4 +1,4 @@
-import { CheckInPost, CheckInPostData } from '@/types/lentTypes';
+import { CheckInPost, CheckInPostData, MomentInPost, MomentPostData } from '@/types/lentTypes';
 import { TestResult, TestResultQuestion } from '@/shared/types/testResult.types';
 import { FormTest, FormAnswers } from '@/shared/types/form.types';
 
@@ -76,6 +76,7 @@ export const convertTestResultToCheckInPost = (testResult: TestResult): CheckInP
   };
 
   testResult.data.forEach((question) => {
+    //@ts-ignore
     data[question.name as keyof CheckInPostData] = question.answer;
   });
 
@@ -83,6 +84,21 @@ export const convertTestResultToCheckInPost = (testResult: TestResult): CheckInP
     date: testResult.date,
     id: `checkin_${Date.now()}`,
     type: 'check-in',
+    data,
+  };
+};
+export const convertTestResultToMomentPost = (testResult: TestResult): MomentInPost => {
+  const data: MomentPostData = {};
+
+  testResult.data.forEach((question) => {
+    //@ts-ignore
+    data[question.name as keyof MomentPostData] = question.answer;
+  });
+
+  return {
+    date: testResult.date,
+    id: `moment_${Date.now()}`,
+    type: 'moment',
     data,
   };
 };

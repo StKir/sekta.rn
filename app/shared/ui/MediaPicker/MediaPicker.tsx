@@ -56,12 +56,12 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
   const launchCameraWithType = (mediaType: 'photo' | 'video') => {
     const options = {
       mediaType: mediaType as MediaType,
-      quality: 0.8 as const,
+      quality: 1 as const,
       maxWidth: 1920,
       maxHeight: 1920,
       includeBase64: false,
-      videoQuality: 'medium' as const,
-      durationLimit: 60,
+      videoQuality: 'high' as const,
+      durationLimit: 30,
     };
 
     launchCamera(options, (response: ImagePickerResponse) => {

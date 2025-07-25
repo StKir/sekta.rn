@@ -1,11 +1,11 @@
 import React from 'react';
-import jsonData from 'apptests/check.json';
+import jsonData from 'apptests/moment.json';
 import { useNavigation } from '@react-navigation/native';
 
 import {
   transformJsonToFormData,
   formatAnswersToTestResult,
-  convertTestResultToCheckInPost,
+  convertTestResultToMomentPost,
 } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
@@ -16,14 +16,16 @@ const CheckInPage = () => {
   const formData = transformJsonToFormData(jsonData);
   const navigation = useNavigation();
   const { addResult } = useTestResultsStore();
-  const { addCheckIn } = useLentStore();
+  const { addCustomPost } = useLentStore();
 
   const handleFormComplete = (answers: FormAnswers) => {
     const testResult = formatAnswersToTestResult(formData, answers);
-    const checkInPost = convertTestResultToCheckInPost(testResult);
+    const momentPost = convertTestResultToMomentPost(testResult);
 
-    addResult(testResult);
-    addCheckIn(checkInPost);
+    if (Object.keys(momentPost.data).length) {
+      addResult(testResult);
+      addCustomPost(momentPost);
+    }
 
     navigation.goBack();
   };

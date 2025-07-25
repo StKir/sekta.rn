@@ -66,16 +66,37 @@ export const useLentStore = create<LentStore>()(
       },
 
       addCustomPost: (customData: CustomPost) => {
-        const newPost: Post = {
-          date: customData.date,
-          id: customData.id,
-          data: [customData],
-        };
+        const posts = get().posts;
 
-        setState((state) => ({
-          posts: [newPost, ...state.posts],
-          total: state.total + 1,
-        }));
+        const today = new Date().toDateString();
+        const existingTodayPost = posts.find(
+          (post) => new Date(post.date).toDateString() === today
+        );
+
+        if (existingTodayPost) {
+          setState((state) => ({
+            posts: state.posts.map((post) =>
+              new Date(post.date).toDateString() === today
+                ? {
+                    ...post,
+                    data: [customData, ...post.data],
+                  }
+                : post
+            ),
+            total: state.total,
+          }));
+        } else {
+          const newPost: Post = {
+            date: customData.date,
+            id: customData.id,
+            data: [customData],
+          };
+
+          setState((state) => ({
+            posts: [newPost, ...state.posts],
+            total: state.total + 1,
+          }));
+        }
       },
 
       removePost: (_id: number) => {

@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Register: undefined;
   JsonFormPage: undefined;
   CheckInPage: undefined;
+  MomentPage: undefined;
 };
 
 export type TabParamList = {

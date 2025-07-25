@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
 import NewRegisterPage from '@/pages/NewRegisterPage';
+import MomentPage from '@/pages/MomentPage';
 import JsonFormPage from '@/pages/JsonFormPage';
 import CheckInPage from '@/pages/CheckInPage';
 
@@ -57,6 +58,7 @@ const AppNavigator = () => {
         <Stack.Screen component={TabNavigator} name='TabNavigator' />
         <Stack.Screen component={JsonFormPage} name='JsonFormPage' />
         <Stack.Screen component={CheckInPage} name='CheckInPage' />
+        <Stack.Screen component={MomentPage} name='MomentPage' />
       </Stack.Navigator>
       <BottomSheet />
     </NavigationContainer>

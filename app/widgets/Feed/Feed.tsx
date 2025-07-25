@@ -4,6 +4,7 @@ import React from 'react';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
+import DateWrapper from '@/features/lent/components/DateWrapper/DateWrapper';
 import Post from '@/features/lent/Post';
 import { useLentStore } from '@/entities/lent/store/store';
 
@@ -20,14 +21,16 @@ const Feed = () => {
       </View>
     );
   }
-
   return (
     <FlatList
-      contentContainerStyle={{ gap: SPACING.LARGE }}
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       ListFooterComponent={<View style={{ height: 100 }} />}
-      renderItem={({ item }) => <Post key={item.id} post={item} />}
+      renderItem={({ item }) => (
+        <DateWrapper date={item.date}>
+          <Post key={item.id} post={item} />
+        </DateWrapper>
+      )}
       showsVerticalScrollIndicator={false}
     />
   );

@@ -18,7 +18,9 @@ const NewRegisterPage = () => {
   const formData = transformJsonToFormData(registrationData);
   const navigation = useNavigation<NavigationProp>();
   const { addResult } = useTestResultsStore();
-
+  console.log('====================================');
+  console.log(formData);
+  console.log('====================================');
   const handleFormComplete = (answers: FormAnswers) => {
     const testResult = formatAnswersToTestResult(formData, answers);
     console.log(testResult, 'testResult');
