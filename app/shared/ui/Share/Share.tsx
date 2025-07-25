@@ -87,11 +87,15 @@ const Share = ({
 
       const file = await CameraRoll.saveAsset(uri, {
         type: 'photo',
-        album: 'Camera Roll',
+        album: 'sekta',
       });
-
+      console.log('====================================');
+      console.log(file.node.image.uri);
+      console.log('====================================');
       if (openGalleryAfterSave) {
-        Linking.openURL(file.node.image.uri);
+        setTimeout(() => {
+          Linking.openURL(file.node.image.uri);
+        }, 500);
       }
 
       return true;

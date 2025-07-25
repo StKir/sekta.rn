@@ -1,3 +1,4 @@
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from 'react-native';
 import React from 'react';
 
@@ -31,6 +32,7 @@ const FormStep = ({
   title = 'Тест',
   stickyButton,
 }: FormStepProps) => {
+  const insets = useSafeAreaInsets();
   const isLastStep = stepIndex === totalSteps - 1;
   const isFirstStep = stepIndex === 0;
   const isWelcomeStep = step.questions.length === 1 && step.questions[0].type === 'welcome';
@@ -138,40 +140,50 @@ const FormStep = ({
             onChange={(value) => onAnswerChange(question.name, value)}
           />
         ))}
-
         {!stickyButton && (
-          <Button
-            fullWidth
-            disabled={!isStepValid()}
-            sticky={stickyButton}
-            title={isLastStep ? 'Завершить' : 'Далее'}
-            onPress={onNext}
-          />
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: SPACING.LARGE,
+              flex: 1,
+            }}
+          >
+            {!isFirstStep && onPrev && (
+              <Button icon='arrow-back' variant='primary-light' onPress={onPrev} />
+            )}
+            <Button
+              disabled={!isStepValid()}
+              sticky={stickyButton}
+              style={{ flex: 2 }}
+              title={isLastStep ? 'Завершить' : 'Далее'}
+              onPress={onNext}
+            />
+          </View>
         )}
       </FormStepWrapper>
-      <View
-        style={{
-          position: 'absolute',
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-          width: '100%',
-          paddingHorizontal: SPACING.LARGE_2,
-          gap: SPACING.LARGE,
-          bottom: 60,
-          padding: 5,
-        }}
-      >
-        {!isFirstStep && onPrev && (
-          <Button icon='arrow-back' variant='primary-light' onPress={onPrev} />
-        )}
-        {stickyButton && (
+      {stickyButton && (
+        <View
+          style={{
+            position: 'absolute',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            width: '100%',
+            paddingHorizontal: SPACING.LARGE_2,
+            gap: SPACING.LARGE,
+            bottom: insets.bottom + 20,
+            padding: 5,
+          }}
+        >
+          {!isFirstStep && onPrev && (
+            <Button icon='arrow-back' variant='primary-light' onPress={onPrev} />
+          )}
           <Button
             disabled={!isStepValid()}
             title={isLastStep ? 'Завершить' : 'Далее'}
             onPress={onNext}
           />
-        )}
-      </View>
+        </View>
+      )}
     </>
   );
 };

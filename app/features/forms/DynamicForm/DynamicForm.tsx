@@ -49,11 +49,11 @@ const DynamicForm = ({
   const carouselData: CarouselItemData[] = formData.data.map((step, index) => ({
     type: 'form',
     stepData: step,
-    stepIndex: CustomFirstStep ? index + 1 : index,
+    stepIndex: index,
   }));
 
   const renderItem = ({ item }: { item: CarouselItemData }) => {
-    if (item.type === 'custom' && CustomFirstStep) {
+    if (CustomFirstStep && item.stepIndex === 0) {
       return (
         <View style={styles.carouselItem}>
           <CustomFirstStep onNext={nextStep} />

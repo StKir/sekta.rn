@@ -58,14 +58,13 @@ const AddRecordForm = ({ type }: AddRecordFormProps) => {
   const config = getFormConfig(type);
   const existingRecords = getRecordsByType(type);
 
-  // Получаем уникальные записи для данного типа (сортируем по времени создания)
   const uniqueRecords = existingRecords.sort((a, b) => b.timestamp - a.timestamp).slice(0, 20); // Показываем максимум 20 последних записей
 
   const handleSubmit = async () => {
     const textToSave = selectedTag || value.trim();
 
     if (!textToSave) {
-      Alert.alert('Ошибка', 'Пожалуйста, введите текст или выберите из существующих');
+      BottomSheetManager.hide();
       return;
     }
 
@@ -73,8 +72,6 @@ const AddRecordForm = ({ type }: AddRecordFormProps) => {
 
     try {
       addRecord(type, textToSave);
-      setValue('');
-      setSelectedTag(null);
       BottomSheetManager.hide();
     } catch {
       Alert.alert('Ошибка', 'Не удалось сохранить запись');
