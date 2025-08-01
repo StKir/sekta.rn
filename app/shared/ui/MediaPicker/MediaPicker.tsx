@@ -5,13 +5,15 @@ import {
   ImagePickerResponse,
   MediaType,
 } from 'react-native-image-picker';
-import { View, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, TouchableOpacity, FlatList } from 'react-native';
 import React from 'react';
 
 import { createStyles } from './MediaPicker.styles';
 
 import { CameraPermissions, StoragePermissions } from '@/shared/utils/permissions';
+import { MediaStorageService } from '@/shared/utils/mediaStorage';
 import Text from '@/shared/ui/Text/Text';
+import Photo from '@/shared/ui/Photo';
 import { useTheme } from '@/shared/theme';
 import { SIZES } from '@/shared/constants';
 
@@ -64,52 +66,85 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       durationLimit: 30,
     };
 
-    launchCamera(options, (response: ImagePickerResponse) => {
+    launchCamera(options, async (response: ImagePickerResponse) => {
       if (response.didCancel || response.errorMessage) {
         return;
       }
 
       if (response.assets && response.assets[0]) {
         const asset = response.assets[0];
-        const newMedia: MediaItem = {
-          id: Date.now().toString(),
-          uri: asset.uri || '',
-          type: mediaType === 'photo' ? 'image' : 'video',
-          fileName: asset.fileName || `camera_${mediaType}_${Date.now()}`,
-        };
+        const fileName = asset.fileName || `camera_${mediaType}_${Date.now()}`;
 
-        onChange([...value, newMedia]);
+        try {
+          const permanentPath = await MediaStorageService.saveMediaFile(asset.uri || '', fileName);
+
+          const newMedia: MediaItem = {
+            id: Date.now().toString(),
+            uri: permanentPath,
+            type: mediaType === 'photo' ? 'image' : 'video',
+            fileName: fileName,
+          };
+
+          onChange([...value, newMedia]);
+        } catch (error) {
+          console.error('Failed to save media file:', error);
+        }
       }
     });
   };
 
   const launchGalleryWithType = (mediaType: 'photo' | 'video' | 'mixed') => {
+    const remainingSlots = maxItems - value.length;
+    const selectionLimit = remainingSlots > 0 ? remainingSlots : 1;
+
     const options = {
       mediaType: mediaType as MediaType,
       quality: 0.8 as const,
       maxWidth: 1920,
       maxHeight: 1920,
       includeBase64: false,
-      selectionLimit: 1,
+      selectionLimit: selectionLimit,
       videoQuality: 'medium' as const,
     };
 
-    launchImageLibrary(options, (response: ImagePickerResponse) => {
+    launchImageLibrary(options, async (response: ImagePickerResponse) => {
       if (response.didCancel || response.errorMessage) {
         return;
       }
 
-      if (response.assets && response.assets[0]) {
-        const asset = response.assets[0];
-        const isVideo = asset.type?.startsWith('video/');
-        const newMedia: MediaItem = {
-          id: Date.now().toString(),
-          uri: asset.uri || '',
-          type: isVideo ? 'video' : 'image',
-          fileName: asset.fileName || `gallery_${isVideo ? 'video' : 'photo'}_${Date.now()}`,
-        };
+      if (response.assets && response.assets.length > 0) {
+        const newMediaItems: MediaItem[] = [];
 
-        onChange([...value, newMedia]);
+        for (const asset of response.assets) {
+          const isVideo = asset.type?.startsWith('video/');
+          const fileName =
+            asset.fileName ||
+            `gallery_${isVideo ? 'video' : 'photo'}_${Date.now()}_${Math.random()
+              .toString(36)
+              .substr(2, 5)}`;
+
+          try {
+            const permanentPath = await MediaStorageService.saveMediaFile(
+              asset.uri || '',
+              fileName
+            );
+
+            const newMedia: MediaItem = {
+              id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              uri: permanentPath,
+              type: isVideo ? 'video' : 'image',
+              fileName: fileName,
+            };
+
+            newMediaItems.push(newMedia);
+          } catch (error) {
+            console.error('Failed to save media file:', error);
+          }
+        }
+
+        if (newMediaItems.length > 0) {
+          onChange([...value, ...newMediaItems]);
+        }
       }
     });
   };
@@ -121,7 +156,7 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
   const renderMediaItem = (item: MediaItem) => (
     <View key={item.id} style={styles.mediaItem}>
       {item.type === 'image' ? (
-        <Image source={{ uri: item.uri }} style={styles.mediaPreview} />
+        <Photo uri={item.uri} style={styles.mediaPreview} />
       ) : (
         <View style={[styles.mediaPreview, styles.videoPreview]}>
           <Icon color={colors.TEXT_PRIMARY} name='play-circle' size={32} />

@@ -32,17 +32,17 @@ const Stats = ({ power, stress }: StatsProps) => {
     if (stress > power) {
       return {
         stress: {
-          width: '68%',
+          width: '68%' as const,
         },
-        power: { width: '30%' },
+        power: { width: '30%' as const },
       };
     }
     if (stress < power) {
       return {
         stress: {
-          width: '30%',
+          width: '30%' as const,
         },
-        power: { width: '68%' },
+        power: { width: '68%' as const },
       };
     }
   };

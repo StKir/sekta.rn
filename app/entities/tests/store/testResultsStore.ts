@@ -10,10 +10,11 @@ export const useTestResultsStore = create<TestResultsStore>()(
       results: [],
 
       addResult: (result: TestResult) => {
-        console.log(result, 'result');
-        set((state) => ({
-          results: [...state.results, result],
-        }));
+        set((state) => {
+          return {
+            results: [...state.results, result],
+          };
+        });
       },
 
       getResultsByTestId: (testId: number): TestResult[] => {

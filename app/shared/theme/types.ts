@@ -1,5 +1,6 @@
 export type ThemeColors = {
   PRIMARY: string;
+  PRIMARY_LITE: string;
   SECONDARY: string;
   SUCCESS: string;
   WARNING: string;
@@ -29,4 +30,7 @@ export type ThemeColors = {
   PINK: string;
   YELLOW: string;
   TEAL: string;
+
+  BORDER: string;
+  SURFACE: string;
 };

@@ -8,6 +8,7 @@ export type RootStackParamList = {
   JsonFormPage: undefined;
   CheckInPage: undefined;
   MomentPage: undefined;
+  AIQuestionPage: undefined;
 };
 
 export type TabParamList = {

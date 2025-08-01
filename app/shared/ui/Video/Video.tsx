@@ -1,8 +1,9 @@
 import RNVideo from 'react-native-video';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { View, TouchableOpacity, ViewStyle } from 'react-native';
-import React, { useState, useRef } from 'react';
+import { View, TouchableOpacity, ViewStyle, Text } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
 
+import { MediaStorageService } from '@/shared/utils/mediaStorage';
 import { useTheme } from '@/shared/theme';
 
 type VideoProps = {
@@ -26,11 +27,31 @@ const Video = ({
   const [isFullScreen, setFullScreen] = useState(false);
   const [isShow, setShow] = useState(false);
   const [isMuted, setIsMuted] = useState(muted);
+  const [videoExists, setVideoExists] = useState(true);
+  const [actualUri, setActualUri] = useState(uri);
   const videoRef = useRef<any>(null);
+
+  useEffect(() => {
+    const checkVideoExists = async () => {
+      if (uri.startsWith('/')) {
+        const exists = await MediaStorageService.fileExists(uri);
+        if (exists) {
+          setActualUri(MediaStorageService.getFileUri(uri));
+          setVideoExists(true);
+        } else {
+          setVideoExists(false);
+        }
+      } else {
+        setActualUri(uri);
+        setVideoExists(true);
+      }
+    };
+
+    checkVideoExists();
+  }, [uri]);
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    // Перезапускаем видео при включении звука
     if (isMuted && videoRef.current) {
       videoRef.current.seek(0);
     }
@@ -41,6 +62,25 @@ const Video = ({
       videoRef.current.presentFullscreenPlayer();
     }
   };
+
+  if (!videoExists) {
+    return (
+      <View
+        style={[
+          {
+            backgroundColor: '#f0f0f0',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 8,
+          },
+          style,
+        ]}
+      >
+        <Icon color='#666' name='videocam-off' size={48} />
+        <Text style={{ color: '#666', fontSize: 14, marginTop: 8 }}>Видео недоступно</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[{ position: 'relative' }, style]}>
@@ -56,10 +96,13 @@ const Video = ({
           ref={videoRef}
           repeat={repeat}
           resizeMode='cover'
-          source={{ uri }}
+          source={{ uri: actualUri }}
           style={{ width: '100%', height: '100%' }}
           onEnd={() => !isFullScreen && setShow(false)}
-          onError={(error: any) => console.log('Video error:', error)}
+          onError={(error: any) => {
+            console.log('Video error:', error);
+            setVideoExists(false);
+          }}
           onFullscreenPlayerDidDismiss={() => setFullScreen(false)}
           onFullscreenPlayerDidPresent={() => setFullScreen(true)}
         />

@@ -2,6 +2,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 
+import AIPage from './AIPage';
+
 import Statistic from '@/widgets/Statistic/Statistic';
 import Feed from '@/widgets/Feed/Feed';
 import { ThemeColors } from '@/shared/theme/types';
@@ -10,7 +12,7 @@ import { SPACING, SIZES } from '@/shared/constants';
 import SwipeableTabView, { SwipeableTabViewRef } from '@/shared/components/SwipeableTabView';
 import TabSelectorTitle from '@/features/auth/TabSelectorTitle/TabSelectorTitle';
 
-const tabs = ['Календарь', 'Статистика'];
+const tabs = ['Календарь', 'Статистика', 'AI'];
 
 const CalendarPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -42,13 +44,10 @@ const CalendarPage = () => {
         style={styles.swipeableContainer}
         onPageSelected={handlePageSelected}
       >
-        <View>
-          <Feed />
-        </View>
+        <Feed />
 
-        <View>
-          <Statistic />
-        </View>
+        <Statistic />
+        <AIPage />
       </SwipeableTabView>
     </SafeAreaView>
   );

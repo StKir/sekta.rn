@@ -27,10 +27,12 @@ export const useLentStore = create<LentStore>()(
       total: 0,
 
       addPost: (data: Post) =>
-        setState((state) => ({
-          posts: [data, ...state.posts],
-          total: state.total + 1,
-        })),
+        setState((state) => {
+          return {
+            posts: [data, ...state.posts],
+            total: state.total + 1,
+          };
+        }),
 
       addCheckIn: (checkInData: CheckInPost) => {
         const posts = get().posts;
@@ -40,17 +42,20 @@ export const useLentStore = create<LentStore>()(
         );
 
         if (existingTodayPost) {
-          setState((state) => ({
-            posts: state.posts.map((post) =>
-              new Date(post.date).toDateString() === today
-                ? {
-                    ...post,
-                    data: [checkInData, ...post.data],
-                  }
-                : post
-            ),
-            total: state.total,
-          }));
+          setState((state) => {
+            console.log(state.posts, 'state');
+            return {
+              posts: state.posts.map((post) =>
+                new Date(post.date).toDateString() === today
+                  ? {
+                      ...post,
+                      data: [checkInData, ...post.data],
+                    }
+                  : post
+              ),
+              total: state.total,
+            };
+          });
         } else {
           const newPost: Post = {
             date: checkInData.date,

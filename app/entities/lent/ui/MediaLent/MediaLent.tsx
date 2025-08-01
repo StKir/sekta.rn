@@ -26,7 +26,7 @@ const MediaLent = ({ media, containerStyle }: MediaLentProps) => {
 
   const renderMediaItem = (item: MediaItem) => {
     if (item.type === 'image') {
-      return <Photo style={styles.mediaImage} uri={item.uri} />;
+      return <Photo key={item.uri} style={styles.mediaImage} uri={item.uri} />;
     }
 
     return (

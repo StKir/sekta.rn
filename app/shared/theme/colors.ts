@@ -2,6 +2,7 @@ import { ThemeColors } from './types';
 
 export const lightColors = {
   PRIMARY: '#007AFF',
+  PRIMARY_LITE: 'rgba(0, 122, 255, 0.05)',
   SECONDARY: '#5AC8FA',
   SUCCESS: '#34C759',
   WARNING: '#FF9500',
@@ -31,10 +32,14 @@ export const lightColors = {
   PINK: '#FF2D55',
   YELLOW: '#FFCC00',
   TEAL: '#5AC8FA',
+
+  BORDER: 'rgba(0, 0, 0, 0.1)',
+  SURFACE: 'rgba(255, 255, 255, 0.8)',
 } as const;
 
 export const darkColors: ThemeColors = {
   PRIMARY: '#007AFF',
+  PRIMARY_LITE: 'rgba(10, 132, 255, 0.05)',
   SECONDARY: '#64D2FF',
   SUCCESS: '#30D158',
   WARNING: '#FF9F0A',
@@ -64,4 +69,7 @@ export const darkColors: ThemeColors = {
   PINK: '#FF375F',
   YELLOW: '#FFD60A',
   TEAL: '#64D2FF',
+
+  BORDER: 'rgba(255, 255, 255, 0.1)',
+  SURFACE: 'rgba(0, 0, 0, 0.1)',
 } as const;

@@ -35,9 +35,7 @@ const FormStep = ({
   const insets = useSafeAreaInsets();
   const isLastStep = stepIndex === totalSteps - 1;
   const isFirstStep = stepIndex === 0;
-  console.log('====================================');
-  console.log(insets);
-  console.log('====================================');
+
   const isWelcomeStep = step.questions.length === 1 && step.questions[0].type === 'welcome';
 
   const titleBlock = step.questions.find((q) => q.type === 'title');

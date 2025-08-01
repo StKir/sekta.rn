@@ -7,6 +7,7 @@ import NewRegisterPage from '@/pages/NewRegisterPage';
 import MomentPage from '@/pages/MomentPage';
 import JsonFormPage from '@/pages/JsonFormPage';
 import CheckInPage from '@/pages/CheckInPage';
+import AIQuestionPage from '@/pages/AIQuestionPage';
 
 import { RootStackParamList } from './types';
 import TabNavigator from './TabNavigator';
@@ -59,6 +60,7 @@ const AppNavigator = () => {
         <Stack.Screen component={JsonFormPage} name='JsonFormPage' />
         <Stack.Screen component={CheckInPage} name='CheckInPage' />
         <Stack.Screen component={MomentPage} name='MomentPage' />
+        <Stack.Screen component={AIQuestionPage} name='AIQuestionPage' />
       </Stack.Navigator>
       <BottomSheet />
     </NavigationContainer>

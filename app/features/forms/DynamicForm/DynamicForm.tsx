@@ -46,14 +46,19 @@ const DynamicForm = ({
     carouselRef.current?.prev();
   };
 
-  const carouselData: CarouselItemData[] = formData.data.map((step, index) => ({
-    type: 'form',
-    stepData: step,
-    stepIndex: index,
-  }));
+  const carouselData: CarouselItemData[] = [
+    // Добавляем кастомный первый шаг если он есть
+    ...(CustomFirstStep ? [{ type: 'custom' as const, stepIndex: -1 }] : []),
+    // Добавляем все шаги формы
+    ...formData.data.map((step, index) => ({
+      type: 'form' as const,
+      stepData: step,
+      stepIndex: index,
+    })),
+  ];
 
   const renderItem = ({ item }: { item: CarouselItemData }) => {
-    if (CustomFirstStep && item.stepIndex === 0) {
+    if (item.type === 'custom' && CustomFirstStep) {
       return (
         <View style={styles.carouselItem}>
           <CustomFirstStep onNext={nextStep} />
@@ -62,7 +67,7 @@ const DynamicForm = ({
     }
 
     if (item.type === 'form') {
-      const isLastStep = item.stepIndex === carouselData.length - 1;
+      const isLastStep = item.stepIndex === formData.data.length - 1;
 
       const handleNext = () => {
         if (isLastStep) {
@@ -72,7 +77,23 @@ const DynamicForm = ({
         }
       };
 
-      const handlePrev = item.stepIndex > 0 ? prevStep : undefined;
+      const handlePrev = () => {
+        const currentCarouselIndex = carouselData.findIndex(
+          (carouselItem) =>
+            carouselItem.type === 'form' && carouselItem.stepIndex === item.stepIndex
+        );
+        if (currentCarouselIndex > 0) {
+          prevStep();
+        }
+      };
+
+      const shouldShowPrev = (() => {
+        const currentCarouselIndex = carouselData.findIndex(
+          (carouselItem) =>
+            carouselItem.type === 'form' && carouselItem.stepIndex === item.stepIndex
+        );
+        return currentCarouselIndex > 0;
+      })();
 
       return (
         <View style={styles.carouselItem}>
@@ -85,7 +106,7 @@ const DynamicForm = ({
             totalSteps={carouselData.length}
             onAnswerChange={handleAnswerChange}
             onNext={handleNext}
-            onPrev={handlePrev}
+            onPrev={shouldShowPrev ? handlePrev : undefined}
           />
         </View>
       );

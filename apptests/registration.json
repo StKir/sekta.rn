@@ -159,10 +159,16 @@
           "description": "Настрой приложение под себя"
         },
         {
+          "id": 1014,
+          "name": "profile_photo",
+          "type": "media",
+          "question": "Добавь фото профиля (необязательно)"
+        },
+        {
           "id": 1008,
           "name": "avatar",
           "type": "avatar",
-          "question": "Выбери аватар",
+          "question": "Или выбери аватар",
           "options": [
             {
               "id": 1,
