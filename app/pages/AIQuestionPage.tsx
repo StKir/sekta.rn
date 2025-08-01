@@ -3,15 +3,16 @@ import { StyleSheet, View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import TextArea from '@/shared/ui/TextArea';
 import Text from '@/shared/ui/Text';
 import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
-import { useLentStore } from '@/entities/lent/store/store';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -20,29 +21,13 @@ const AIQuestionPage = () => {
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
   const [question, setQuestion] = useState('');
-  const { posts } = useLentStore();
-
-  const getLastFiveDaysPosts = () => {
-    const fiveDaysAgo = new Date();
-    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-
-    return posts.filter((post) => {
-      const postDate = new Date(post.date);
-      return postDate >= fiveDaysAgo;
-    });
-  };
+  const { postsData } = useDaysPosts(5);
 
   const handleComplete = () => {
-    const lastFiveDaysPosts = getLastFiveDaysPosts();
-
     const prompt = `Представь что ты профессиональный психолог, я твой пациент и задаю тебе вопрос: "${question}". Ответь на него на основе и проанализировав контекст последних моих пяти дней жизни.`;
+    console.log(prompt, JSON.stringify(postsData, null, 2));
+    Clipboard.setString(prompt + '\n\n' + JSON.stringify(postsData, null, 2));
 
-    const postsData = JSON.stringify(lastFiveDaysPosts, null, 2);
-
-    console.log(prompt);
-    console.log(postsData);
-
-    // Возвращаемся назад после обработки
     navigation.goBack();
   };
 

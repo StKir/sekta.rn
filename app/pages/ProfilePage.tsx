@@ -1,14 +1,13 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { StorageService } from '@/shared/utils/storage';
 import Text from '@/shared/ui/Text';
-import { FormAnswers } from '@/shared/types/form.types';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useUser } from '@/shared/hooks/useUser';
 import { SPACING, SIZES } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
@@ -20,26 +19,14 @@ const ProfilePage = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
-  const [userData, setUserData] = useState<FormAnswers | null>(null);
 
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
+  const { userData, isLoading, loadUser, removeUser } = useUser();
 
   useEffect(() => {
-    const loadUserData = () => {
-      const user = StorageService.getUser();
-      if (user) {
-        // Добавляем дату регистрации если её нет
-        if (!user.registrationDate) {
-          user.registrationDate = new Date().toISOString();
-          StorageService.setUser(user);
-        }
-        setUserData(user);
-      }
-    };
-
-    loadUserData();
-  }, []);
+    loadUser();
+  }, [loadUser]);
 
   const formatRegistrationDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -64,7 +51,7 @@ const ProfilePage = () => {
   const handleLogout = () => {
     try {
       // Удаляем все данные пользователя
-      StorageService.removeUser();
+      removeUser();
       clearLentStore();
       clearResults();
 
@@ -84,16 +71,20 @@ const ProfilePage = () => {
       clearLentStore();
       clearResults();
       console.log('Все данные очищены успешно');
-
-      // Обновляем состояние компонента
-      const user = StorageService.getUser();
-      setUserData(user);
     } catch (error) {
       console.error('Clear data error:', error);
     }
   };
 
   const renderUserProfile = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.userCard}>
+          <Text style={styles.noDataText}>Загрузка...</Text>
+        </View>
+      );
+    }
+
     if (!userData) {
       return (
         <View style={styles.userCard}>
@@ -107,15 +98,6 @@ const ProfilePage = () => {
 
     return (
       <View style={styles.userCard}>
-        {/* Аватар временно скрыт */}
-        <View style={styles.defaultAvatarContainer}>
-          {userData.avatar?.name ? (
-            <Text style={styles.avatarEmoji}>{userData.avatar.name}</Text>
-          ) : (
-            <Text style={styles.avatarEmoji}>👤</Text>
-          )}
-        </View>
-
         {/* Информация о пользователе */}
         <View style={styles.userInfoContainer}>
           <Text style={styles.userName} variant='h2'>

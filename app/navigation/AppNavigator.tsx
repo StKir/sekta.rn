@@ -1,5 +1,5 @@
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -12,32 +12,19 @@ import AIQuestionPage from '@/pages/AIQuestionPage';
 import { RootStackParamList } from './types';
 import TabNavigator from './TabNavigator';
 
-import { StorageService } from '@/shared/utils/storage';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { useTheme } from '@/shared/theme';
+import { useUser } from '@/shared/hooks/useUser';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const { colors } = useTheme();
-  const [hasUser, setHasUser] = useState(false);
+  const { isAuthenticated, isLoading, loadUser } = useUser();
 
   useEffect(() => {
-    checkUserStatus();
-  }, []);
-
-  const checkUserStatus = () => {
-    try {
-      const userExists = StorageService.hasUser();
-
-      setHasUser(userExists);
-    } catch (error) {
-      console.error('Error checking user status:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    loadUser();
+  }, [loadUser]);
 
   if (isLoading) {
     return (
@@ -50,7 +37,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={hasUser ? 'TabNavigator' : 'Register'}
+        initialRouteName={isAuthenticated ? 'TabNavigator' : 'Register'}
         screenOptions={{
           headerShown: false,
         }}

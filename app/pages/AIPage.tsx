@@ -2,11 +2,14 @@ import { StyleSheet, View, FlatList } from 'react-native';
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import Text from '@/shared/ui/Text';
 import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useUser } from '@/shared/hooks/useUser';
+import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
 
@@ -23,6 +26,8 @@ const AIPage = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
+  const { postsData } = useDaysPosts(7);
+  const user = useUser();
 
   const aiBlocks: AIBlock[] = [
     {
@@ -31,6 +36,13 @@ const AIPage = () => {
       description:
         'Мы отправим в нейросеть контекст вашей недели и вы получите ценные советы и рекомендации по стабилизации эмоционального состояния',
       action: () => {
+        const prompt = `Представь что ты профессиональный психолог, я твой пациент сделай анализ моей неделе, будь ${
+          user.userData?.communication_style || 'Дуржелюбный'
+        }, вот записи моей недели`;
+        console.log('====================================');
+        console.log(prompt);
+        console.log('====================================');
+        Clipboard.setString(prompt + '\n\n' + JSON.stringify(postsData, null, 2));
         console.log('Анализ недели');
       },
     },

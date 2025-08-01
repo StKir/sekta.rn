@@ -12,6 +12,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.1.6",
     "@react-native-camera-roll/camera-roll": "7.10.0",
+    "@react-native-clipboard/clipboard": "^1.16.3",
     "@react-native-community/push-notification-ios": "^1.11.0",
     "@react-native-community/slider": "^4.5.7",
     "@react-navigation/bottom-tabs": "^6.5.11",
