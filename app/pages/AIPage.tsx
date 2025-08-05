@@ -12,6 +12,7 @@ import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
+import { weekAnalysisPrompt } from '@/entities/assiatent/promts';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -36,14 +37,10 @@ const AIPage = () => {
       description:
         'Мы отправим в нейросеть контекст вашей недели и вы получите ценные советы и рекомендации по стабилизации эмоционального состояния',
       action: () => {
-        const prompt = `Представь что ты профессиональный психолог, я твой пациент сделай анализ моей неделе, будь ${
-          user.userData?.communication_style || 'Дуржелюбный'
-        }, вот записи моей недели`;
-        console.log('====================================');
+        const prompt = weekAnalysisPrompt({ ...postsData }, user.userData || {});
+
+        Clipboard.setString(prompt);
         console.log(prompt);
-        console.log('====================================');
-        Clipboard.setString(prompt + '\n\n' + JSON.stringify(postsData, null, 2));
-        console.log('Анализ недели');
       },
     },
     {

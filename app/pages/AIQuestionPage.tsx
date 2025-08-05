@@ -10,9 +10,11 @@ import Text from '@/shared/ui/Text';
 import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
+import { questionPrompt } from '@/entities/assiatent/promts';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -22,12 +24,11 @@ const AIQuestionPage = () => {
   const navigation = useNavigation<NavigationProp>();
   const [question, setQuestion] = useState('');
   const { postsData } = useDaysPosts(5);
+  const user = useUser();
 
   const handleComplete = () => {
-    const prompt = `Представь что ты профессиональный психолог, я твой пациент и задаю тебе вопрос: "${question}". Ответь на него на основе и проанализировав контекст последних моих пяти дней жизни.`;
-    console.log(prompt, JSON.stringify(postsData, null, 2));
-    Clipboard.setString(prompt + '\n\n' + JSON.stringify(postsData, null, 2));
-
+    console.log(questionPrompt(postsData.slice(0, 30), user.userData));
+    Clipboard.setString(questionPrompt(postsData.slice(0, 30), user.userData));
     navigation.goBack();
   };
 

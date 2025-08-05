@@ -7,9 +7,22 @@ export const useDaysPosts = (days: number) => {
     const fiveDaysAgo = new Date();
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - days);
 
-    return posts.filter((post) => {
+    const lastDaysPosts = posts.filter((post) => {
       const postDate = new Date(post.date);
       return postDate >= fiveDaysAgo;
+    });
+
+    return lastDaysPosts.map((postData) => {
+      return {
+        date: postData.date,
+        type: postData.id,
+        data: postData.data.map((el) => {
+          return {
+            ...el.data,
+            type: el.type,
+          };
+        }),
+      };
     });
   };
 
