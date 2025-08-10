@@ -57,6 +57,7 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
+      backgroundColor: colors.BACKGROUND_PRIMARY,
     },
     container: {
       paddingHorizontal: SPACING.LARGE,

@@ -6,6 +6,8 @@ import React, { useState, useRef } from 'react';
 import FormStep from './FormStep';
 
 import { FormTest, FormAnswers } from '@/shared/types/form.types';
+import { ThemeColors } from '@/shared/theme/types';
+import { useTheme } from '@/shared/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -28,6 +30,8 @@ const DynamicForm = ({
   customFirstStep: CustomFirstStep,
   stickyButton,
 }: DynamicFormProps) => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [answers, setAnswers] = useState<FormAnswers>({});
   const carouselRef = useRef<ICarouselInstance>(null);
 
@@ -138,25 +142,27 @@ const DynamicForm = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  carousel: {
-    flex: 1,
-    height: Dimensions.get('screen').height,
-  },
-  carouselItem: {
-    flex: 1,
-    height: Dimensions.get('screen').height,
-    width: SCREEN_WIDTH,
-  },
-  containerStyle: {
-    width: '100%',
-    height: Dimensions.get('screen').height,
-    position: 'absolute',
-    top: 0,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.BACKGROUND_PRIMARY,
+    },
+    carousel: {
+      flex: 1,
+      height: Dimensions.get('screen').height,
+    },
+    carouselItem: {
+      flex: 1,
+      height: Dimensions.get('screen').height,
+      width: SCREEN_WIDTH,
+    },
+    containerStyle: {
+      width: '100%',
+      height: Dimensions.get('screen').height,
+      position: 'absolute',
+      top: 0,
+    },
+  });
 
 export default DynamicForm;

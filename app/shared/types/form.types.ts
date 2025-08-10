@@ -11,7 +11,11 @@ export type FormQuestionType =
   | 'multi_select'
   | 'title'
   | 'area'
-  | 'range';
+  | 'range'
+  | 'date'
+  | 'time'
+  | 'notification'
+  | 'theme';
 
 export interface FormOption {
   id: number;

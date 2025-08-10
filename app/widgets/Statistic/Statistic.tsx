@@ -8,6 +8,7 @@ import DayStreak from './DayStreak';
 
 import Text from '@/shared/ui/Text';
 import Tag from '@/shared/ui/Tag/Tag';
+import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
 import Stats from '@/entities/lent/ui/Stats/Stats';
@@ -123,7 +124,7 @@ const Statistic = () => {
   );
 };
 
-const createStyles = (colors: any) =>
+const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       height: '100%',

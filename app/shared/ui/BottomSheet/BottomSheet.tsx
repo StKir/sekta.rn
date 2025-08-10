@@ -7,7 +7,9 @@ import {
 } from '@gorhom/bottom-sheet';
 
 import BottomSheetManager from './BottomSheetManager';
-import { styles } from './BottomSheet.styles';
+import { styles as createStyles } from './BottomSheet.styles';
+
+import { useTheme } from '@/shared/theme';
 
 interface ShowOptions {
   snapPoints?: (string | number)[];
@@ -17,6 +19,8 @@ interface ShowOptions {
 }
 
 const BottomSheet = () => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const bottomSheetRef = useRef<BottomSheetModal | null>(null);
   const [content, setContent] = React.useState<React.ReactNode | null>(null);
   const [options, setOptions] = React.useState<ShowOptions>({
@@ -42,6 +46,7 @@ const BottomSheet = () => {
         {...props}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
+        style={styles.backdrop}
         onPress={() => BottomSheetManager.hide()}
       />
     ),
@@ -61,6 +66,7 @@ const BottomSheet = () => {
           bottomInset: options.bottomInset || 0,
           style: { marginHorizontal: 0 },
         })}
+        backgroundStyle={{ backgroundColor: colors.BACKGROUND_PRIMARY, opacity: 0.9 }}
         enableDynamicSizing={false}
       >
         <BottomSheetView style={styles.content}>{content}</BottomSheetView>

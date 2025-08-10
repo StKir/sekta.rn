@@ -1,7 +1,9 @@
 import { useColorScheme } from 'react-native';
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 
 import { lightColors, darkColors } from './colors';
+
+import { useUserStore } from '@/entities/user/store/userStore';
 
 type ThemeContextType = {
   isDark: boolean;
@@ -22,11 +24,14 @@ type ThemeProviderProps = {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { theme, loadUser } = useUserStore();
+
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
+
+  const isDark = theme === 'dark' || (theme === 'light' && colorScheme === 'dark');
   const colors = isDark ? darkColors : lightColors;
-  return (
-    <ThemeContext.Provider value={{ isDark, colors: lightColors }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+
+  return <ThemeContext.Provider value={{ isDark, colors }}>{children}</ThemeContext.Provider>;
 };

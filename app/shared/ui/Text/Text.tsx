@@ -2,6 +2,7 @@ import { Text as RNText, TextProps as RNTextProps } from 'react-native';
 import React from 'react';
 
 import { typography } from '@/shared/theme/typography';
+import { useTheme } from '@/shared/theme';
 
 type TypographyVariant = keyof typeof typography;
 
@@ -10,8 +11,29 @@ type TextProps = RNTextProps & {
   color?: string;
 };
 
-const Text = ({ variant = 'body1', color = 'primary', style, ...props }: TextProps) => {
-  return <RNText style={[typography[variant], { color: color }, style]} {...props} />;
+const Text = ({ variant = 'body1', color = 'textPrimary', style, ...props }: TextProps) => {
+  const { colors } = useTheme();
+
+  const getColor = (colorProp: string) => {
+    switch (colorProp) {
+      case 'primary':
+        return colors.PRIMARY;
+      case 'textPrimary':
+        return colors.TEXT_PRIMARY;
+      case 'textSecondary':
+        return colors.TEXT_SECONDARY;
+      case 'textTertiary':
+        return colors.TEXT_TERTIARY;
+      case 'white':
+        return colors.BACKGROUND_PRIMARY;
+      case 'black':
+        return colors.TEXT_PRIMARY;
+      default:
+        return colors.TEXT_PRIMARY;
+    }
+  };
+
+  return <RNText style={[typography[variant], { color: getColor(color) }, style]} {...props} />;
 };
 
 Text.H1 = (props: Omit<TextProps, 'variant'>) => <Text variant='h1' {...props} />;

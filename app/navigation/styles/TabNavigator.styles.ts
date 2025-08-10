@@ -13,6 +13,7 @@ export const createNavigationOptions = (
   tabBarInactiveTintColor: colors.GRAY_1,
   headerShown: false,
   tabBarStyle: {
+    backgroundColor: colors.BACKGROUND_SECONDARY,
     position: 'absolute',
     height: SIZES.TAB_BAR_HEIGHT + insets.bottom,
     padding: 0,
@@ -22,11 +23,12 @@ export const createNavigationOptions = (
     borderBottomEndRadius: 0,
     borderBottomStartRadius: 0,
     borderRadius: 24,
+    // borderWidth: 2,
+    borderColor: colors.BACKGROUND_SECONDARY,
 
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    shadowOpacity: 0.1,
     elevation: 5,
   },
   headerStyle: {

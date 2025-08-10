@@ -147,7 +147,7 @@ const Selector = <T extends string | number>({
   return (
     <View>
       {label && (
-        <Text color='primary' style={styles.label} variant='body1'>
+        <Text color={colors.PRIMARY} style={styles.label} variant='body1'>
           {label}
         </Text>
       )}
@@ -212,7 +212,7 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.TEXT_SECONDARY,
     },
     buttonTextActive: {
-      color: colors.BACKGROUND_PRIMARY,
+      color: colors.BUTTON_TEXT,
     },
     buttonTextDisabled: {
       color: colors.TEXT_PRIMARY,

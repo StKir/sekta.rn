@@ -14,6 +14,8 @@ export type ThemeColors = {
   GRAY_5: string;
   GRAY_6: string;
 
+  BUTTON_TEXT: string;
+
   BACKGROUND_PRIMARY: string;
   BACKGROUND_SECONDARY: string;
   TEXT_PRIMARY: string;

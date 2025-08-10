@@ -8,12 +8,19 @@ import { FormAnswers } from '@/shared/types/form.types';
 interface UserState {
   userData: UserData | null;
   isLoading: boolean;
+  notification: {
+    active: boolean;
+    time: Date | null;
+  };
+  theme: 'light' | 'dark';
   isAuthenticated: boolean;
 }
 
 interface UserActions {
   setUser: (userData: UserData | FormAnswers) => void;
   updateUser: (userData: Partial<UserData>) => void;
+  setTheme: (theme: 'light' | 'dark') => void;
+  setNotification: (notification: { active: boolean; time: Date | null }) => void;
   loadUser: () => void;
   removeUser: () => void;
   clearAll: () => void;
@@ -26,16 +33,19 @@ export const useUserStore = create<UserStore>()(
     (setState, get) => ({
       userData: null,
       isLoading: false,
+      theme: 'light',
+      notification: {
+        active: false,
+        time: null,
+      },
       isAuthenticated: false,
 
       setUser: (userData: UserData | FormAnswers) => {
-        // Добавляем дату регистрации если её нет
         const userWithDate: UserData = {
           ...userData,
           registrationDate: userData.registrationDate || new Date().toISOString(),
         };
 
-        // Сохраняем в StorageService для совместимости
         StorageService.setUser(userWithDate as FormAnswers);
 
         setState({
@@ -43,6 +53,15 @@ export const useUserStore = create<UserStore>()(
           isAuthenticated: true,
           isLoading: false,
         });
+      },
+
+      setTheme: (theme: 'light' | 'dark') => {
+        setState({ theme });
+        StorageService.setTheme(theme);
+      },
+
+      setNotification: (notification: { active: boolean; time: Date | null }) => {
+        setState({ notification });
       },
 
       updateUser: (updatedData: Partial<UserData>) => {
@@ -101,11 +120,13 @@ export const useUserStore = create<UserStore>()(
       storage: createJSONStorage(() => ({
         getItem: (_name) => {
           const userData = StorageService.getUser();
+          const theme = StorageService.getTheme();
           return JSON.stringify({
             state: {
               userData: userData as UserData,
               isAuthenticated: !!userData,
               isLoading: false,
+              theme: theme as 'light' | 'dark',
             },
           });
         },

@@ -1,3 +1,4 @@
+import { calculateAge } from '@/shared/utils/dateUtils';
 import { UseUserReturn } from '@/shared/types/user.types';
 import { useUserStore } from '@/entities/user';
 
@@ -16,11 +17,9 @@ export const useUser = (): UseUserReturn => {
     // Дополнительные вычисляемые свойства
     isLoggedIn: isAuthenticated && !!userData,
     userName: userData?.name || 'Пользователь',
-    userAge: userData?.age
-      ? typeof userData.age === 'string'
-        ? parseInt(userData.age, 10)
-        : userData.age
-      : null,
+    userBirthDate: userData?.birthDate || null,
+    notification: userData?.notification || { active: false, time: null },
+    userAge: userData?.birthDate ? calculateAge(userData.birthDate) : null,
     userGender: userData?.gender || null,
     registrationDate: userData?.registrationDate || null,
     profilePhoto: userData?.profile_photo || null,

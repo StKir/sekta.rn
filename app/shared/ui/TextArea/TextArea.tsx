@@ -30,7 +30,7 @@ const TextArea = ({ label, error, style, minHeight = 120, ...props }: TextAreaPr
   return (
     <View>
       {label && (
-        <Text color='primary' style={styles.label} variant='body1'>
+        <Text color={colors.PRIMARY} style={styles.label} variant='body1'>
           {label}
         </Text>
       )}
@@ -49,7 +49,7 @@ const TextArea = ({ label, error, style, minHeight = 120, ...props }: TextAreaPr
         {...props}
       />
       {error && (
-        <Text color='textPrimary' style={styles.error} variant='body2'>
+        <Text color={colors.TEXT_PRIMARY} style={styles.error} variant='body2'>
           {error}
         </Text>
       )}

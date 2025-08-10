@@ -14,7 +14,7 @@ export interface UserGender {
 export interface UserData {
   // Основная информация
   name?: string;
-  age?: number | string;
+  birthDate?: string;
   gender?: UserGender | string;
 
   // Медиа
@@ -31,6 +31,10 @@ export interface UserData {
   tracking_goals?: string[];
   app_experience?: string;
   communication_style?: string;
+  notification?: {
+    active: boolean;
+    time: string | null;
+  };
 
   // Для совместимости с FormAnswers
   [key: string]: any;
@@ -51,9 +55,15 @@ export interface UseUserReturn {
   // Вычисляемые свойства
   isLoggedIn: boolean;
   userName: string;
+  userBirthDate: string | null;
   userAge: number | null;
   userGender: UserGender | string | null;
   registrationDate: string | null;
   profilePhoto: MediaItem[] | null;
   avatar: UserAvatar | null;
+  notification: {
+    active: boolean;
+    time: string | null;
+  };
+  theme: 'light' | 'dark';
 }

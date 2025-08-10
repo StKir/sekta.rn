@@ -57,7 +57,10 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
   let attempts = 0;
 
   while (attempts < maxAttempts) {
-    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    if (attempts !== 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+    console.log(attempts);
     attempts++;
 
     console.log(`Попытка ${attempts}/${maxAttempts} получения результата`);
@@ -71,10 +74,6 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
           },
         }
       );
-
-      console.log('==== Статус ответа ====');
-      console.log(statusResponse.data);
-      console.log('======================');
 
       if (statusResponse.data.status === 'success') {
         return {

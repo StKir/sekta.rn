@@ -62,6 +62,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
           const question = await showAIQuestionModal();
 
           const prompt = questionPrompt(postsData.slice(0, 2), user.userData, question);
+          changeTab(0);
           const aiResponseID = await sendToGPT_4oMini(prompt);
           addCustomPost({
             date: new Date().toISOString(),
@@ -73,7 +74,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
               result: '',
             },
           });
-          changeTab(0);
         } catch {
           console.log('Пользователь отменил ввод вопроса');
         }

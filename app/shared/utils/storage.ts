@@ -7,6 +7,7 @@ const storage = new MMKV();
 const STORAGE_KEYS = {
   USER: 'user',
   LENT: 'lent',
+  THEME: 'theme',
 };
 
 export const StorageService = {
@@ -19,6 +20,23 @@ export const StorageService = {
       storage.set(STORAGE_KEYS.USER, JSON.stringify(userData));
     } catch (error) {
       console.error('Error saving user data:', error);
+    }
+  },
+
+  getTheme: () => {
+    try {
+      return storage.getString(STORAGE_KEYS.THEME) || 'light';
+    } catch (error) {
+      console.error('Error getting theme:', error);
+      return null;
+    }
+  },
+
+  setTheme: (theme: 'light' | 'dark') => {
+    try {
+      storage.set(STORAGE_KEYS.THEME, theme);
+    } catch (error) {
+      console.error('Error saving theme:', error);
     }
   },
 

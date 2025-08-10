@@ -22,6 +22,24 @@ interface LentActions {
 
 type LentStore = LentState & LentActions;
 
+const findTodayPost = (posts: Post[]) => {
+  const today = new Date().toDateString();
+  return posts.find((post) => new Date(post.date).toDateString() === today);
+};
+
+const createNewPost = (data: CheckInPost | CustomPost): Post => ({
+  date: data.date,
+  id: data.id,
+  data: [data],
+});
+
+const updateTodayPost = (posts: Post[], newData: CheckInPost | CustomPost) => {
+  const today = new Date().toDateString();
+  return posts.map((post) =>
+    new Date(post.date).toDateString() === today ? { ...post, data: [newData, ...post.data] } : post
+  );
+};
+
 export const useLentStore = create<LentStore>()(
   persist(
     (setState, get) => ({
@@ -29,48 +47,25 @@ export const useLentStore = create<LentStore>()(
       total: 0,
 
       addPost: (data: Post) => {
-        setState((state) => {
-          return {
-            posts: [data, ...state.posts],
-            total: state.total + 1,
-          };
-        });
+        setState((state) => ({
+          posts: [data, ...state.posts],
+          total: state.total + 1,
+        }));
       },
 
       getPost: (id: string | number) => {
-        return get().posts.find((post) => {
-          const aiPost = post.data.find((item) => String(item.id) === String(id));
-          return aiPost !== undefined;
-        });
+        return get().posts.find((post) => post.data.some((item) => String(item.id) === String(id)));
       },
 
       addCheckIn: (checkInData: CheckInPost) => {
         const posts = get().posts;
-        const today = new Date().toDateString();
-        const existingTodayPost = posts.find((post) => {
-          console.log('====================================');
-          console.log(new Date(post.date).toDateString(), today);
-          console.log('====================================');
-          return new Date(post.date).toDateString() === today;
-        });
+        const existingTodayPost = findTodayPost(posts);
 
-        console.log('====================================');
-        console.log(existingTodayPost);
-        console.log('====================================');
         if (existingTodayPost) {
-          setState((state) => {
-            return {
-              posts: state.posts.map((post) =>
-                new Date(post.date).toDateString() === today
-                  ? {
-                      ...post,
-                      data: [checkInData, ...post.data],
-                    }
-                  : post
-              ),
-              total: state.total,
-            };
-          });
+          setState((state) => ({
+            posts: updateTodayPost(state.posts, checkInData),
+            total: state.total,
+          }));
         } else {
           const newPost: Post = {
             date: checkInData.date,
@@ -87,30 +82,15 @@ export const useLentStore = create<LentStore>()(
 
       addCustomPost: (customData: CustomPost) => {
         const posts = get().posts;
-
-        const today = new Date().toDateString();
-        const existingTodayPost = posts.find(
-          (post) => new Date(post.date).toDateString() === today
-        );
+        const existingTodayPost = findTodayPost(posts);
 
         if (existingTodayPost) {
           setState((state) => ({
-            posts: state.posts.map((post) =>
-              new Date(post.date).toDateString() === today
-                ? {
-                    ...post,
-                    data: [customData, ...post.data],
-                  }
-                : post
-            ),
+            posts: updateTodayPost(state.posts, customData),
             total: state.total,
           }));
         } else {
-          const newPost: Post = {
-            date: customData.date,
-            id: customData.id,
-            data: [customData],
-          };
+          const newPost = createNewPost(customData);
 
           setState((state) => ({
             posts: [newPost, ...state.posts],
@@ -121,30 +101,31 @@ export const useLentStore = create<LentStore>()(
 
       changePost: (id: string, data: CustomPost | CheckInPost | AIPost) => {
         setState((state) => ({
-          posts: state.posts.map((post) => {
-            const foundPost = get().getPost(id);
-
-            if (foundPost) {
-              return {
-                ...foundPost,
-                data: post.data.map((item) => (String(item.id) === String(data.id) ? data : item)),
-              };
-            }
-            return post;
-          }),
+          posts: state.posts.map((post) => ({
+            ...post,
+            data: post.data.map((item) => (String(item.id) === String(id) ? data : item)),
+          })),
         }));
       },
 
-      removePost: (_id: number | string) => {
-        if (get().posts.length > 0) {
-          setState((state) => ({
-            posts: state.posts.map((el) => ({
-              ...el,
-              data: el.data.filter((postItem) => postItem.id !== _id),
-            })),
-            total: Math.max(0, state.total - 1),
+      removePost: (id: number | string) => {
+        setState((state) => {
+          const updatedPosts = state.posts.map((post) => ({
+            ...post,
+            data: post.data.filter((item) => String(item.id) !== String(id)),
           }));
-        }
+
+          const removedCount = state.posts.reduce(
+            (count, post) =>
+              count + post.data.filter((item) => String(item.id) === String(id)).length,
+            0
+          );
+
+          return {
+            posts: updatedPosts.filter((post) => post.data.length > 0),
+            total: Math.max(0, state.total - removedCount),
+          };
+        });
       },
 
       resetPosts: () => setState({ posts: [], total: 0 }),

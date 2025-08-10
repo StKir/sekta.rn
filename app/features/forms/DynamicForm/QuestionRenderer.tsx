@@ -1,14 +1,16 @@
 import { View, StyleSheet } from 'react-native';
 import React from 'react';
 
+import { isValidDate } from '@/shared/utils/dateUtils';
 import TextArea from '@/shared/ui/TextArea';
 import Text from '@/shared/ui/Text';
 import Selector from '@/shared/ui/Selector';
 import Range from '@/shared/ui/Range';
+import NotificationInput from '@/shared/ui/NotificationInput/NotificationInput';
 import MediaPicker from '@/shared/ui/MediaPicker';
 import Input from '@/shared/ui/Input';
 import ColorPicker from '@/shared/ui/ColorPicker/ColorPicker';
-import { Button } from '@/shared/ui';
+import { Button, DateInput, ThemeController } from '@/shared/ui';
 import { FormQuestion } from '@/shared/types/form.types';
 import { RecordType } from '@/entities/records/store/recordsStore';
 
@@ -70,9 +72,9 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
         return (
           <Input
             error={value && !isValid ? 'Некорректное значение' : undefined}
-            keyboardType={question.name === 'age' ? 'numeric' : 'default'}
+            keyboardType='default'
             label={question.question}
-            placeholder={question.name === 'age' ? 'Возраст' : '| '}
+            placeholder='| '
             value={value || ''}
             onChangeText={onChange}
           />
@@ -206,6 +208,39 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
       }
       case 'color':
         return <ColorPicker question={question} value={value} onChange={onChange} />;
+
+      case 'date': {
+        const isValid = isValidDate(value) && (!question.validation?.required || value);
+        return (
+          <DateInput
+            error={value && !isValid ? 'Некорректная дата' : undefined}
+            label={question.question}
+            placeholder='Выберите дату'
+            type='date'
+            value={value}
+            onChange={onChange}
+          />
+        );
+      }
+
+      case 'notification': {
+        return <NotificationInput label={question.question} value={value} onChange={onChange} />;
+      }
+
+      case 'theme': {
+        return <ThemeController />;
+      }
+
+      case 'time':
+        return (
+          <DateInput
+            label={question.question}
+            placeholder='Выберите время'
+            type='time'
+            value={value}
+            onChange={onChange}
+          />
+        );
 
       default:
         return null;

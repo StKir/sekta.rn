@@ -1,5 +1,7 @@
 import { UserData } from '../user';
 
+import { calculateAge } from '@/shared/utils/dateUtils';
+
 export const weekAnalysisPrompt = (postsData: any, user?: UserData) => {
   return `Я хочу, чтобы ты выступил в роли профессионального психолога и эмоционального коуча. Ниже я передам тебе краткий эмоциональный и деятельностный контекст пользователя за последние 7 дней (или меньше). Данные включают:
 	•	дату
@@ -55,7 +57,7 @@ export const questionPrompt = (postsData: any, user: UserData | null, question: 
 Информация о пользователе:
 Имя: ${user?.name} ${user?.surname}
 Пол: ${user?.gender}
-Возраст: ${user?.age}
+Возраст: ${user?.birthDate ? calculateAge(user.birthDate) : 'Не указан'}
 Стиль общения: ${user?.communication_style}
 
 Контекст пользователя за последние дни:

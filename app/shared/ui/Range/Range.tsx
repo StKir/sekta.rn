@@ -35,7 +35,7 @@ const Range = ({
   return (
     <View style={styles.container}>
       {label && (
-        <Text color='primary' style={styles.label} variant='body1'>
+        <Text style={styles.label} variant='body1'>
           {label}
         </Text>
       )}

@@ -52,6 +52,8 @@
 	<string>Приложению требуется доступ к галерее для выбора фото и видео</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Приложению требуется доступ к микрофону для записи видео со звуком</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Приложению требуется доступ к уведомлениям для отправки напоминаний о заполнении дневника</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ionicons.ttf</string>
@@ -70,5 +72,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>background-processing</string>
+	</array>
 </dict>
 </plist>

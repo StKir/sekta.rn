@@ -23,13 +23,11 @@
         },
         {
           "id": 1002,
-          "name": "age",
-          "type": "text",
-          "question": "Сколько тебе лет?",
+          "name": "birthDate",
+          "type": "date",
+          "question": "Когда у тебя день рождения?",
           "validation": {
-            "required": true,
-            "min": 5,
-            "max": 120
+            "required": true
           }
         },
         {
@@ -239,6 +237,18 @@
               "name": "С юмором"
             }
           ]
+        },
+        {
+          "id": 4232432,
+          "name": "notification",
+          "type": "notification",
+          "question": "Напоминать заполнять дневник?"
+        },
+        {
+          "id": 543321321,
+          "name": "theme",
+          "type": "theme",
+          "question": "Выбери тему приложения"
         }
       ]
     ]

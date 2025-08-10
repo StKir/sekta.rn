@@ -156,7 +156,7 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
   const renderMediaItem = (item: MediaItem) => (
     <View key={item.id} style={styles.mediaItem}>
       {item.type === 'image' ? (
-        <Photo uri={item.uri} style={styles.mediaPreview} />
+        <Photo style={styles.mediaPreview} uri={item.uri} />
       ) : (
         <View style={[styles.mediaPreview, styles.videoPreview]}>
           <Icon color={colors.TEXT_PRIMARY} name='play-circle' size={32} />
@@ -164,21 +164,21 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       )}
 
       <TouchableOpacity style={styles.removeButton} onPress={() => removeMedia(item.id)}>
-        <Icon color='white' name='close' size={14} />
+        <Icon color={colors.BACKGROUND_PRIMARY} name='close' size={14} />
       </TouchableOpacity>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text color='primary' variant='body1'>
+      <Text color={colors.PRIMARY} variant='body1'>
         Добавить медиа
       </Text>
       {value.length < maxItems && (
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={handlePickFromGallery}>
             <Icon color={colors.TEXT_PRIMARY} name='images' size={SIZES.ICON_SIZE_SMALL} />
-            <Text color='textPrimary' variant='body2'>
+            <Text color={colors.TEXT_PRIMARY} variant='body2'>
               Галерея
             </Text>
           </TouchableOpacity>

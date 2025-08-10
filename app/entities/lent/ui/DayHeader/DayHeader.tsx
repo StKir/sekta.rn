@@ -31,7 +31,7 @@ const DayHeader = ({ date }: DayHeaderProps) => {
             justifyContent: 'center',
           }}
         >
-          <Ionicons color='black' name='share-social-outline' size={16} />
+          <Ionicons color={colors.TEXT_PRIMARY} name='share-social-outline' size={16} />
         </TouchableOpacity>
       </MainContainer>
       <PointerLine offsetTop={SPACING.MEDIUM} />

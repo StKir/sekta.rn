@@ -24,7 +24,6 @@ const NewRegisterPage = () => {
     const testResult = formatAnswersToTestResult(formData, answers);
     addResult(testResult);
 
-    // Сохраняем пользователя через store
     setUser(answers);
 
     Alert.alert('Регистрация завершена!', 'Добро пожаловать в приложение!', [

@@ -92,7 +92,7 @@ const Button = ({
       return colors.PRIMARY;
     }
 
-    return colors.BACKGROUND_PRIMARY;
+    return colors.BUTTON_TEXT;
   };
 
   return (
