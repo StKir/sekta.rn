@@ -53,6 +53,17 @@ export type MomentInPost = {
   data: MomentPostData;
 };
 
+export type AIPost = {
+  date: string;
+  id: string | number;
+  type: 'ai_text';
+  title: string;
+  data: {
+    result: string;
+    status: 'processing' | 'success' | 'error';
+  };
+};
+
 export type CustomPost =
   | {
       date: string;
@@ -60,4 +71,5 @@ export type CustomPost =
       type: 'custom';
       data: CustomPostData;
     }
-  | MomentInPost;
+  | MomentInPost
+  | AIPost;

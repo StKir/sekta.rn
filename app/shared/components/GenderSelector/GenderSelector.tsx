@@ -26,7 +26,12 @@ const GenderSelector = ({
   onChange,
   options = defaultOptions,
 }: GenderSelectorProps) => {
-  return <Selector label={label} options={options} value={value} onChange={onChange} />;
+  const handleChange = (gender: Gender | Gender[]) => {
+    const selectedValue = Array.isArray(gender) ? gender[0] : gender;
+    onChange(selectedValue);
+  };
+
+  return <Selector label={label} options={options} value={value} onChange={handleChange} />;
 };
 
 export default GenderSelector;

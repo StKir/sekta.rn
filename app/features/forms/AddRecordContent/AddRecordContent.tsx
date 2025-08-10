@@ -12,6 +12,19 @@ interface AddRecordContentProps {
   navigation?: NavigationProp<RootStackParamList>;
 }
 
+const options: OptionType[] = [
+  {
+    title: 'Эмоциональный чек-ин',
+    type: 'check-in',
+  },
+  {
+    title: 'Момент',
+    type: 'moment',
+  },
+];
+
+type OptionType = { type: 'check-in' | 'moment'; title: string };
+
 const AddRecordContent = ({ navigation }: AddRecordContentProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
@@ -32,12 +45,15 @@ const AddRecordContent = ({ navigation }: AddRecordContentProps) => {
     <View style={styles.container}>
       <Text style={styles.title}>Новая запись</Text>
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.option} onPress={() => handleNavigate('check-in')}>
-          <Text style={styles.optionText}>🐬 Чек-ин</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.option} onPress={() => handleNavigate('moment')}>
-          <Text style={styles.optionText}>Момент</Text>
-        </TouchableOpacity>
+        {options.map((option, i) => (
+          <TouchableOpacity
+            key={i}
+            style={styles.option}
+            onPress={() => handleNavigate(option.type)}
+          >
+            <Text style={styles.optionText}>{option.title}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
@@ -50,6 +66,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     optionsContainer: {
       flexDirection: 'row',
+      justifyContent: 'space-around',
       gap: SPACING.LARGE,
       flexWrap: 'wrap',
       width: '100%',
@@ -57,9 +74,9 @@ const createStyles = (colors: ThemeColors) =>
     title: {
       fontSize: SIZES.FONT_SIZE.LARGE,
       fontWeight: 'bold',
+      textAlign: 'center',
       color: colors.TEXT_PRIMARY,
       marginBottom: SPACING.LARGE,
-      textAlign: 'left',
     },
     option: {
       borderWidth: 1,
@@ -69,7 +86,8 @@ const createStyles = (colors: ThemeColors) =>
       height: 70,
       padding: SPACING.LARGE,
       marginBottom: SPACING.MEDIUM,
-      justifyContent: 'flex-end',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     optionText: {
       fontSize: SIZES.FONT_SIZE.XLARGE,

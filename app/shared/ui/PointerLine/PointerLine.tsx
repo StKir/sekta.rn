@@ -1,6 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import React from 'react';
 
+import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 
 type PointerLineProps = {

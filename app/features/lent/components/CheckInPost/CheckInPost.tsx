@@ -20,9 +20,7 @@ const CheckInPost = ({ post }: CheckInPostProps) => {
   const { mood, color, quote, note, media, activities, emotions, power, stress } = post.data;
   const { date } = post;
   const { colors } = useTheme();
-  console.log('====================================');
-  console.log(media);
-  console.log('====================================');
+
   return (
     <View
       style={{

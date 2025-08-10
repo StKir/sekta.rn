@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { SPACING, SIZES } from '../../constants';
+import { ThemeColors } from '@/shared/theme/types';
+import { SPACING, SIZES } from '@/shared/constants';
 
 export const createButtonStyles = (colors: ThemeColors) =>
   StyleSheet.create({

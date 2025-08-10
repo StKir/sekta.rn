@@ -47,7 +47,7 @@ const CalendarPage = () => {
         <Feed />
 
         <Statistic />
-        <AIPage />
+        <AIPage changeTab={handleTabPress} />
       </SwipeableTabView>
     </SafeAreaView>
   );

@@ -9,6 +9,9 @@ export type RootStackParamList = {
   CheckInPage: undefined;
   MomentPage: undefined;
   AIQuestionPage: undefined;
+  AIResultPage: {
+    requestId: number;
+  };
 };
 
 export type TabParamList = {

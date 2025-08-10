@@ -21,6 +21,8 @@ class BottomSheetManager {
   private bottomSheetRef: React.MutableRefObject<BottomSheetModal | null> | null = null;
   private setContent: ((content: React.ReactNode | null) => void) | null = null;
   private setOptions: ((options: ShowOptions) => void) | null = null;
+  private currentPromiseResolve: ((value: any) => void) | null = null;
+  private currentPromiseReject: ((reason?: any) => void) | null = null;
 
   private constructor() {}
 
@@ -48,7 +50,6 @@ class BottomSheetManager {
       return;
     }
 
-    // Всегда устанавливаем опции, либо переданные, либо дефолтные
     const finalOptions = { ...DEFAULT_OPTIONS, ...options };
 
     if (this.setOptions) {
@@ -59,15 +60,60 @@ class BottomSheetManager {
     this.bottomSheetRef.current.present();
   }
 
+  showWithPromise<T = any>(content: React.ReactNode, options?: ShowOptions): Promise<T> {
+    return new Promise((resolve, reject) => {
+      if (!this.bottomSheetRef?.current || !this.setContent) {
+        reject(new Error('BottomSheet не инициализирован'));
+        return;
+      }
+
+      this.currentPromiseResolve = resolve;
+      this.currentPromiseReject = reject;
+
+      const finalOptions = { ...DEFAULT_OPTIONS, ...options };
+
+      if (this.setOptions) {
+        this.setOptions(finalOptions);
+      }
+
+      this.setContent(content);
+      this.bottomSheetRef.current.present();
+    });
+  }
+
+  resolvePromise(value: any) {
+    if (this.currentPromiseResolve) {
+      this.currentPromiseResolve(value);
+      this.currentPromiseResolve = null;
+      this.currentPromiseReject = null;
+    }
+    this.hide();
+  }
+
+  rejectPromise(reason?: any) {
+    if (this.currentPromiseReject) {
+      this.currentPromiseReject(reason);
+      this.currentPromiseResolve = null;
+      this.currentPromiseReject = null;
+    }
+    this.hide();
+  }
+
   hide() {
     if (!this.bottomSheetRef?.current || !this.setContent) {
       return;
     }
 
+    // Если промис ещё не разрешён, отклоняем его
+    if (this.currentPromiseReject) {
+      this.currentPromiseReject(new Error('Модальное окно закрыто'));
+      this.currentPromiseResolve = null;
+      this.currentPromiseReject = null;
+    }
+
     this.setContent(null);
     this.bottomSheetRef.current.dismiss();
 
-    // Сбрасываем опции на дефолтные после закрытия
     if (this.setOptions) {
       this.setOptions(DEFAULT_OPTIONS);
     }

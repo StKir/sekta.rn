@@ -1,39 +1,35 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 import TextArea from '@/shared/ui/TextArea';
 import Text from '@/shared/ui/Text';
 import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
-import { useUser } from '@/shared/hooks/useUser';
-import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
-import { RootStackParamList } from '@/navigation/types';
-import { questionPrompt } from '@/entities/assiatent/promts';
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+interface AIQuestionModalProps {
+  onComplete: (question: string) => void;
+  onCancel: () => void;
+}
 
-const AIQuestionPage = () => {
+const AIQuestionModal = ({ onComplete, onCancel }: AIQuestionModalProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const navigation = useNavigation<NavigationProp>();
   const [question, setQuestion] = useState('');
-  const { postsData } = useDaysPosts(5);
-  const user = useUser();
 
   const handleComplete = () => {
-    console.log(questionPrompt(postsData.slice(0, 30), user.userData));
-    Clipboard.setString(questionPrompt(postsData.slice(0, 30), user.userData));
-    navigation.goBack();
+    if (question.trim()) {
+      onComplete(question.trim());
+    }
+  };
+
+  const handleCancel = () => {
+    onCancel();
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.pageTitle} variant='h2'>
           Задать вопрос AI
@@ -58,23 +54,30 @@ const AIQuestionPage = () => {
       </ScrollView>
 
       <View style={styles.bottomContainer}>
-        <Button
-          fullWidth
-          disabled={!question.trim()}
-          title='Завершить'
-          variant='primary'
-          onPress={handleComplete}
-        />
+        <View style={styles.buttonRow}>
+          <Button
+            style={styles.cancelButton}
+            title='Отмена'
+            variant='outline'
+            onPress={handleCancel}
+          />
+          <Button
+            disabled={!question.trim()}
+            style={styles.completeButton}
+            title='Завершить'
+            variant='primary'
+            onPress={handleComplete}
+          />
+        </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: colors.BACKGROUND_PRIMARY,
+      height: '100%',
     },
     scrollContainer: {
       flexGrow: 1,
@@ -96,17 +99,26 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: SPACING.LARGE,
     },
     questionInput: {
-      minHeight: 200,
+      minHeight: 150,
       textAlignVertical: 'top',
     },
     bottomContainer: {
       paddingHorizontal: SPACING.LARGE,
       paddingBottom: SPACING.LARGE,
       paddingTop: SPACING.MEDIUM,
-      backgroundColor: colors.BACKGROUND_PRIMARY,
       borderTopWidth: 1,
       borderTopColor: colors.BORDER,
     },
+    buttonRow: {
+      flexDirection: 'row',
+      gap: SPACING.MEDIUM,
+    },
+    cancelButton: {
+      flex: 1,
+    },
+    completeButton: {
+      flex: 2,
+    },
   });
 
-export default AIQuestionPage;
+export default AIQuestionModal;

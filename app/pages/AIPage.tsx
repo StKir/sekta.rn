@@ -1,33 +1,31 @@
 import { StyleSheet, View, FlatList } from 'react-native';
 import React from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
-import Clipboard from '@react-native-clipboard/clipboard';
 
+import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
+import { showAIQuestionModal } from '@/shared/ui/AIQuestionModal/showAIQuestionModal';
 import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
-import { RootStackParamList } from '@/navigation/types';
-import { weekAnalysisPrompt } from '@/entities/assiatent/promts';
-
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+import { sendToGPT_4oMini } from '@/shared/api/AIActions';
+import { useLentStore } from '@/entities/lent/store/store';
+import { weekAnalysisPrompt, questionPrompt } from '@/entities/assiatent/promts';
 
 type AIBlock = {
   id: string;
   title: string;
   description: string;
-  action: () => void;
+  action: () => void | Promise<void>;
 };
 
-const AIPage = () => {
+const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const navigation = useNavigation<NavigationProp>();
-  const { postsData } = useDaysPosts(7);
+  const { postsData, checkIns } = useDaysPosts(4);
+  const { addCustomPost } = useLentStore();
   const user = useUser();
 
   const aiBlocks: AIBlock[] = [
@@ -35,21 +33,50 @@ const AIPage = () => {
       id: '1',
       title: 'Анализ недели',
       description:
-        'Мы отправим в нейросеть контекст вашей недели и вы получите ценные советы и рекомендации по стабилизации эмоционального состояния',
-      action: () => {
-        const prompt = weekAnalysisPrompt({ ...postsData }, user.userData || {});
+        'Расскажем нейросети о твоей неделе — и вернём вдохновляющие советы, которые помогут почувствовать себя лучше 💛',
+      action: async () => {
+        const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
 
-        Clipboard.setString(prompt);
-        console.log(prompt);
+        const aiResponseID = await sendToGPT_4oMini(prompt);
+
+        addCustomPost({
+          date: new Date().toISOString(),
+          id: aiResponseID,
+          type: 'ai_text',
+          title: 'AI Анализ недели' + ' ' + formatDateRange(new Date().toISOString()),
+          data: {
+            status: 'processing',
+            result: '',
+          },
+        });
+        changeTab(0);
       },
     },
     {
       id: '2',
       title: 'Задать вопрос',
       description:
-        'Задайте любой вопрос нашему AI-психологу и получите персональную консультацию на основе анализа ваших записей',
-      action: () => {
-        navigation.navigate('AIQuestionPage');
+        'Спроси что угодно у нашего AI-психолога — и получи тёплый, персональный совет на основе твоих записей 🪄',
+      action: async () => {
+        try {
+          const question = await showAIQuestionModal();
+
+          const prompt = questionPrompt(postsData.slice(0, 2), user.userData, question);
+          const aiResponseID = await sendToGPT_4oMini(prompt);
+          addCustomPost({
+            date: new Date().toISOString(),
+            id: aiResponseID,
+            type: 'ai_text',
+            title: `AI Ответ на вопрос: ${question}`,
+            data: {
+              status: 'processing',
+              result: '',
+            },
+          });
+          changeTab(0);
+        } catch {
+          console.log('Пользователь отменил ввод вопроса');
+        }
       },
     },
   ];

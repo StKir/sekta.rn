@@ -10,6 +10,7 @@ import { useLentStore } from '@/entities/lent/store/store';
 
 const Feed = () => {
   const { posts } = useLentStore();
+
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
@@ -21,6 +22,10 @@ const Feed = () => {
       </View>
     );
   }
+
+  console.log('====================================');
+  console.log(posts);
+  console.log('====================================');
   return (
     <FlatList
       data={posts}
@@ -28,7 +33,7 @@ const Feed = () => {
       ListFooterComponent={<View style={{ height: 100 }} />}
       renderItem={({ item }) => (
         <DateWrapper date={item.date}>
-          <Post key={item.id} post={item} />
+          <Post post={item} />
         </DateWrapper>
       )}
       showsVerticalScrollIndicator={false}
