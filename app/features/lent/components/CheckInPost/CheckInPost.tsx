@@ -39,7 +39,9 @@ const CheckInPost = ({ post }: CheckInPostProps) => {
       <MediaLent media={media} />
       {quote && <TextLent text={quote} type='quote' />}
       {note && <TextLent text={note} type='text' />}
-      <Stats power={power} stress={stress} />
+      <MainContainer>
+        <Stats power={power} stress={stress} />
+      </MainContainer>
       {activities?.length > 0 && <TagListLent tags={activities} variant='small' />}
       {emotions?.length > 0 && <TagListLent tags={emotions} variant='small' />}
     </View>

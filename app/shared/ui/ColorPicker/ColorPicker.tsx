@@ -1,4 +1,5 @@
 import React from 'react';
+import colorsOptions from 'appData/colors.json';
 
 import Selector from '../Selector';
 
@@ -21,21 +22,19 @@ const ColorPicker = ({ question, value, onChange }: ColorPickerProps) => {
         borderRadius: 14,
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: value?.id === option.value ? colors.PRIMARY : 'transparent',
+        borderColor: value?.name === option.value ? colors.PRIMARY : 'transparent',
       })}
       label={question.question}
       labelStyle={{ display: 'none' }}
       options={
-        question.colors?.map((color) => ({
-          value: color.id || color.name,
+        colorsOptions?.map((color) => ({
+          value: color.name,
           label: color.color,
         })) || []
       }
       value={value?.id || value?.name || null}
       onChange={(selectedValue) => {
-        const selectedColor = question.colors?.find(
-          (color) => (color.id || color.name) === selectedValue
-        );
+        const selectedColor = colorsOptions.find((color) => color.name === selectedValue);
         onChange(selectedColor || null);
       }}
     />

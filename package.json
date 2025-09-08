@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.1.6",
+    "@notifee/react-native": "^9.1.8",
     "@react-native-camera-roll/camera-roll": "7.10.0",
     "@react-native-clipboard/clipboard": "^1.16.3",
     "@react-native-community/push-notification-ios": "^1.11.0",
@@ -19,7 +20,6 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.20",
-    "@types/react-native-push-notification": "^8.1.4",
     "axios": "^1.11.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "react": "19.0.0",
@@ -32,7 +32,6 @@
     "react-native-markdown-display": "^7.0.2",
     "react-native-mmkv": "^3.3.0",
     "react-native-pager-view": "^6.8.1",
-    "react-native-push-notification": "^8.1.1",
     "react-native-reanimated": "3.17.3",
     "react-native-reanimated-carousel": "^4.0.2",
     "react-native-safe-area-context": "5.4.0",

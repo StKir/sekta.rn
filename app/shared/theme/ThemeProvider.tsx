@@ -1,4 +1,3 @@
-import { useColorScheme } from 'react-native';
 import React, { createContext, useContext, ReactNode, useEffect } from 'react';
 
 import { lightColors, darkColors } from './colors';
@@ -23,14 +22,13 @@ type ThemeProviderProps = {
 };
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const colorScheme = useColorScheme();
   const { theme, loadUser } = useUserStore();
 
   useEffect(() => {
     loadUser();
   }, [loadUser]);
 
-  const isDark = theme === 'dark' || (theme === 'light' && colorScheme === 'dark');
+  const isDark = theme === 'dark';
   const colors = isDark ? darkColors : lightColors;
 
   return <ThemeContext.Provider value={{ isDark, colors }}>{children}</ThemeContext.Provider>;

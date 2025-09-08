@@ -8,17 +8,44 @@
 import 'react-native-reanimated';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import AppNavigator from '../navigation/AppNavigator';
 
 import { styles } from './styles/App.styles';
 
+import { getInitialReminderID, setReminders, updateReminder } from '@/shared/utils/reminder';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { ThemeProvider } from '@/shared/theme';
+import { useUser } from '@/shared/hooks/useUser';
 
 const App = (): React.JSX.Element => {
+  const { notification } = useUser();
+
+  useEffect(() => {
+    const setReminder = async () => {
+      const initialReminderID = await getInitialReminderID();
+
+      if (!notification.active || !notification.time) {
+        return;
+      }
+
+      if (initialReminderID) {
+        updateReminder(initialReminderID, new Date(notification.time));
+
+        return;
+      }
+
+      if (notification.active && notification.time) {
+        await setReminders(new Date(notification.time));
+      }
+    };
+
+    setReminder();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <GestureHandlerRootView style={styles.container}>

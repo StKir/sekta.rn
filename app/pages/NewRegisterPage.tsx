@@ -4,17 +4,20 @@ import registrationData from 'apptests/registration.json';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+import { removeAllReminders } from '@/shared/utils/reminder';
 import { transformJsonToFormData, formatAnswersToTestResult } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { useUser } from '@/shared/hooks/useUser';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import HelloScreen from '@/features/auth/Register/HelloScreen/HelloScreen';
+import { useUserStore } from '@/entities/user/store/userStore';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 
 const NewRegisterPage = () => {
+  const { setNotification } = useUserStore();
   const formData = transformJsonToFormData(registrationData);
   const navigation = useNavigation<NavigationProp>();
   const { addResult } = useTestResultsStore();
@@ -25,6 +28,9 @@ const NewRegisterPage = () => {
     addResult(testResult);
 
     setUser(answers);
+    setNotification(answers.notification);
+
+    await removeAllReminders();
 
     Alert.alert('Регистрация завершена!', 'Добро пожаловать в приложение!', [
       {

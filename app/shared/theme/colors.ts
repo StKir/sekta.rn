@@ -1,7 +1,7 @@
 import { ThemeColors } from './types';
 
 export const lightColors: ThemeColors = {
-  PRIMARY: '#007AFF',
+  PRIMARY: '#3C66FF',
   PRIMARY_LITE: 'rgba(0, 122, 255, 0.05)',
   SECONDARY: '#5AC8FA',
   SUCCESS: '#34C759',
@@ -19,7 +19,7 @@ export const lightColors: ThemeColors = {
   BUTTON_TEXT: '#F6F6F6',
 
   BACKGROUND_PRIMARY: '#F6F6F6',
-  BACKGROUND_SECONDARY: '#F6F6F6',
+  BACKGROUND_SECONDARY: '#ffffff',
   TEXT_PRIMARY: '#2C2C2C',
   TEXT_SECONDARY: '#4C4C4C',
   TEXT_TERTIARY: '#8E8E93',

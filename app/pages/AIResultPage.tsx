@@ -69,6 +69,7 @@ const createStyles = (colors: ThemeColors) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: colors.BACKGROUND_PRIMARY,
     },
     container: {
       flex: 1,

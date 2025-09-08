@@ -3,3 +3,4 @@ export * from './formUtils';
 export * from './mediaStorage';
 export * from './permissions';
 export * from './storage';
+export * from './numberUtils';

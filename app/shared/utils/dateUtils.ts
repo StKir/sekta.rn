@@ -37,3 +37,15 @@ export const isValidDate = (dateValue: Date | string | undefined): boolean => {
   const date = new Date(dateValue);
   return !isNaN(date.getTime());
 };
+
+export const getDateWithOffset = (dayOffset: number, h: number, m: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() + dayOffset);
+  date.setHours(h, m, 0, 0);
+  return date;
+};
+
+export const isDatePassed = (date: Date) => {
+  const now = new Date();
+  return date.getTime() < now.getTime();
+};

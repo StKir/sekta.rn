@@ -1,6 +1,6 @@
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
 import NewRegisterPage from '@/pages/NewRegisterPage';
@@ -40,6 +40,7 @@ const AppNavigator = () => {
         initialRouteName={isAuthenticated ? 'TabNavigator' : 'Register'}
         screenOptions={{
           headerShown: false,
+          ...TransitionPresets.ModalSlideFromBottomIOS,
         }}
       >
         <Stack.Screen component={NewRegisterPage} name='Register' />

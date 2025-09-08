@@ -10,7 +10,7 @@ import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
-import { sendToGPT_4oMini } from '@/shared/api/AIActions';
+import { sendToGPT } from '@/shared/api/AIActions';
 import { useLentStore } from '@/entities/lent/store/store';
 import { weekAnalysisPrompt, questionPrompt } from '@/entities/assiatent/promts';
 
@@ -37,7 +37,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       action: async () => {
         const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
 
-        const aiResponseID = await sendToGPT_4oMini(prompt);
+        const aiResponseID = await sendToGPT(prompt);
 
         addCustomPost({
           date: new Date().toISOString(),
@@ -63,7 +63,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
 
           const prompt = questionPrompt(postsData.slice(0, 2), user.userData, question);
           changeTab(0);
-          const aiResponseID = await sendToGPT_4oMini(prompt);
+          const aiResponseID = await sendToGPT(prompt);
           addCustomPost({
             date: new Date().toISOString(),
             id: aiResponseID,
@@ -126,7 +126,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     blockContainer: {
       backgroundColor: colors.BACKGROUND_SECONDARY,
-      borderRadius: 25,
+      borderRadius: 14,
       padding: SPACING.LARGE,
       marginBottom: SPACING.MEDIUM,
       borderWidth: 1,

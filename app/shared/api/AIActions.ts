@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { GEN_API_TOKEN, GEN_API_URL } from '@/env';
 
-export async function sendToGPT_4oMini(prompt: string): Promise<number> {
+export async function sendToGPT(prompt: string, model: string = 'gpt-4-1'): Promise<number> {
   const payload: GPTRequest = {
     messages: [
       {
@@ -23,7 +23,7 @@ export async function sendToGPT_4oMini(prompt: string): Promise<number> {
 
   try {
     const initialResponse = await axios.post<GPTResponseInitial>(
-      `${GEN_API_URL}/networks/gpt-4o-mini`,
+      `${GEN_API_URL}/networks/${model}`,
       payload,
       {
         headers: {

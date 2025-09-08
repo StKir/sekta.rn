@@ -21,15 +21,14 @@ const AIWeekAnalysisPostComponent = ({ post }: Props) => {
   const currentPost = post;
 
   return (
-    <MainContainer>
-      <View
-        style={{
-          gap: SPACING.LARGE_2,
-          borderRadius: 14,
-          backgroundColor: colors.BACKGROUND_SECONDARY,
-          paddingVertical: SPACING.LARGE,
-        }}
-      >
+    <View
+      style={{
+        borderRadius: 14,
+        backgroundColor: colors.BACKGROUND_SECONDARY,
+        paddingVertical: SPACING.LARGE,
+      }}
+    >
+      <MainContainer gap={SPACING.LARGE_2}>
         <Text.H3>{currentPost.title}</Text.H3>
         <Button
           fullWidth
@@ -39,8 +38,8 @@ const AIWeekAnalysisPostComponent = ({ post }: Props) => {
             navigation.navigate('AIResultPage', { requestId: Number(currentPost.id) });
           }}
         />
-      </View>
-    </MainContainer>
+      </MainContainer>
+    </View>
   );
 };
 

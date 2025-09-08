@@ -1,9 +1,14 @@
-import { View, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 
 import { NotificationInputProps } from './types';
 import { createStyles } from './styles';
-import { NOTIFICATION_CONSTANTS, BUTTON_TEXTS, LABELS } from './constants';
+import {
+  NOTIFICATION_CONSTANTS,
+  BUTTON_TEXTS,
+  LABELS,
+  requestNotificationPermission,
+} from './constants';
 
 import Text from '@/shared/ui/Text/Text';
 import { DateInput } from '@/shared/ui';
@@ -14,24 +19,18 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
   const styles = createStyles(colors);
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | null>(null);
 
-  const handlePermissionRequest = () => {
-    Alert.alert(
-      'Разрешение на уведомления',
-      'Приложение запрашивает разрешение на отправку уведомлений для напоминаний о заполнении дневника',
-      [
-        { text: 'Отмена', style: 'cancel', onPress: () => setPermissionStatus('denied') },
-        {
-          text: 'Разрешить',
-          onPress: () => {
-            setPermissionStatus('granted');
-            onChange({
-              active: true,
-              time: value?.time || new Date(),
-            });
-          },
-        },
-      ]
-    );
+  const handlePermissionRequest = async () => {
+    const res = await requestNotificationPermission();
+
+    if (res) {
+      setPermissionStatus('granted');
+      onChange({
+        active: true,
+        time: value?.time || new Date(),
+      });
+    } else {
+      setPermissionStatus('denied');
+    }
   };
 
   const handleTimeChange = (time: Date) => {
@@ -52,7 +51,7 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
     }
   };
 
-  const isNotificationEnabled = value?.active && permissionStatus === 'granted';
+  const isNotificationEnabled = value?.active || permissionStatus === 'granted';
 
   return (
     <View style={[styles.container, style]}>
