@@ -15,7 +15,7 @@ import AppNavigator from '../navigation/AppNavigator';
 
 import { styles } from './styles/App.styles';
 
-import { getInitialReminderID, setReminders, updateReminder } from '@/shared/utils/reminder';
+import { getInitialReminderID, updateReminder } from '@/shared/utils/reminder';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { ThemeProvider } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
@@ -33,12 +33,7 @@ const App = (): React.JSX.Element => {
 
       if (initialReminderID) {
         updateReminder(initialReminderID, new Date(notification.time));
-
         return;
-      }
-
-      if (notification.active && notification.time) {
-        await setReminders(new Date(notification.time));
       }
     };
 

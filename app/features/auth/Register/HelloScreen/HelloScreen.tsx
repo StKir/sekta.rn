@@ -17,9 +17,9 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
     onNext();
   };
 
-  const handleLogin = () => {
-    onNext();
-  };
+  // const handleLogin = () => {
+  //   onNext();
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,13 +42,13 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
       </View>
       <View>
         <Button fullWidth title={'Начать'} onPress={handleStart} />
-        <Button
+        {/* <Button
           style={styles.link}
           textStyle={styles.linkText}
           title={'У меня уже есть аккаунт'}
           variant='text'
           onPress={handleLogin}
-        />
+        /> */}
       </View>
     </SafeAreaView>
   );

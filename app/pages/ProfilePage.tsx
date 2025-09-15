@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -27,7 +27,7 @@ const ProfilePage = () => {
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
   const { userData, isLoading, loadUser, removeUser } = useUser();
-  const { setNotification } = useUserStore();
+  const { setNotification, updateUser } = useUserStore();
 
   useEffect(() => {
     loadUser();
@@ -46,16 +46,22 @@ const ProfilePage = () => {
 
   const handleLogout = () => {
     try {
-      // Удаляем все данные пользователя
-      removeUser();
-      clearLentStore();
-      clearResults();
+      Alert.alert('Вы уверены, что хотите выйти?', 'Это действие нельзя будет отменить', [
+        { text: 'Отмена', style: 'cancel' },
+        {
+          text: 'Выйти',
+          onPress: () => {
+            removeUser();
+            clearLentStore();
+            clearResults();
 
-      // Переходим на регистрацию
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Register' }],
-      });
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Register' }],
+            });
+          },
+        },
+      ]);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -142,16 +148,29 @@ const ProfilePage = () => {
       <View style={styles.buttonContainer}>
         <ThemeController />
 
-        {/* <NotificationInput
-          label='Уведомления'
+        <NotificationInput
+          label='Ежедневные уведомления'
           value={{
             active: userData?.notification?.active || false,
             time: userData?.notification?.time ? new Date(userData?.notification?.time) : null,
           }}
-          onChange={(newDate) => {
-            setNotification(newDate);
+          onChange={(newNotification) => {
+            if (userData) {
+              const notification = {
+                active: newNotification.active,
+                time: newNotification.time ? newNotification.time.toISOString() : null,
+              };
+              updateUser({
+                ...userData,
+                notification,
+              });
+              setNotification({
+                active: newNotification.active,
+                time: newNotification.time,
+              });
+            }
           }}
-        /> */}
+        />
 
         <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
           <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>

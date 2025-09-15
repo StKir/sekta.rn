@@ -1,38 +1,32 @@
 import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@/shared/theme/types';
+import { SPACING } from '@/shared/constants';
 
 export const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      gap: 16,
+      gap: SPACING.MEDIUM,
+      backgroundColor: colors.BACKGROUND_SECONDARY,
+      padding: SPACING.MEDIUM,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.BORDER,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     label: {
       color: colors.TEXT_PRIMARY,
-    },
-    permissionButton: {
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      borderRadius: 8,
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    permissionButtonActive: {
-      backgroundColor: colors.PRIMARY,
-    },
-    permissionButtonText: {
-      color: colors.TEXT_PRIMARY,
-      fontWeight: '600',
-    },
-    permissionButtonTextActive: {
-      color: colors.SURFACE,
+      flex: 1,
     },
     timeContainer: {
-      gap: 8,
+      gap: SPACING.SMALL,
     },
     timeLabel: {
-      color: colors.TEXT_PRIMARY,
+      color: colors.TEXT_SECONDARY,
     },
     permissionText: {
       color: colors.DANGER,

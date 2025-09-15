@@ -1,10 +1,6 @@
 /* eslint-disable react-native/split-platform-components */
 import { Platform, PermissionsAndroid, Alert } from 'react-native';
 
-export const NOTIFICATION_CONSTANTS = {
-  ACTIVE_OPACITY: 0.7,
-};
-
 export const BUTTON_TEXTS = {
   ENABLE: 'Включить уведомления',
   DISABLE: 'Отключить уведомления',

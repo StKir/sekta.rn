@@ -4,7 +4,7 @@ import registrationData from 'apptests/registration.json';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { removeAllReminders } from '@/shared/utils/reminder';
+import { removeAllReminders, setReminders } from '@/shared/utils/reminder';
 import { transformJsonToFormData, formatAnswersToTestResult } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { useUser } from '@/shared/hooks/useUser';
@@ -31,6 +31,10 @@ const NewRegisterPage = () => {
     setNotification(answers.notification);
 
     await removeAllReminders();
+    if (answers.notification.active) {
+      console.log('setReminders');
+      await setReminders(new Date(answers.notification.time));
+    }
 
     Alert.alert('Регистрация завершена!', 'Добро пожаловать в приложение!', [
       {

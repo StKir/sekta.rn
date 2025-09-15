@@ -1,14 +1,9 @@
-import { View, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { View, Switch, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
 import { NotificationInputProps } from './types';
 import { createStyles } from './styles';
-import {
-  NOTIFICATION_CONSTANTS,
-  BUTTON_TEXTS,
-  LABELS,
-  requestNotificationPermission,
-} from './constants';
+import { LABELS, requestNotificationPermission } from './constants';
 
 import Text from '@/shared/ui/Text/Text';
 import { DateInput } from '@/shared/ui';
@@ -18,63 +13,62 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | null>(null);
+  const [localTime, setLocalTime] = useState<Date | null>(value?.time || null);
+  const [isEnabled, setIsEnabled] = useState(value?.active || false);
+
+  useEffect(() => {
+    setLocalTime(value?.time || null);
+    setIsEnabled(value?.active || false);
+  }, [value]);
 
   const handlePermissionRequest = async () => {
     const res = await requestNotificationPermission();
 
     if (res) {
       setPermissionStatus('granted');
-      onChange({
-        active: true,
-        time: value?.time || new Date(),
-      });
+      handleToggleNotification(true);
     } else {
       setPermissionStatus('denied');
     }
   };
 
   const handleTimeChange = (time: Date) => {
+    setLocalTime(time);
     onChange({
-      active: permissionStatus === 'granted',
-      time: time || null,
+      active: isEnabled,
+      time,
     });
   };
 
-  const handleToggleNotification = () => {
-    if (permissionStatus === 'granted') {
-      onChange({
-        active: !value?.active,
-        time: value?.time || new Date(),
-      });
-    } else {
+  const handleToggleNotification = (newValue: boolean) => {
+    if (newValue && permissionStatus !== 'granted') {
       handlePermissionRequest();
+      return;
     }
-  };
 
-  const isNotificationEnabled = value?.active || permissionStatus === 'granted';
+    setIsEnabled(newValue);
+    onChange({
+      active: newValue,
+      time: localTime || new Date(),
+    });
+  };
 
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.label} variant='body2'>
-        {label}
-      </Text>
-
-      <TouchableOpacity
-        activeOpacity={NOTIFICATION_CONSTANTS.ACTIVE_OPACITY}
-        style={[styles.permissionButton, isNotificationEnabled && styles.permissionButtonActive]}
-        onPress={handleToggleNotification}
-      >
-        <Text
-          style={[
-            styles.permissionButtonText,
-            isNotificationEnabled && styles.permissionButtonTextActive,
-          ]}
-        >
-          {isNotificationEnabled ? BUTTON_TEXTS.DISABLE : BUTTON_TEXTS.ENABLE}
+      <TouchableOpacity style={styles.header} onPress={() => handleToggleNotification(!isEnabled)}>
+        <Text style={styles.label} variant='body2'>
+          {label}
         </Text>
+        <Switch
+          ios_backgroundColor={colors.BACKGROUND_SECONDARY}
+          thumbColor={colors.PRIMARY}
+          trackColor={{ false: colors.BACKGROUND_SECONDARY, true: colors.PRIMARY }}
+          value={isEnabled}
+          onValueChange={handleToggleNotification}
+        />
       </TouchableOpacity>
 
-      {isNotificationEnabled && (
+      {isEnabled && (
         <View style={styles.timeContainer}>
           <Text style={styles.timeLabel} variant='body2'>
             {LABELS.TIME}
@@ -83,7 +77,7 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
             label=''
             placeholder={LABELS.SELECT_TIME}
             type='time'
-            value={value?.time}
+            value={localTime}
             onChange={handleTimeChange}
           />
         </View>

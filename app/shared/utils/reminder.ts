@@ -72,6 +72,10 @@ export const setReminder = async (
         color: '#3C66FF',
         sound: 'default',
         importance: AndroidImportance.HIGH,
+        smallIcon: 'ic_stat_name',
+        pressAction: {
+          id: 'default',
+        },
         ...androidOptions,
       },
     },
