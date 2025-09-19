@@ -23,9 +23,6 @@ const Feed = () => {
     );
   }
 
-  console.log('====================================');
-  console.log(posts);
-  console.log('====================================');
   return (
     <FlatList
       data={posts}

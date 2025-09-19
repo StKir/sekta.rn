@@ -1,9 +1,12 @@
+/* eslint-disable no-console */
+/* eslint-disable react-native/no-unused-styles */
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+import { setReminders, sendTestNotification } from '@/shared/utils/reminder';
 import { calculateAge, formatBirthDate, formatRegistrationDate } from '@/shared/utils/dateUtils';
 import ThemeController from '@/shared/ui/ThemeController/ThemeController';
 import Text from '@/shared/ui/Text';
@@ -27,11 +30,11 @@ const ProfilePage = () => {
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
   const { userData, isLoading, loadUser, removeUser } = useUser();
-  const { setNotification, updateUser } = useUserStore();
+  const { setNotification, getNotification, notification } = useUserStore();
 
   useEffect(() => {
     loadUser();
-  }, [loadUser]);
+  }, [getNotification, loadUser, notification]);
 
   const getGenderText = (gender: any) => {
     if (typeof gender === 'object' && gender?.name) {
@@ -151,26 +154,43 @@ const ProfilePage = () => {
         <NotificationInput
           label='Ежедневные уведомления'
           value={{
-            active: userData?.notification?.active || false,
-            time: userData?.notification?.time ? new Date(userData?.notification?.time) : null,
+            active: notification?.active || false,
+            time: notification?.time ? new Date(notification?.time) : null,
           }}
-          onChange={(newNotification) => {
+          onChange={async (newNotification) => {
             if (userData) {
-              const notification = {
-                active: newNotification.active,
-                time: newNotification.time ? newNotification.time.toISOString() : null,
-              };
-              updateUser({
-                ...userData,
-                notification,
-              });
-              setNotification({
-                active: newNotification.active,
-                time: newNotification.time,
-              });
+              try {
+                const notificationData = {
+                  active: newNotification.active,
+                  time: newNotification.time,
+                };
+
+                if (notificationData.time) {
+                  setReminders(new Date(notificationData.time)).then(() => {
+                    setNotification(notificationData);
+                  });
+                }
+              } catch (error) {
+                console.log('====================================');
+                console.log(error);
+                console.log('====================================');
+              }
             }
           }}
         />
+
+        {/* <TouchableOpacity
+          style={[styles.button, styles.testButton]}
+          onPress={async () => {
+            try {
+              await sendTestNotification();
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+        >
+          <Text style={styles.buttonText}>Отправить тестовое уведомление</Text>
+        </TouchableOpacity> */}
 
         <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
           <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>

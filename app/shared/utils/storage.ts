@@ -8,6 +8,9 @@ const STORAGE_KEYS = {
   USER: 'user',
   LENT: 'lent',
   THEME: 'theme',
+  USER_TIME: 'user_time',
+  NOTIFICATION: 'notification',
+  AI_TOKEN: 'ai_token',
 };
 
 export const StorageService = {
@@ -20,6 +23,64 @@ export const StorageService = {
       storage.set(STORAGE_KEYS.USER, JSON.stringify(userData));
     } catch (error) {
       console.error('Error saving user data:', error);
+    }
+  },
+
+  setNotification: (notification: { active: boolean; time: Date | null }) => {
+    try {
+      // Преобразуем Date в строку перед сохранением
+      const notificationToSave = {
+        active: notification.active,
+        time: notification.time ? notification.time.toISOString() : null,
+      };
+      storage.set(STORAGE_KEYS.NOTIFICATION, JSON.stringify(notificationToSave));
+    } catch (error) {
+      console.error('Error saving notification:', error);
+    }
+  },
+
+  getNotification: () => {
+    try {
+      if (!storage.getString(STORAGE_KEYS.NOTIFICATION)) {
+        return null;
+      }
+
+      const savedNotification = JSON.parse(storage.getString(STORAGE_KEYS.NOTIFICATION) as string);
+
+      // Преобразуем строку обратно в объект Date при получении
+      return {
+        active: savedNotification.active,
+        time: savedNotification.time ? new Date(savedNotification.time) : null,
+      };
+    } catch (error) {
+      console.error('Error getting notification:', error);
+      return null;
+    }
+  },
+
+  setUserTime: (time: Date) => {
+    try {
+      // Преобразуем Date в строку ISO перед сохранением
+      storage.set(STORAGE_KEYS.USER_TIME, time.toISOString());
+    } catch (error) {
+      console.error('Error saving user time:', error);
+    }
+  },
+
+  setAiToken: (ai_tokens: number) => {
+    try {
+      storage.set(STORAGE_KEYS.AI_TOKEN, ai_tokens.toString());
+    } catch (error) {
+      console.error('Error saving ai token:', error);
+    }
+  },
+
+  getAiToken: () => {
+    try {
+      return Number(storage.getString(STORAGE_KEYS.AI_TOKEN)) || 0;
+    } catch (error) {
+      console.error('Error getting ai token:', error);
+      return 0;
     }
   },
 

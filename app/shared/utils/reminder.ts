@@ -1,3 +1,5 @@
+import RNFS from 'react-native-fs';
+import { Platform, Image } from 'react-native';
 import notifee, {
   AndroidCategory,
   AndroidImportance,
@@ -6,6 +8,8 @@ import notifee, {
   TimestampTrigger,
   TriggerType,
 } from '@notifee/react-native';
+
+import { IMAGES } from '../constants/images';
 
 import { getRandomInt } from './numberUtils';
 import { getDateWithOffset, isDatePassed } from './dateUtils';
@@ -32,18 +36,26 @@ const remindersBodies = [
   'Все за сегодня успел?',
 ];
 
+const cleanText = (text: string) => text.replace(/<[^>]*>/g, '');
+
 export const getRemindersContent = () => ({
-  title: `<p style="color: #0a0d67;"><b>${
-    remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
-  }</span></p></b></p> &#128576;`,
+  title:
+    Platform.OS === 'ios'
+      ? cleanText(remindersTitles[getRandomInt(0, remindersTitles.length - 1)])
+      : `<p style="color: #0a0d67;"><b>${
+          remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
+        }</span></p></b></p> &#128576;`,
   body: remindersBodies[getRandomInt(0, remindersBodies.length - 1)],
 });
 
 export const getRemindersData = (date: Date) => ({
   date: date,
-  title: `<p style="color: #0a0d67;"><b>${
-    remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
-  }</span></p></b></p> &#128576;`,
+  title:
+    Platform.OS === 'ios'
+      ? cleanText(remindersTitles[getRandomInt(0, remindersTitles.length - 1)])
+      : `<p style="color: #0a0d67;"><b>${
+          remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
+        }</span></p></b></p> &#128576;`,
   body: remindersBodies[getRandomInt(0, remindersBodies.length - 1)],
 });
 
@@ -66,6 +78,21 @@ export const setReminder = async (
   await notifee.createTriggerNotification(
     {
       ...getRemindersData(reminder.date),
+      ios: {
+        sound: 'default',
+        badgeCount: 1,
+        attachments: [
+          {
+            id: 'logonot',
+            url: IMAGES.logonot.uri,
+          },
+        ],
+        foregroundPresentationOptions: {
+          alert: true,
+          sound: true,
+          badge: true,
+        },
+      },
       android: {
         channelId: androidChannelId,
         category: AndroidCategory.EVENT,
@@ -88,7 +115,6 @@ export const setReminders = async (date: Date) => {
     const channels = await notifee.getChannels();
 
     const reminderChanel = channels.find((channel) => channel.id === 'main-channel-alert');
-
     if (!reminderChanel) {
       await notifee.createChannel({
         id: 'main-channel-alert',
@@ -147,5 +173,44 @@ export const removeAllReminders = async () => {
     await notifee.cancelAllNotifications();
   } catch (error) {
     console.error('Ошибка удаления всех напоминаний:', error);
+  }
+};
+
+export const sendTestNotification = async () => {
+  try {
+    await notifee.requestPermission();
+
+    if (Platform.OS === 'android') {
+      const channel = await notifee.getChannel('test-channel');
+      if (!channel) {
+        await notifee.createChannel({ id: 'test-channel', name: 'test-channel' });
+      }
+    }
+    await notifee.displayNotification({
+      title: 'Тестовое уведомление',
+      body: 'iOS тест локального уведомления',
+      ios: {
+        sound: 'default',
+        badgeCount: 1,
+        attachments: [
+          {
+            id: 'logonot-test',
+            url: IMAGES.logonot.uri,
+          },
+        ],
+        foregroundPresentationOptions: {
+          alert: true,
+          sound: true,
+          badge: true,
+        },
+      },
+      android: {
+        channelId: 'test-channel',
+        importance: AndroidImportance.HIGH,
+        smallIcon: 'ic_stat_name',
+      },
+    });
+  } catch (error) {
+    console.error('Ошибка показа тестового уведомления:', error);
   }
 };

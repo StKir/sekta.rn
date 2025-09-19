@@ -1,5 +1,6 @@
 /* eslint-disable react-native/split-platform-components */
 import { Platform, PermissionsAndroid, Alert } from 'react-native';
+import notifee from '@notifee/react-native';
 
 export const BUTTON_TEXTS = {
   ENABLE: 'Включить уведомления',
@@ -26,22 +27,24 @@ export const requestNotificationPermission = async () => {
     return result === PermissionsAndroid.RESULTS.GRANTED;
   }
 
-  // if (Platform.OS === 'ios') {
-  //   const authStatus = await messaging().requestPermission({
-  //     sound: true,
-  //     provisional: true,
-  //   });
+  if (Platform.OS === 'ios') {
+    const settings = await notifee.requestPermission({
+      sound: true,
+      announcement: true,
+      badge: true,
+      criticalAlert: false,
+      alert: true,
+      provisional: false,
+    });
 
-  //   const enabled =
-  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    const granted = settings.authorizationStatus;
 
-  //   if (!enabled) {
-  //     Alert.alert(i18n.t('common:notification'));
-  //   }
+    if (!granted) {
+      Alert.alert('Уведомления отклонены');
+    }
 
-  //   return enabled;
-  // }
+    return granted;
+  }
 
   return true;
 };

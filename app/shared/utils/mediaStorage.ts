@@ -25,7 +25,31 @@ export class MediaStorageService {
       const uniqueFileName = `${timestamp}_${Math.random().toString(36).substr(2, 9)}.${extension}`;
       const destinationPath = `${mediaDir}/${uniqueFileName}`;
 
-      await RNFS.copyFile(sourceUri, destinationPath);
+      // Нормализуем file:// URI
+      const isIOS = Platform.OS === 'ios';
+      const isPHAsset =
+        isIOS && (sourceUri.startsWith('ph://') || sourceUri.startsWith('assets-library://'));
+      const normalizedSource = sourceUri.startsWith('file://')
+        ? sourceUri.replace('file://', '')
+        : sourceUri;
+
+      if (isPHAsset) {
+        const isVideo = ['mp4', 'mov', 'm4v', 'avi', 'mkv'].some(
+          (ext) => extension.toLowerCase() === ext
+        );
+        if (isVideo) {
+          // Видео из фотобиблиотеки iOS
+          // @ts-ignore - типы могут не содержать метод, но он доступен на iOS
+          await RNFS.copyAssetsVideoIOS(sourceUri, destinationPath);
+        } else {
+          // Фото из фотобиблиотеки iOS
+          // Требует указать размеры, задаем большие чтобы избежать деградации
+          // @ts-ignore - типы могут не содержать метод, но он доступен на iOS
+          await RNFS.copyAssetsFileIOS(sourceUri, destinationPath, 4096, 4096, 1.0, 0.9, 'contain');
+        }
+      } else {
+        await RNFS.copyFile(normalizedSource, destinationPath);
+      }
 
       return destinationPath;
     } catch (error) {

@@ -1,6 +1,12 @@
 import Icon from 'react-native-vector-icons/Ionicons';
 import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 
 import Text from '@/shared/ui/Text';
@@ -21,6 +27,7 @@ type ButtonProps = {
   icon?: string;
   textStyle?: TextStyle;
   sticky?: boolean;
+  loading?: boolean;
 };
 
 const Button = ({
@@ -33,6 +40,7 @@ const Button = ({
   textStyle,
   sticky = false,
   icon,
+  loading = false,
 }: ButtonProps) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -102,8 +110,16 @@ const Button = ({
       style={getButtonStyle()}
       onPress={onPress}
     >
-      {title && <Text.Button style={[textStyle, { color: getTextColor() }]}>{title}</Text.Button>}
-      {icon && <Icon color={getTextColor()} name={icon} size={24} />}
+      {loading ? (
+        <ActivityIndicator color={colors.PRIMARY} size='small' />
+      ) : (
+        <>
+          {title && (
+            <Text.Button style={[textStyle, { color: getTextColor() }]}>{title}</Text.Button>
+          )}
+          {icon && <Icon color={getTextColor()} name={icon} size={24} />}
+        </>
+      )}
     </TouchableOpacity>
   );
 };

@@ -4,8 +4,9 @@ import {
   launchCamera,
   ImagePickerResponse,
   MediaType,
+  CameraOptions,
 } from 'react-native-image-picker';
-import { View, TouchableOpacity, FlatList } from 'react-native';
+import { View, TouchableOpacity, FlatList, Alert, Platform, Linking } from 'react-native';
 import React from 'react';
 
 import { createStyles } from './MediaPicker.styles';
@@ -56,7 +57,7 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
   };
 
   const launchCameraWithType = (mediaType: 'photo' | 'video') => {
-    const options = {
+    const options: CameraOptions = {
       mediaType: mediaType as MediaType,
       quality: 1 as const,
       maxWidth: 1920,
@@ -64,10 +65,32 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       includeBase64: false,
       videoQuality: 'high' as const,
       durationLimit: 30,
+      presentationStyle: Platform.OS === 'ios' ? 'fullScreen' : undefined,
+      includeExtra: true,
     };
 
     launchCamera(options, async (response: ImagePickerResponse) => {
-      if (response.didCancel || response.errorMessage) {
+      if (response.didCancel) {
+        return;
+      }
+
+      if (response.errorCode) {
+        if (response.errorCode === 'permission') {
+          Alert.alert(
+            'Нет доступа',
+            mediaType === 'video'
+              ? 'Нет доступа к камере/микрофону. Разрешите в настройках.'
+              : 'Нет доступа к камере. Разрешите в настройках.',
+            [
+              { text: 'Отмена', style: 'cancel' },
+              { text: 'Открыть настройки', onPress: () => Linking.openSettings() },
+            ]
+          );
+        } else if (response.errorCode === 'camera_unavailable') {
+          Alert.alert('Камера недоступна', 'Проверьте разрешения или устройство.');
+        } else {
+          Alert.alert('Ошибка камеры', response.errorMessage || 'Не удалось открыть камеру');
+        }
         return;
       }
 
@@ -105,10 +128,28 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       includeBase64: false,
       selectionLimit: selectionLimit,
       videoQuality: 'medium' as const,
+      presentationStyle: Platform.OS === 'ios' ? 'fullScreen' : undefined,
+      includeExtra: true,
     };
 
     launchImageLibrary(options, async (response: ImagePickerResponse) => {
-      if (response.didCancel || response.errorMessage) {
+      if (response.didCancel) {
+        return;
+      }
+
+      if (response.errorCode) {
+        if (response.errorCode === 'permission') {
+          Alert.alert(
+            'Нет доступа к медиа',
+            'Разрешите доступ к Фото в настройках, чтобы выбрать медиа.',
+            [
+              { text: 'Отмена', style: 'cancel' },
+              { text: 'Открыть настройки', onPress: () => Linking.openSettings() },
+            ]
+          );
+        } else {
+          Alert.alert('Ошибка галереи', response.errorMessage || 'Не удалось открыть галерею');
+        }
         return;
       }
 

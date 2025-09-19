@@ -1,5 +1,6 @@
 import { View, Switch, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import notifee from '@notifee/react-native';
 
 import { NotificationInputProps } from './types';
 import { createStyles } from './styles';
@@ -8,6 +9,7 @@ import { LABELS, requestNotificationPermission } from './constants';
 import Text from '@/shared/ui/Text/Text';
 import { DateInput } from '@/shared/ui';
 import { useTheme } from '@/shared/theme';
+import { useUserStore } from '@/entities/user';
 
 const NotificationInput = ({ label, value, onChange, style }: NotificationInputProps) => {
   const { colors } = useTheme();
@@ -15,6 +17,7 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | null>(null);
   const [localTime, setLocalTime] = useState<Date | null>(value?.time || null);
   const [isEnabled, setIsEnabled] = useState(value?.active || false);
+  const { setNotification } = useUserStore();
 
   useEffect(() => {
     setLocalTime(value?.time || null);
@@ -46,7 +49,13 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
       return;
     }
 
+    if (!newValue) {
+      notifee.cancelAllNotifications();
+    }
+
+    setNotification({ active: newValue, time: localTime || new Date() });
     setIsEnabled(newValue);
+
     onChange({
       active: newValue,
       time: localTime || new Date(),

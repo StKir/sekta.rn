@@ -42,6 +42,7 @@ export const getDateWithOffset = (dayOffset: number, h: number, m: number) => {
   const date = new Date();
   date.setDate(date.getDate() + dayOffset);
   date.setHours(h, m, 0, 0);
+
   return date;
 };
 

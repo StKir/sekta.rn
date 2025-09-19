@@ -45,6 +45,7 @@ export const useLentStore = create<LentStore>()(
     (setState, get) => ({
       posts: [],
       total: 0,
+      userTime: null,
 
       addPost: (data: Post) => {
         setState((state) => ({

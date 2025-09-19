@@ -25,7 +25,6 @@ const SwipeableTabView = forwardRef<SwipeableTabViewRef, SwipeableTabViewProps>(
 
     const handlePageSelected = (event: any) => {
       const { position } = event.nativeEvent;
-      console.log('Page selected:', position);
       onPageSelected(position);
     };
 

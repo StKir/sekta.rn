@@ -1,5 +1,6 @@
-import { StyleSheet, View, FlatList } from 'react-native';
-import React from 'react';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, View, FlatList, Alert } from 'react-native';
+import React, { useState } from 'react';
 
 import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
@@ -11,6 +12,7 @@ import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { sendToGPT } from '@/shared/api/AIActions';
+import { useUserStore } from '@/entities/user/store/userStore';
 import { useLentStore } from '@/entities/lent/store/store';
 import { weekAnalysisPrompt, questionPrompt } from '@/entities/assiatent/promts';
 
@@ -27,6 +29,16 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { postsData, checkIns } = useDaysPosts(4);
   const { addCustomPost } = useLentStore();
   const user = useUser();
+  const [isLoading, setIsLoading] = useState(false);
+  const { ai_tokens, minusAiToken } = useUserStore();
+
+  const checkAiTokens = () => {
+    if (ai_tokens <= 0) {
+      Alert.alert('У вас закончились токены(');
+      return false;
+    }
+    return true;
+  };
 
   const aiBlocks: AIBlock[] = [
     {
@@ -35,21 +47,40 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       description:
         'Расскажем нейросети о твоей неделе — и вернём вдохновляющие советы, которые помогут почувствовать себя лучше 💛',
       action: async () => {
-        const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
+        // if (!checkAiTokens()) {
+        //   return;
+        // }
 
-        const aiResponseID = await sendToGPT(prompt);
+        try {
+          setIsLoading(true);
+          const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
 
-        addCustomPost({
-          date: new Date().toISOString(),
-          id: aiResponseID,
-          type: 'ai_text',
-          title: 'AI Анализ недели' + ' ' + formatDateRange(new Date().toISOString()),
-          data: {
-            status: 'processing',
-            result: '',
-          },
-        });
-        changeTab(0);
+          const aiResponseID = await sendToGPT(prompt);
+
+          if (typeof aiResponseID === 'number') {
+            console.log('====================================');
+            console.log(aiResponseID);
+            console.log('====================================');
+            minusAiToken();
+          }
+
+          addCustomPost({
+            date: new Date().toISOString(),
+            id: aiResponseID,
+            type: 'ai_text',
+            title: 'AI Анализ недели' + ' ' + formatDateRange(new Date().toISOString()),
+            data: {
+              status: 'processing',
+              result: '',
+            },
+          });
+          changeTab(0);
+          setIsLoading(false);
+        } catch {
+          setIsLoading(false);
+          Alert.alert('Произошла ошибка(');
+          return;
+        }
       },
     },
     {
@@ -58,12 +89,20 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       description:
         'Спроси что угодно у нашего AI-психолога — и получи тёплый, персональный совет на основе твоих записей 🪄',
       action: async () => {
+        // if (!checkAiTokens()) {
+        //   return;
+        // }
+
         try {
           const question = await showAIQuestionModal();
-
-          const prompt = questionPrompt(postsData.slice(0, 2), user.userData, question);
           changeTab(0);
+          const prompt = questionPrompt(postsData.slice(0, 2), user.userData, question);
           const aiResponseID = await sendToGPT(prompt);
+
+          if (typeof aiResponseID === 'number') {
+            minusAiToken();
+          }
+
           addCustomPost({
             date: new Date().toISOString(),
             id: aiResponseID,
@@ -89,7 +128,13 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       <Text style={styles.blockDescription} variant='body2'>
         {item.description}
       </Text>
-      <Button fullWidth title='Начать' variant='outline' onPress={item.action} />
+      <Button
+        fullWidth
+        loading={isLoading}
+        title='Начать'
+        variant='outline'
+        onPress={item.action}
+      />
     </View>
   );
 
@@ -98,6 +143,13 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       <Text style={styles.pageTitle} variant='h2'>
         AI Помощник
       </Text>
+
+      <View style={{ marginBottom: SPACING.LARGE }}>
+        <Text style={{ color: colors.PRIMARY }} variant='h3'>
+          {ai_tokens} <Icon color={colors.PRIMARY} name='star' size={18} />
+        </Text>
+      </View>
+
       <FlatList
         contentContainerStyle={styles.listContainer}
         data={aiBlocks}
