@@ -1,20 +1,23 @@
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StyleSheet, View, FlatList, Alert } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
 import { showAIQuestionModal } from '@/shared/ui/AIQuestionModal/showAIQuestionModal';
-import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { sendToGPT } from '@/shared/api/AIActions';
+import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user/store/userStore';
 import { useLentStore } from '@/entities/lent/store/store';
 import { weekAnalysisPrompt, questionPrompt } from '@/entities/assiatent/promts';
+import { AICard } from '@/entities/ai/AiCard';
 
 type AIBlock = {
   id: string;
@@ -29,7 +32,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { postsData, checkIns } = useDaysPosts(4);
   const { addCustomPost } = useLentStore();
   const user = useUser();
-  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { ai_tokens, minusAiToken } = useUserStore();
 
   const checkAiTokens = () => {
@@ -47,20 +50,16 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       description:
         'Расскажем нейросети о твоей неделе — и вернём вдохновляющие советы, которые помогут почувствовать себя лучше 💛',
       action: async () => {
-        // if (!checkAiTokens()) {
-        //   return;
-        // }
+        if (!checkAiTokens()) {
+          return;
+        }
 
         try {
-          setIsLoading(true);
           const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
 
           const aiResponseID = await sendToGPT(prompt);
 
           if (typeof aiResponseID === 'number') {
-            console.log('====================================');
-            console.log(aiResponseID);
-            console.log('====================================');
             minusAiToken();
           }
 
@@ -75,9 +74,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
             },
           });
           changeTab(0);
-          setIsLoading(false);
         } catch {
-          setIsLoading(false);
           Alert.alert('Произошла ошибка(');
           return;
         }
@@ -89,9 +86,9 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       description:
         'Спроси что угодно у нашего AI-психолога — и получи тёплый, персональный совет на основе твоих записей 🪄',
       action: async () => {
-        // if (!checkAiTokens()) {
-        //   return;
-        // }
+        if (!checkAiTokens()) {
+          return;
+        }
 
         try {
           const question = await showAIQuestionModal();
@@ -118,24 +115,35 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         }
       },
     },
+    {
+      id: '3',
+      title: 'Составить плейлист',
+      description: 'Составим плейлист на основе твоих записей и предпочтений.',
+      action: async () => {
+        if (!checkAiTokens()) {
+          return;
+        }
+        navigation.navigate('AiPlayListPage');
+        return;
+      },
+    },
+    {
+      id: '4',
+      title: 'Придумать планы',
+      description:
+        'Отправим нейросети контекст твоей жизни и пожелания взамен получим подбрку идей на неделю/выходные/вечер',
+      action: async () => {
+        if (!checkAiTokens()) {
+          return;
+        }
+        navigation.navigate('AiPlans');
+        return;
+      },
+    },
   ];
 
   const renderAIBlock = ({ item }: { item: AIBlock }) => (
-    <View style={styles.blockContainer}>
-      <Text style={styles.blockTitle} variant='h3'>
-        {item.title}
-      </Text>
-      <Text style={styles.blockDescription} variant='body2'>
-        {item.description}
-      </Text>
-      <Button
-        fullWidth
-        loading={isLoading}
-        title='Начать'
-        variant='outline'
-        onPress={item.action}
-      />
-    </View>
+    <AICard description={item.description} title={item.title} onPress={item.action} />
   );
 
   return (
@@ -144,16 +152,23 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         AI Помощник
       </Text>
 
-      <View style={{ marginBottom: SPACING.LARGE }}>
-        <Text style={{ color: colors.PRIMARY }} variant='h3'>
-          {ai_tokens} <Icon color={colors.PRIMARY} name='star' size={18} />
-        </Text>
-      </View>
-
       <FlatList
         contentContainerStyle={styles.listContainer}
         data={aiBlocks}
         keyExtractor={(item) => item.id}
+        ListFooterComponent={<View style={{ height: 100 }} />}
+        ListHeaderComponent={
+          <View style={{ marginBottom: SPACING.LARGE }}>
+            <View style={{ marginBottom: SPACING.LARGE }}>
+              <Text style={{ color: colors.PRIMARY }} variant='h3'>
+                {ai_tokens} <Icon color={colors.PRIMARY} name='star' size={18} />
+              </Text>
+            </View>
+            <Text color='textSecondary' variant='body2'>
+              Получайте токены за добавление чек-инов
+            </Text>
+          </View>
+        }
         renderItem={renderAIBlock}
         showsVerticalScrollIndicator={false}
       />
@@ -175,23 +190,6 @@ const createStyles = (colors: ThemeColors) =>
     },
     listContainer: {
       paddingBottom: SPACING.LARGE,
-    },
-    blockContainer: {
-      backgroundColor: colors.BACKGROUND_SECONDARY,
-      borderRadius: 14,
-      padding: SPACING.LARGE,
-      marginBottom: SPACING.MEDIUM,
-      borderWidth: 1,
-      borderColor: colors.BORDER,
-    },
-    blockTitle: {
-      color: colors.TEXT_PRIMARY,
-      marginBottom: SPACING.SMALL,
-    },
-    blockDescription: {
-      color: colors.TEXT_SECONDARY,
-      marginBottom: SPACING.LARGE,
-      lineHeight: 22,
     },
   });
 

@@ -18,18 +18,22 @@ const options: OptionType[] = [
     type: 'check-in',
   },
   {
+    title: 'Заметка',
+    type: 'note',
+  },
+  {
     title: 'Момент',
     type: 'moment',
   },
 ];
 
-type OptionType = { type: 'check-in' | 'moment'; title: string };
+type OptionType = { type: 'check-in' | 'moment' | 'note'; title: string };
 
 const AddRecordContent = ({ navigation }: AddRecordContentProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
-  const handleNavigate = (type: 'check-in' | 'moment') => {
+  const handleNavigate = (type: 'check-in' | 'moment' | 'note') => {
     BottomSheetManager.hide();
 
     if (type === 'check-in') {
@@ -38,6 +42,10 @@ const AddRecordContent = ({ navigation }: AddRecordContentProps) => {
 
     if (type === 'moment') {
       navigation?.navigate('MomentPage');
+    }
+
+    if (type === 'note') {
+      navigation?.navigate('NotePage');
     }
   };
 
@@ -66,7 +74,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     optionsContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'center',
       gap: SPACING.LARGE,
       flexWrap: 'wrap',
       width: '100%',

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import NotePost from './components/NotePost/NotePost';
 import MomentPost from './components/MomentPost/MomentPost';
 import CheckInPost from './components/CheckInPost/CheckInPost';
 import AIWeekAnalysisPostComponent from './components/AIWeekAnalysisPost/AIWeekAnalysisPost';
@@ -31,6 +32,19 @@ const Post = ({ post }: { post: PostType }) => {
           title='Мой пост'
         >
           <MomentPost post={postData} />
+        </Share>
+      );
+    }
+
+    if (postData.type === 'note') {
+      return (
+        <Share
+          id={postData.id}
+          key={postData.id}
+          message='Посмотри на мой пост в приложении!'
+          title='Мой пост'
+        >
+          <NotePost post={postData} />
         </Share>
       );
     }

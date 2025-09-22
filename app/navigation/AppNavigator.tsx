@@ -3,10 +3,13 @@ import React, { useEffect } from 'react';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+import NotePage from '@/pages/NotePage';
 import NewRegisterPage from '@/pages/NewRegisterPage';
 import MomentPage from '@/pages/MomentPage';
 import JsonFormPage from '@/pages/JsonFormPage';
 import CheckInPage from '@/pages/CheckInPage';
+import AiPlayListPage from '@/pages/AiPlayListPage';
+import AiPlans from '@/pages/AiPlans';
 import AIResultPage from '@/pages/AIResultPage';
 
 import { RootStackParamList } from './types';
@@ -47,7 +50,10 @@ const AppNavigator = () => {
         <Stack.Screen component={TabNavigator} name='TabNavigator' />
         <Stack.Screen component={JsonFormPage} name='JsonFormPage' />
         <Stack.Screen component={CheckInPage} name='CheckInPage' />
+        <Stack.Screen component={AiPlayListPage} name='AiPlayListPage' />
+        <Stack.Screen component={AiPlans} name='AiPlans' />
         <Stack.Screen component={MomentPage} name='MomentPage' />
+        <Stack.Screen component={NotePage} name='NotePage' />
         <Stack.Screen component={AIResultPage} name='AIResultPage' />
       </Stack.Navigator>
       <BottomSheet />

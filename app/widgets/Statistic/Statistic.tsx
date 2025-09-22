@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-unused-styles */
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import React, { useState } from 'react';
@@ -65,9 +66,16 @@ const Statistic = () => {
         <Text style={styles.sectionTitle} variant='h3'>
           Типы постов
         </Text>
-        <View style={styles.row}>
-          <StatCard title='Чекины' value={stats.checkInCount} />
-          <StatCard title='Моменты' value={stats.momentCount} />
+        <View style={styles.rowContainer}>
+          <View style={styles.row}>
+            <StatCard title='Чекины' value={stats.checkInCount} />
+            <StatCard title='Моменты' value={stats.momentCount} />
+          </View>
+
+          <View style={styles.row}>
+            <StatCard title='Заметки' value={stats.noteCount} />
+            <StatCard title='АИ анализ' value={stats.aiTextCount} />
+          </View>
         </View>
       </View>
 
@@ -138,6 +146,9 @@ const createStyles = (colors: ThemeColors) =>
     },
     section: {
       marginBottom: SPACING.XLARGE,
+    },
+    rowContainer: {
+      gap: SPACING.MEDIUM,
     },
     sectionTitle: {
       marginBottom: SPACING.MEDIUM,

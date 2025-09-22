@@ -1,5 +1,5 @@
-import RNFS from 'react-native-fs';
-import { Platform, Image } from 'react-native';
+import NotificationSounds from 'react-native-notification-sounds';
+import { Platform } from 'react-native';
 import notifee, {
   AndroidCategory,
   AndroidImportance,
@@ -44,7 +44,7 @@ export const getRemindersContent = () => ({
       ? cleanText(remindersTitles[getRandomInt(0, remindersTitles.length - 1)])
       : `<p style="color: #0a0d67;"><b>${
           remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
-        }</span></p></b></p> &#128576;`,
+        }</span></p></b></p>;`,
   body: remindersBodies[getRandomInt(0, remindersBodies.length - 1)],
 });
 
@@ -55,7 +55,7 @@ export const getRemindersData = (date: Date) => ({
       ? cleanText(remindersTitles[getRandomInt(0, remindersTitles.length - 1)])
       : `<p style="color: #0a0d67;"><b>${
           remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
-        }</span></p></b></p> &#128576;`,
+        }</span></p></b></p>;`,
   body: remindersBodies[getRandomInt(0, remindersBodies.length - 1)],
 });
 
@@ -67,14 +67,21 @@ export const setReminder = async (
 ) => {
   const isLate = isDatePassed(reminder.date);
 
+  const timestamp = getDateWithOffset(
+    isLate ? 1 : 0,
+    reminder.date.getHours(),
+    reminder.date.getMinutes()
+  ).getTime();
+
   const trigger: TimestampTrigger = {
     type: TriggerType.TIMESTAMP,
-    timestamp: isLate
-      ? getDateWithOffset(1, reminder.date.getHours(), reminder.date.getMinutes()).getTime()
-      : reminder.date.getTime(),
+    timestamp: timestamp,
     ...triggerOptions,
   };
 
+  const soundsList = await NotificationSounds.getNotifications('notification');
+
+  await notifee.cancelAllNotifications();
   await notifee.createTriggerNotification(
     {
       ...getRemindersData(reminder.date),
@@ -97,7 +104,7 @@ export const setReminder = async (
         channelId: androidChannelId,
         category: AndroidCategory.EVENT,
         color: '#3C66FF',
-        sound: 'default',
+        sound: soundsList[0].url,
         importance: AndroidImportance.HIGH,
         smallIcon: 'ic_stat_name',
         pressAction: {
@@ -114,12 +121,15 @@ export const setReminders = async (date: Date) => {
   try {
     const channels = await notifee.getChannels();
 
+    const soundsList = await NotificationSounds.getNotifications('notification');
+
     const reminderChanel = channels.find((channel) => channel.id === 'main-channel-alert');
     if (!reminderChanel) {
       await notifee.createChannel({
         id: 'main-channel-alert',
         name: 'reminder-channel',
         description: 'reminder-channel',
+        sound: soundsList[0].url,
       });
     }
 

@@ -53,6 +53,19 @@ export type MomentInPost = {
   data: MomentPostData;
 };
 
+export type NotePost = {
+  date: string;
+  id: string | number;
+  type: 'note';
+  data: NotePostData;
+};
+
+export type NotePostData = {
+  name: string;
+  note: string;
+  media?: MediaItem[];
+};
+
 export type AIPost = {
   date: string;
   id: string | number;
@@ -72,4 +85,5 @@ export type CustomPost =
       data: CustomPostData;
     }
   | MomentInPost
-  | AIPost;
+  | AIPost
+  | NotePost;

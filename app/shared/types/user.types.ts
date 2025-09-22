@@ -27,6 +27,7 @@ export interface UserData {
   // Дополнительная информация из регистрации
   feeling?: string;
   stress_level?: string;
+  about_me?: string;
   bad_habits?: string;
   tracking_goals?: string[];
   app_experience?: string;

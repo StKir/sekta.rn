@@ -48,5 +48,9 @@ export const getDateWithOffset = (dayOffset: number, h: number, m: number) => {
 
 export const isDatePassed = (date: Date) => {
   const now = new Date();
-  return date.getTime() < now.getTime();
+  const h = date.getHours();
+  const m = date.getMinutes();
+
+  const time = new Date().setHours(h, m, 0, 0);
+  return time < now.getTime();
 };

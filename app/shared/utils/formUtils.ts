@@ -1,4 +1,11 @@
-import { CheckInPost, CheckInPostData, MomentInPost, MomentPostData } from '@/types/lentTypes';
+import {
+  CheckInPost,
+  CheckInPostData,
+  MomentInPost,
+  MomentPostData,
+  NotePost,
+  NotePostData,
+} from '@/types/lentTypes';
 import { TestResult, TestResultQuestion } from '@/shared/types/testResult.types';
 import { FormTest, FormAnswers } from '@/shared/types/form.types';
 
@@ -100,5 +107,20 @@ export const convertTestResultToMomentPost = (testResult: TestResult): MomentInP
     id: `moment_${Date.now()}`,
     type: 'moment',
     data,
+  };
+};
+
+export const convertTestResultToNotePost = (testResult: TestResult): NotePost => {
+  const data = {};
+  testResult.data.forEach((question) => {
+    //@ts-ignore
+    data[question.name as keyof NotePostData] = question.answer;
+  });
+
+  return {
+    date: testResult.date,
+    id: `note_${Date.now()}`,
+    type: 'note',
+    data: data as NotePostData,
   };
 };

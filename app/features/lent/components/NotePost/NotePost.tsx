@@ -1,21 +1,21 @@
 import { View } from 'react-native';
 import React from 'react';
 
-import { MomentInPost } from '@/types/lentTypes';
+import { NotePost as NotePostType } from '@/types/lentTypes';
 import Title from '@/shared/ui/Title';
 import TimeTitle from '@/shared/ui/TimeTitle/TimeTitle';
 import MainContainer from '@/shared/ui/Container/MainContainer';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
-import TagListLent from '@/entities/lent/ui/TagListLent/TagListLent';
+import TextLent from '@/entities/lent/ui/TextLent/TextLent';
 import MediaLent from '@/entities/lent/ui/MediaLent/MediaLent';
 
-type MomentPostProps = {
-  post: MomentInPost;
+type NotePostProps = {
+  post: NotePostType;
 };
 
-const MomentPost = ({ post }: MomentPostProps) => {
-  const { media, emotions, name } = post.data;
+const NotePost = ({ post }: NotePostProps) => {
+  const { note, media, name } = post.data;
   const { date } = post;
   const { colors } = useTheme();
 
@@ -38,10 +38,13 @@ const MomentPost = ({ post }: MomentPostProps) => {
           <Title marginBottom={0}>{name}</Title>
         </MainContainer>
       )}
-      <MediaLent containerStyle={{ height: 500 }} media={media} />
-      {emotions && emotions?.length > 0 && <TagListLent tags={emotions} variant='small' />}
+      {note && <TextLent text={note} type='text' />}
+      <MediaLent
+        containerStyle={{ height: 200, flexDirection: 'row', alignItems: 'center' }}
+        media={media}
+      />
     </View>
   );
 };
 
-export default React.memo(MomentPost);
+export default React.memo(NotePost);

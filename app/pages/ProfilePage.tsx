@@ -1,14 +1,15 @@
 /* eslint-disable no-console */
 /* eslint-disable react-native/no-unused-styles */
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { setReminders, sendTestNotification } from '@/shared/utils/reminder';
+import { setReminders } from '@/shared/utils/reminder';
 import { calculateAge, formatBirthDate, formatRegistrationDate } from '@/shared/utils/dateUtils';
 import ThemeController from '@/shared/ui/ThemeController/ThemeController';
+import TextArea from '@/shared/ui/TextArea/TextArea';
 import Text from '@/shared/ui/Text';
 import NotificationInput from '@/shared/ui/NotificationInput/NotificationInput';
 import { ThemeColors } from '@/shared/theme/types';
@@ -30,11 +31,16 @@ const ProfilePage = () => {
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
   const { userData, isLoading, loadUser, removeUser } = useUser();
-  const { setNotification, getNotification, notification } = useUserStore();
-
+  const { setNotification, getNotification, notification, updateUser } = useUserStore();
   useEffect(() => {
-    loadUser();
-  }, [getNotification, loadUser, notification]);
+    if (!userData) {
+      loadUser();
+    }
+  }, [getNotification, loadUser, notification, userData]);
+
+  const handleFeedback = () => {
+    Linking.openURL('https://t.me/OG_Kurasaki');
+  };
 
   const getGenderText = (gender: any) => {
     if (typeof gender === 'object' && gender?.name) {
@@ -146,56 +152,71 @@ const ProfilePage = () => {
         Профиль
       </Text>
 
-      {renderUserProfile()}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {renderUserProfile()}
+        <View style={styles.buttonContainer}>
+          <TextArea
+            label='О тебе'
+            multiline={true}
+            numberOfLines={6}
+            placeholder='Расскажи о себе, что тебе нравится, чем увлекаешься, чего ты хочешь достичь'
+            value={userData?.about_me || ''}
+            onChangeText={(value) => {
+              updateUser({ about_me: value });
+            }}
+          />
 
-      <View style={styles.buttonContainer}>
-        <ThemeController />
+          <ThemeController />
 
-        <NotificationInput
-          label='Ежедневные уведомления'
-          value={{
-            active: notification?.active || false,
-            time: notification?.time ? new Date(notification?.time) : null,
-          }}
-          onChange={async (newNotification) => {
-            if (userData) {
-              try {
-                const notificationData = {
-                  active: newNotification.active,
-                  time: newNotification.time,
-                };
+          <NotificationInput
+            label='Ежедневные уведомления'
+            value={{
+              active: notification?.active || false,
+              time: notification?.time ? new Date(notification?.time) : null,
+            }}
+            onChange={async (newNotification) => {
+              if (userData) {
+                try {
+                  const notificationData = {
+                    active: newNotification.active,
+                    time: newNotification.time,
+                  };
 
-                if (notificationData.time) {
-                  setReminders(new Date(notificationData.time)).then(() => {
-                    setNotification(notificationData);
-                  });
+                  if (notificationData.time) {
+                    setReminders(new Date(notificationData.time)).then(() => {
+                      setNotification(notificationData);
+                    });
+                  }
+                } catch {
+                  Alert.alert('Произошла ошибка(');
                 }
-              } catch (error) {
-                console.log('====================================');
-                console.log(error);
-                console.log('====================================');
               }
-            }
-          }}
-        />
+            }}
+          />
 
-        {/* <TouchableOpacity
+          {/* <TouchableOpacity
           style={[styles.button, styles.testButton]}
           onPress={async () => {
             try {
               await sendTestNotification();
-            } catch (error) {
-              console.log(error);
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>Отправить тестовое уведомление</Text>
-        </TouchableOpacity> */}
+              } catch (error) {
+                console.log(error);
+                }
+                }}
+                >
+                <Text style={styles.buttonText}>Отправить тестовое уведомление</Text>
+                </TouchableOpacity> */}
 
-        <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-          <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
+            <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
+            <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
+          </TouchableOpacity>
+          <View style={{ height: 150 }} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -288,7 +309,7 @@ const createStyles = (colors: ThemeColors) =>
 
     // Кнопки
     buttonContainer: {
-      gap: SPACING.MEDIUM,
+      gap: SPACING.LARGE,
     },
     button: {
       backgroundColor: colors.PRIMARY,
@@ -304,6 +325,9 @@ const createStyles = (colors: ThemeColors) =>
     },
     logoutButton: {
       backgroundColor: colors.DANGER,
+    },
+    feedbackButton: {
+      backgroundColor: colors.INFO,
     },
     logoutButtonText: {
       color: 'white',

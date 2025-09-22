@@ -1,39 +1,33 @@
 import React from 'react';
-import jsonData from 'apptests/check.json';
+import jsonData from 'apptests/note.json';
 import { useNavigation } from '@react-navigation/native';
 
 import {
   transformJsonToFormData,
   formatAnswersToTestResult,
-  convertTestResultToCheckInPost,
+  convertTestResultToNotePost,
 } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
-import { useUserStore } from '@/entities/user';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 import { useLentStore } from '@/entities/lent/store/store';
 
-const CheckInPage = () => {
+const NotePage = () => {
   const formData = transformJsonToFormData(jsonData);
   const navigation = useNavigation();
   const { addResult } = useTestResultsStore();
-  const { plusAiToken, ai_tokens } = useUserStore();
-  const { addCheckIn } = useLentStore();
+  const { addCustomPost } = useLentStore();
 
   const handleFormComplete = (answers: FormAnswers) => {
     const testResult = formatAnswersToTestResult(formData, answers);
-    const checkInPost = convertTestResultToCheckInPost(testResult);
+    const notePost = convertTestResultToNotePost(testResult);
 
     addResult(testResult);
-    addCheckIn(checkInPost);
-
-    if (ai_tokens < 2) {
-      plusAiToken();
-    }
+    addCustomPost(notePost);
 
     navigation.goBack();
   };
   return <DynamicForm stickyButton formData={formData} onComplete={handleFormComplete} />;
 };
 
-export default CheckInPage;
+export default NotePage;

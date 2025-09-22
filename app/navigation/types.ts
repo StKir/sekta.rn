@@ -7,7 +7,10 @@ export type RootStackParamList = {
   Register: undefined;
   JsonFormPage: undefined;
   CheckInPage: undefined;
+  AiPlayListPage: undefined;
   MomentPage: undefined;
+  AiPlans: undefined;
+  NotePage: undefined;
   AIQuestionPage: undefined;
   AIResultPage: {
     requestId: number;

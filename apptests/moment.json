@@ -20,11 +20,6 @@
           "question": "Фото или видео"
         },
         {
-          "name": "note",
-          "type": "area",
-          "question": "Заметка"
-        },
-        {
           "name": "emotions",
           "type": "multi_select",
           "question": "Эмоции",

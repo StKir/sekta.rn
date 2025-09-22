@@ -26,6 +26,7 @@ export const weekAnalysisPrompt = (postsData: any, user?: UserData) => {
 Пол: ${user?.gender}
 Возраст: ${user?.birthDate ? calculateAge(user.birthDate) : 'Не указан'}
 Стиль общения: ${user?.communication_style}
+О себе: ${user?.about_me}
 
 Вот данные:
 ${JSON.stringify(postsData)}
@@ -37,6 +38,46 @@ ${JSON.stringify(postsData)}
 обязательно на русском языке.
 и пиши автора 
 	`;
+};
+
+export const playlistPrompt = (postsData: any, user: UserData | null, question: string) => {
+  return `На основе данных пользователя, составь плейлист на основе его предпочтений и настроений.
+
+Информация о пользователе:
+Имя: ${user?.name} ${user?.surname}
+Пол: ${user?.gender}
+Возраст: ${user?.birthDate ? calculateAge(user.birthDate) : 'Не указан'}
+Стиль общения: ${user?.communication_style}
+О себе: ${user?.about_me}
+
+Плейлист пареметры:
+${question}
+
+Контекст пользователя за последние дни:
+${JSON.stringify(postsData)}
+
+
+`;
+};
+
+export const plansPrompt = (postsData: any, user: UserData | null, question: string) => {
+  return `На основе данных пользователя, и его пожеланий, придумай планы и интересные активности
+  
+  Информация о пользователе:
+  Имя: ${user?.name} ${user?.surname}
+  Пол: ${user?.gender}
+  Возраст: ${user?.birthDate ? calculateAge(user.birthDate) : 'Не указан'}
+  Стиль общения: ${user?.communication_style}
+  О себе: ${user?.about_me}
+  
+  Пожелания пользователя:
+  ${question}
+  
+  Контекст пользователя за последние дни (или меньше):
+  ${JSON.stringify(postsData)}
+  
+  
+  `;
 };
 
 export const questionPrompt = (postsData: any, user: UserData | null, question: string) => {
@@ -66,6 +107,7 @@ export const questionPrompt = (postsData: any, user: UserData | null, question: 
 Пол: ${user?.gender}
 Возраст: ${user?.birthDate ? calculateAge(user.birthDate) : 'Не указан'}
 Стиль общения: ${user?.communication_style}
+О себе: ${user?.about_me}
 
 Контекст пользователя за последние дни:
 ${JSON.stringify(postsData)}`;

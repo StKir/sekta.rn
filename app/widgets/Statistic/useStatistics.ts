@@ -12,6 +12,8 @@ export type DayData = {
 export type StatisticsData = {
   checkInCount: number;
   momentCount: number;
+  noteCount: number;
+  aiTextCount: number;
   mostFrequentMood: string | null;
   favoriteColor: string | null;
   favoriteActivity: string | null;
@@ -35,6 +37,8 @@ export const useStatistics = (days: number = 7): StatisticsData => {
 
     let checkInCount = 0;
     let momentCount = 0;
+    let noteCount = 0;
+    let aiTextCount = 0;
     const moodAnswers: string[] = [];
     const colorNames: string[] = [];
     const activities: string[] = [];
@@ -79,6 +83,10 @@ export const useStatistics = (days: number = 7): StatisticsData => {
           if (item.data.emotions) {
             emotions.push(...item.data.emotions);
           }
+        } else if (item.type === 'note') {
+          noteCount++;
+        } else if (item.type === 'ai_text') {
+          aiTextCount++;
         }
       });
     });
@@ -97,6 +105,8 @@ export const useStatistics = (days: number = 7): StatisticsData => {
     return {
       checkInCount,
       momentCount,
+      noteCount,
+      aiTextCount,
       mostFrequentMood: getMostFrequent(moodAnswers),
       favoriteColor: getMostFrequent(colorNames),
       favoriteActivity: getMostFrequent(activities),

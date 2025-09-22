@@ -74,7 +74,7 @@ const QuestionRenderer = ({ question, value, onChange, onNext }: QuestionRendere
             error={value && !isValid ? 'Некорректное значение' : undefined}
             keyboardType='default'
             label={question.question}
-            placeholder='| '
+            placeholder=''
             value={value || ''}
             onChangeText={onChange}
           />

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-unused-styles */
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet, ScrollView, ViewStyle, StyleProp } from 'react-native';
 import React from 'react';
@@ -60,7 +61,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     content: {
       paddingHorizontal: SPACING.MEDIUM,
-      paddingVertical: SPACING.MEDIUM,
+      paddingVertical: SPACING.LARGE,
       borderRadius: SPACING.LARGE,
       backgroundColor: colors.BACKGROUND_SECONDARY,
       gap: SPACING.LARGE,

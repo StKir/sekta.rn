@@ -1,0 +1,30 @@
+[
+  {
+    "id": 542342342,
+    "name": "Заметка",
+    "data": [
+      [
+        {
+          "name": "title_note",
+          "type": "title",
+          "title": "Создание заметки"
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "question": "Заголовок"
+        },
+        {
+          "name": "note",
+          "type": "area",
+          "question": "Заметка"
+        },
+        {
+          "name": "media",
+          "type": "media",
+          "question": "Фото или видео"
+        }
+      ]
+    ]
+  }
+]
