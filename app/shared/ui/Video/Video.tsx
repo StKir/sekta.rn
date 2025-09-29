@@ -13,6 +13,7 @@ type VideoProps = {
   autoPlay?: boolean;
   muted?: boolean;
   repeat?: boolean;
+  fastStart?: boolean;
 };
 
 const Video = ({
@@ -22,10 +23,11 @@ const Video = ({
   autoPlay = true,
   muted = true,
   repeat = true,
+  fastStart = false,
 }: VideoProps) => {
   const { colors } = useTheme();
   const [isFullScreen, setFullScreen] = useState(false);
-  const [isShow, setShow] = useState(false);
+  const [isShow, setShow] = useState(fastStart);
   const [isMuted, setIsMuted] = useState(muted);
   const [videoExists, setVideoExists] = useState(true);
   const [actualUri, setActualUri] = useState(uri);

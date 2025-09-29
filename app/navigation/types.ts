@@ -2,16 +2,15 @@ export type RootStackParamList = {
   TabNavigator: undefined;
   Profile: undefined;
   Calendar: undefined;
-  Events: undefined;
   Feed: undefined;
   Register: undefined;
-  JsonFormPage: undefined;
   CheckInPage: undefined;
   AiPlayListPage: undefined;
   MomentPage: undefined;
   AiPlans: undefined;
   NotePage: undefined;
   AIQuestionPage: undefined;
+  OnboardingPage: undefined;
   AIResultPage: {
     requestId: number;
   };

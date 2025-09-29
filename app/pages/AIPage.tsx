@@ -11,6 +11,7 @@ import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
+import { useDailyFirstLogin } from '@/shared/hooks/useDailyFirstLogin';
 import { SPACING } from '@/shared/constants';
 import { sendToGPT } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
@@ -27,6 +28,7 @@ type AIBlock = {
 };
 
 const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
+  useDailyFirstLogin();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const { postsData, checkIns } = useDaysPosts(4);
@@ -165,7 +167,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
               </Text>
             </View>
             <Text color='textSecondary' variant='body2'>
-              Получайте токены за добавление чек-инов
+              Получайте токены каждый день за вход в приложение
             </Text>
           </View>
         }

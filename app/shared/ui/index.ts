@@ -8,3 +8,4 @@ export { default as Range } from './Range/Range';
 export { default as Share } from './Share/Share';
 export { default as Video } from './Video/Video';
 export { default as ThemeController } from './ThemeController/ThemeController';
+export { AlertProvider, useAlert } from './CustomAlert';

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 
@@ -80,6 +81,7 @@ export const useUserStore = create<UserStore>()(
 
       plusAiToken: () => {
         setState((state) => ({ ai_tokens: state.ai_tokens + 1 }));
+        StorageService.setAiToken(get().ai_tokens + 1);
       },
 
       minusAiToken: () => {

@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
 import React from 'react';
-import jsonData from 'apptests/playlist.json';
+import jsonData from 'appData/apptests/playlist.json';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 

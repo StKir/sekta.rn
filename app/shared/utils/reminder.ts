@@ -27,6 +27,7 @@ const remindersTitles = [
   'Заполни чекин',
   'Ты почему мне не пишешь?',
   'Заполни меня',
+  'Как дела?',
 ];
 
 const remindersBodies = [
@@ -34,6 +35,9 @@ const remindersBodies = [
   'Ты помнишь про меня?',
   'А ты сегодня покушал?',
   'Все за сегодня успел?',
+  'Я волнюсь за тебя, напиши!',
+  'Чувствуешь этот момент?',
+  'У тебя все в порядке?',
 ];
 
 const cleanText = (text: string) => text.replace(/<[^>]*>/g, '');
@@ -53,9 +57,9 @@ export const getRemindersData = (date: Date) => ({
   title:
     Platform.OS === 'ios'
       ? cleanText(remindersTitles[getRandomInt(0, remindersTitles.length - 1)])
-      : `<p style="color: #0a0d67;"><b>${
+      : `<p style="color:rgb(0, 2, 71);"><b>${
           remindersTitles[getRandomInt(0, remindersTitles.length - 1)]
-        }</span></p></b></p>;`,
+        }</b></p>`,
   body: remindersBodies[getRandomInt(0, remindersBodies.length - 1)],
 });
 

@@ -6,6 +6,7 @@
  */
 
 import 'react-native-reanimated';
+import '@/shared/ui/CustomAlert/AlertOverride';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
@@ -16,6 +17,7 @@ import AppNavigator from '../navigation/AppNavigator';
 import { styles } from './styles/App.styles';
 
 import { getInitialReminderID, updateReminder } from '@/shared/utils/reminder';
+import { AlertProvider } from '@/shared/ui/CustomAlert';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { ThemeProvider } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
@@ -45,8 +47,10 @@ const App = (): React.JSX.Element => {
       <GestureHandlerRootView style={styles.container}>
         <BottomSheetModalProvider>
           <ThemeProvider>
-            <AppNavigator />
-            <BottomSheet />
+            <AlertProvider>
+              <AppNavigator />
+              <BottomSheet />
+            </AlertProvider>
           </ThemeProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>

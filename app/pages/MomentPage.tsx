@@ -1,5 +1,5 @@
 import React from 'react';
-import jsonData from 'apptests/moment.json';
+import jsonData from 'appData/apptests/moment.json';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -12,7 +12,7 @@ import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 import { useLentStore } from '@/entities/lent/store/store';
 
-const CheckInPage = () => {
+const MomentPage = () => {
   const formData = transformJsonToFormData(jsonData);
   const navigation = useNavigation();
   const { addResult } = useTestResultsStore();
@@ -32,4 +32,4 @@ const CheckInPage = () => {
   return <DynamicForm stickyButton formData={formData} onComplete={handleFormComplete} />;
 };
 
-export default CheckInPage;
+export default MomentPage;

@@ -11,7 +11,6 @@ export const useUser = (): UseUserReturn => {
     isLoading,
     isAuthenticated,
     setUser,
-
     theme: userData?.theme || 'light',
     updateUser,
     loadUser,

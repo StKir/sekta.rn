@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   USER_TIME: 'user_time',
   NOTIFICATION: 'notification',
   AI_TOKEN: 'ai_token',
+  LAST_LOGIN_DATE: 'last_login_date',
 };
 
 export const StorageService = {

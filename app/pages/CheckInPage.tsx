@@ -1,5 +1,5 @@
 import React from 'react';
-import jsonData from 'apptests/check.json';
+import jsonData from 'appData/apptests/check.json';
 import { useNavigation } from '@react-navigation/native';
 
 import {
@@ -9,7 +9,6 @@ import {
 } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
-import { useUserStore } from '@/entities/user';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 import { useLentStore } from '@/entities/lent/store/store';
 
@@ -17,7 +16,6 @@ const CheckInPage = () => {
   const formData = transformJsonToFormData(jsonData);
   const navigation = useNavigation();
   const { addResult } = useTestResultsStore();
-  const { plusAiToken, ai_tokens } = useUserStore();
   const { addCheckIn } = useLentStore();
 
   const handleFormComplete = (answers: FormAnswers) => {
@@ -26,10 +24,6 @@ const CheckInPage = () => {
 
     addResult(testResult);
     addCheckIn(checkInPost);
-
-    if (ai_tokens < 2) {
-      plusAiToken();
-    }
 
     navigation.goBack();
   };

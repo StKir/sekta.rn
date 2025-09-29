@@ -1,5 +1,5 @@
 import React from 'react';
-import jsonData from 'apptests/note.json';
+import jsonData from 'appData/apptests/note.json';
 import { useNavigation } from '@react-navigation/native';
 
 import {

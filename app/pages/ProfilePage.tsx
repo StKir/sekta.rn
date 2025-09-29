@@ -53,6 +53,10 @@ const ProfilePage = () => {
     navigation.navigate('Register');
   };
 
+  const handleOnboarding = () => {
+    navigation.navigate('OnboardingPage');
+  };
+
   const handleLogout = () => {
     try {
       Alert.alert('Вы уверены, что хотите выйти?', 'Это действие нельзя будет отменить', [
@@ -207,10 +211,15 @@ const ProfilePage = () => {
                 <Text style={styles.buttonText}>Отправить тестовое уведомление</Text>
                 </TouchableOpacity> */}
 
-          <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
+          {/* <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            style={[styles.button, styles.feedbackButton]}
+            onPress={handleOnboarding}
+          >
+            <Text style={[styles.buttonText, styles.logoutButtonText]}>Обучение</Text>
           </TouchableOpacity>
-
           <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
           </TouchableOpacity>
