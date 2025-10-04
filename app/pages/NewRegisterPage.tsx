@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import React from 'react';
 import registrationData from 'appData/apptests/registration.json';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -27,23 +26,23 @@ const NewRegisterPage = () => {
     const testResult = formatAnswersToTestResult(formData, answers);
     addResult(testResult);
 
-    setUser(answers);
-    setNotification(answers.notification);
+    try {
+      console.log(answers);
 
-    await removeAllReminders();
-    if (answers.notification.active) {
-      await setReminders(new Date(answers.notification.time));
+      setUser(answers);
+      setNotification(answers?.notification);
+
+      await removeAllReminders();
+
+      if (answers?.notification?.active) {
+        await setReminders(new Date(answers.notification.time));
+      }
+
+      setAiTokens(3);
+      navigation.replace('OnboardingPage');
+    } catch (error) {
+      console.log(error);
     }
-    setAiTokens(3);
-
-    Alert.alert('Регистрация завершена!', 'Добро пожаловать в приложение!', [
-      {
-        text: 'Продолжить',
-        onPress: () => {
-          navigation.replace('OnboardingPage');
-        },
-      },
-    ]);
   };
 
   return (

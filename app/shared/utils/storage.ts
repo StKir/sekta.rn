@@ -29,11 +29,11 @@ export const StorageService = {
 
   setNotification: (notification: { active: boolean; time: Date | null }) => {
     try {
-      // Преобразуем Date в строку перед сохранением
       const notificationToSave = {
-        active: notification.active,
+        active: Boolean(notification.active),
         time: notification.time ? notification.time.toISOString() : null,
       };
+
       storage.set(STORAGE_KEYS.NOTIFICATION, JSON.stringify(notificationToSave));
     } catch (error) {
       console.error('Error saving notification:', error);

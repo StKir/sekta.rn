@@ -23,7 +23,7 @@ interface UserActions {
   setUser: (userData: UserData | FormAnswers) => void;
   updateUser: (userData: Partial<UserData>) => void;
   setTheme: (theme: 'light' | 'dark') => void;
-  setNotification: (notification: { active: boolean; time: Date | null }) => void;
+  setNotification: (notification?: { active: boolean; time: Date | null }) => void;
   loadUser: () => void;
   removeUser: () => void;
   clearAll: () => void;
@@ -94,9 +94,18 @@ export const useUserStore = create<UserStore>()(
         StorageService.setAiToken(ai_tokens);
       },
 
-      setNotification: (notification: { active: boolean; time: Date | null }) => {
-        setState({ notification });
-        StorageService.setNotification(notification);
+      setNotification: (notification?: { active: boolean; time: Date | null }) => {
+        if (!notification) {
+          return;
+        }
+
+        const notificationToSave = {
+          active: Boolean(notification?.active),
+          time: notification?.time ? notification.time : null,
+        };
+
+        setState({ notification: notificationToSave });
+        StorageService.setNotification(notificationToSave);
       },
 
       updateUser: (updatedData: Partial<UserData>) => {
