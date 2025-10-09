@@ -1,13 +1,15 @@
 {
   "name": "sekta",
-  "version": "0.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "export-android": "mkdir -p android/output && react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/output/index.android.bundle --assets-dest android/output --sourcemap-output android/sourcemap.js && cd android && find output -type f | zip index.android.bundle.zip -@ && zip sourcemap.zip sourcemap.js && cd .. && rm -rf android/output && rm -rf android/sourcemap.js",
+    "export-ios": "mkdir -p ios/output && react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/output/main.jsbundle --assets-dest ios/output --sourcemap-output ios/sourcemap.js && cd ios && find output -type f | zip main.jsbundle.zip -@ && zip sourcemap.zip sourcemap.js && cd .. && rm -rf ios/output && rm -rf ios/sourcemap.js"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.1.6",
@@ -25,13 +27,16 @@
     "react": "19.0.0",
     "react-hook-form": "^7.57.0",
     "react-native": "0.79.0",
+    "react-native-blob-util": "^0.22.2",
     "react-native-date-picker": "^5.0.13",
+    "react-native-device-info": "^14.1.1",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "2.25.0",
     "react-native-image-picker": "^8.2.1",
     "react-native-markdown-display": "^7.0.2",
     "react-native-mmkv": "^3.3.0",
     "react-native-notification-sounds": "^0.5.8",
+    "react-native-ota-hot-update": "^2.3.4",
     "react-native-pager-view": "^6.8.1",
     "react-native-reanimated": "3.17.3",
     "react-native-reanimated-carousel": "^4.0.2",

@@ -21,9 +21,16 @@ import { AlertProvider } from '@/shared/ui/CustomAlert';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { ThemeProvider } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
+import { useOTAUpdate } from '@/shared/hooks/useOTAUpdate';
 
 const App = (): React.JSX.Element => {
+  const { version } = useOTAUpdate();
   const { notification } = useUser();
+
+  useEffect(() => {
+    version.onCheckVersion();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const setReminder = async () => {

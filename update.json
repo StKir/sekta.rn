@@ -1,0 +1,7 @@
+{
+  "1.0.3": {
+    "bundleVersion": 1,
+    "downloadAndroidUrl": "https://storage.yandexcloud.net/hot-update/1.0.3/index.android.bundle.zip",
+    "downloadIosUrl": "https://storage.yandexcloud.net/hot-update/1.0.3/main.jsbundle.zip"
+  }
+}

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable react-native/no-unused-styles */
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DeviceInfo from 'react-native-device-info';
 import { Alert, Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -15,6 +16,7 @@ import NotificationInput from '@/shared/ui/NotificationInput/NotificationInput';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
+import { useOTAUpdate } from '@/shared/hooks/useOTAUpdate';
 import { SPACING, SIZES } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user';
@@ -27,6 +29,7 @@ const ProfilePage = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
+  const { version } = useOTAUpdate();
 
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
@@ -223,6 +226,9 @@ const ProfilePage = () => {
           <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
           </TouchableOpacity>
+          <Text variant='body2'>
+            Версия: {DeviceInfo.getVersion() + '.' + version.state.version}
+          </Text>
           <View style={{ height: 150 }} />
         </View>
       </ScrollView>
