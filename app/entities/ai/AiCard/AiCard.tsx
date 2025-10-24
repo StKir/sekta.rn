@@ -1,8 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 
 import Text from '@/shared/ui/Text';
-import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
@@ -18,37 +17,32 @@ const AICard = ({ title, description, onPress }: AICardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const styles = createStyles(colors);
 
-  const handlePress = () => {
+  const handlePress = async () => {
     setIsLoading(true);
-    onPress();
+    await onPress();
     setIsLoading(false);
   };
 
   return (
-    <View style={styles.blockContainer}>
+    <TouchableOpacity style={styles.blockContainer} onPress={handlePress}>
       <Text style={styles.blockTitle} variant='h3'>
         {title}
       </Text>
       <Text style={styles.blockDescription} variant='body2'>
         {description}
       </Text>
-      <Button
-        fullWidth
-        loading={isLoading}
-        title='Начать'
-        variant='outline'
-        onPress={handlePress}
-      />
-    </View>
+      {isLoading && <ActivityIndicator color={colors.PRIMARY} size='small' />}
+    </TouchableOpacity>
   );
 };
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     blockContainer: {
-      backgroundColor: colors.BACKGROUND_SECONDARY,
+      backgroundColor: colors.PRIMARY_ALPHA,
       borderRadius: 14,
       padding: SPACING.LARGE,
+      minHeight: 100,
       marginBottom: SPACING.MEDIUM,
       borderWidth: 1,
       borderColor: colors.BORDER,

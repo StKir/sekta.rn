@@ -10,6 +10,7 @@ import { FormStep as FormStepType, FormAnswers, FormQuestion } from '@/shared/ty
 import { SPACING } from '@/shared/constants';
 
 type FormStepProps = {
+  showBackButton: boolean;
   step: FormStepType;
   stepIndex: number;
   totalSteps: number;
@@ -26,6 +27,7 @@ const FormStep = ({
   stepIndex,
   totalSteps,
   answers,
+  showBackButton,
   onAnswerChange,
   onNext,
   onPrev,
@@ -129,6 +131,7 @@ const FormStep = ({
   return (
     <>
       <FormStepWrapper
+        showBackButton={showBackButton}
         showHeader={shouldShowHeader}
         subtitle={shouldShowHeader ? getSubtitle() : `Шаг ${stepIndex} из ${totalSteps - 1}`}
         title={shouldShowHeader ? titleBlock?.title || title : title}

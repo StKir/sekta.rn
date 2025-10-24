@@ -6,47 +6,19 @@ import CheckInPost from './components/CheckInPost/CheckInPost';
 import AIWeekAnalysisPostComponent from './components/AIWeekAnalysisPost/AIWeekAnalysisPost';
 
 import { PostData, Post as PostType } from '@/types/lentTypes';
-import { Share } from '@/shared/ui';
 
 const Post = ({ post }: { post: PostType }) => {
   const postCreator = (postData: PostData) => {
     if (postData.type === 'check-in') {
-      return (
-        <Share
-          id={postData.id}
-          key={postData.id}
-          message='Посмотри на мой пост в приложении!'
-          title='Мой пост'
-        >
-          <CheckInPost post={postData} />
-        </Share>
-      );
+      return <CheckInPost key={postData.id} post={postData} />;
     }
 
     if (postData.type === 'moment') {
-      return (
-        <Share
-          id={postData.id}
-          key={postData.id}
-          message='Посмотри на мой пост в приложении!'
-          title='Мой пост'
-        >
-          <MomentPost post={postData} />
-        </Share>
-      );
+      return <MomentPost key={postData.id} post={postData} />;
     }
 
     if (postData.type === 'note') {
-      return (
-        <Share
-          id={postData.id}
-          key={postData.id}
-          message='Посмотри на мой пост в приложении!'
-          title='Мой пост'
-        >
-          <NotePost post={postData} />
-        </Share>
-      );
+      return <NotePost key={postData.id} post={postData} />;
     }
 
     if (postData.type === 'ai_text') {

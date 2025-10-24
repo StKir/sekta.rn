@@ -11,7 +11,7 @@ export const showAIQuestionModal = (): Promise<string> => {
         BottomSheetManager.resolvePromise(question);
       },
       onCancel: () => {
-        BottomSheetManager.rejectPromise(new Error('Отменено пользователем'));
+        BottomSheetManager.rejectPromise(null);
       },
     }),
     {

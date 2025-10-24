@@ -4,6 +4,7 @@ import React from 'react';
 import { CheckInPost as CheckInPostType } from '@/types/lentTypes';
 import TimeTitle from '@/shared/ui/TimeTitle/TimeTitle';
 import MainContainer from '@/shared/ui/Container/MainContainer';
+import { Share } from '@/shared/ui';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
 import TextLent from '@/entities/lent/ui/TextLent/TextLent';
@@ -22,29 +23,37 @@ const CheckInPost = ({ post }: CheckInPostProps) => {
   const { colors } = useTheme();
 
   return (
-    <View
-      style={{
-        gap: SPACING.LARGE_2,
-        borderRadius: 14,
-        backgroundColor: colors.BACKGROUND_SECONDARY,
-        paddingVertical: SPACING.LARGE,
-      }}
+    <Share
+      aiData={post}
+      id={post.id}
+      key={post.id}
+      message='Посмотри на мой пост в приложении!'
+      title='Мой пост'
     >
-      <MainContainer>
-        <TimeTitle date={date} />
-      </MainContainer>
+      <View
+        style={{
+          gap: SPACING.LARGE_2,
+          borderRadius: 14,
+          backgroundColor: colors.BACKGROUND_SECONDARY,
+          paddingVertical: SPACING.LARGE,
+        }}
+      >
+        <MainContainer>
+          <TimeTitle date={date} />
+        </MainContainer>
 
-      <MoodCardLent color={color?.color} colorText={color?.name} mood={mood} />
+        <MoodCardLent color={color?.color} colorText={color?.name} mood={mood} />
 
-      <MediaLent media={media} />
-      {quote && <TextLent text={quote} type='quote' />}
-      {note && <TextLent text={note} type='text' />}
-      <MainContainer>
-        <Stats power={power} stress={stress} />
-      </MainContainer>
-      {activities?.length > 0 && <TagListLent tags={activities} variant='small' />}
-      {emotions?.length > 0 && <TagListLent tags={emotions} variant='small' />}
-    </View>
+        <MediaLent media={media} />
+        {quote && <TextLent text={quote} type='quote' />}
+        {note && <TextLent text={note} type='text' />}
+        <MainContainer>
+          <Stats power={power} stress={stress} />
+        </MainContainer>
+        {activities?.length > 0 && <TagListLent tags={activities} variant='small' />}
+        {emotions?.length > 0 && <TagListLent tags={emotions} variant='small' />}
+      </View>
+    </Share>
   );
 };
 

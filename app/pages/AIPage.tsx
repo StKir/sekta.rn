@@ -1,6 +1,5 @@
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StyleSheet, View, FlatList, Alert } from 'react-native';
-import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 

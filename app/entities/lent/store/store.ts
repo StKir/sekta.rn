@@ -1,12 +1,13 @@
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 
-import { CheckInPost, Post, CustomPost, AIPost } from '@/types/lentTypes';
+import { CheckInPost, Post, CustomPost, AIPost, AiResult } from '@/types/lentTypes';
 import { StorageService } from '@/shared/utils/storage';
 
 interface LentState {
   posts: Post[];
   total: number;
+  aiData: AiResult[];
 }
 
 interface LentActions {
@@ -18,6 +19,13 @@ interface LentActions {
   resetPosts: () => void;
   clearAll: () => void;
   getPost: (id: string | number) => Post | undefined;
+  addAiData: (data: {
+    postId: number | string;
+    requestId: string | number;
+    status?: 'processing' | 'success' | 'error';
+    result?: string | null;
+  }) => void;
+  updateAiData: (id: number | string, data: AiResult) => void;
 }
 
 type LentStore = LentState & LentActions;
@@ -45,7 +53,7 @@ export const useLentStore = create<LentStore>()(
     (setState, get) => ({
       posts: [],
       total: 0,
-      userTime: null,
+      aiData: [],
 
       addPost: (data: Post) => {
         setState((state) => ({
@@ -129,13 +137,57 @@ export const useLentStore = create<LentStore>()(
         });
       },
 
+      addAiData: (data: {
+        postId: number | string;
+        requestId: string | number;
+        status?: 'processing' | 'success' | 'error';
+        result?: string | null;
+      }) => {
+        setState((state) => {
+          const newAiData = [
+            ...state.aiData,
+            {
+              postId: String(data.postId),
+              requestId: Number(data.requestId),
+              status: data.status || 'processing',
+              result: data.result || null,
+            },
+          ];
+          return {
+            aiData: newAiData,
+          };
+        });
+      },
+
+      updateAiData: (id: number | string, data: AiResult) => {
+        setState((state) => ({
+          aiData: state.aiData.map((item) =>
+            String(item.postId) === String(id) ? { ...item, ...data } : item
+          ),
+        }));
+      },
+
       resetPosts: () => setState({ posts: [], total: 0 }),
 
-      clearAll: () => setState({ posts: [], total: 0 }),
+      clearAll: () => setState({ posts: [], total: 0, aiData: [] }),
     }),
     {
       name: 'lent-storage',
-      partialize: (state) => ({ posts: state.posts, total: state.total }),
+      partialize: (state) => {
+        console.log('partialize вызвана, aiData:', state.aiData);
+        const serializedData = {
+          posts: state.posts,
+          total: state.total,
+          aiData: state.aiData.map((item) => ({
+            postId: String(item.postId),
+            requestId: Number(item.requestId),
+            status: item.status,
+            result: item.result,
+          })),
+        };
+        console.log('Сериализованные данные:', serializedData);
+        return serializedData;
+      },
       storage: createJSONStorage(() => StorageService),
     }
   )

@@ -35,7 +35,7 @@ const AIWeekAnalysisPostComponent = ({ post }: Props) => {
           title='Смотреть'
           variant='outline'
           onPress={() => {
-            navigation.navigate('AIResultPage', { requestId: Number(currentPost.id) });
+            navigation.navigate('AIResultPage', { requestId: String(currentPost.id) });
           }}
         />
       </MainContainer>

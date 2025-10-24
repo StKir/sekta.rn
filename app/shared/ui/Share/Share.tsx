@@ -3,9 +3,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { View, TouchableOpacity, Alert } from 'react-native';
 import React, { useRef } from 'react';
 
+import { PostData } from '@/types/lentTypes';
 import { useTheme } from '@/shared/theme';
 import { useScreenshotShare } from '@/shared/hooks/useScreenshotShare';
 import { useLentStore } from '@/entities/lent/store/store';
+import AiCheck from '@/entities/ai/Aicheck/AiCheck';
 
 type ShareProps = {
   children: React.ReactNode;
@@ -13,14 +15,17 @@ type ShareProps = {
   title?: string;
   message?: string;
   iconSize?: number;
+  requestId?: number | null;
   iconColor?: string;
   buttonStyle?: any;
+  aiData?: PostData;
   showOptionsMenu?: boolean; // Показывать ли меню выбора действий
   openGalleryAfterSave?: boolean; // Открывать ли галерею после сохранения
 };
 
 const Share = ({
   children,
+  aiData,
   iconSize = 24,
   iconColor,
   id,
@@ -30,6 +35,7 @@ const Share = ({
   const { colors } = useTheme();
   const viewShotRef = useRef<ViewShot>(null);
   const { removePost } = useLentStore();
+
   const { handleShare } = useScreenshotShare({ openGalleryAfterSave });
 
   const onShare = () => handleShare(viewShotRef);
@@ -53,7 +59,6 @@ const Share = ({
       >
         {children}
       </ViewShot>
-
       <View
         style={[
           {
@@ -67,6 +72,7 @@ const Share = ({
           buttonStyle,
         ]}
       >
+        {aiData && <AiCheck post={aiData} />}
         <TouchableOpacity
           style={{
             width: 30,

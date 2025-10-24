@@ -49,6 +49,7 @@ const NewRegisterPage = () => {
     <DynamicForm
       customFirstStep={HelloScreen}
       formData={formData}
+      showBackButton={true}
       onComplete={handleFormComplete}
     />
   );

@@ -8,6 +8,7 @@ export const styles = (color: ThemeColors) =>
     container: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      gap: SPACING.SMALL,
     },
     stat: {
       width: 170,

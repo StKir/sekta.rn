@@ -46,6 +46,13 @@ export type CheckInPost = {
   data: CheckInPostData;
 };
 
+export type AiResult = {
+  postId: string;
+  requestId: number;
+  result: string | null;
+  status: 'processing' | 'success' | 'error';
+};
+
 export type MomentInPost = {
   date: string;
   id: string | number;

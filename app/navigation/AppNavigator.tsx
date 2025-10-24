@@ -18,6 +18,7 @@ import TabNavigator from './TabNavigator';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
+import AIResultCheckPage from '@/pages/AIResultCheckPage';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -54,6 +55,7 @@ const AppNavigator = () => {
         <Stack.Screen component={MomentPage} name='MomentPage' />
         <Stack.Screen component={NotePage} name='NotePage' />
         <Stack.Screen component={AIResultPage} name='AIResultPage' />
+        <Stack.Screen component={AIResultCheckPage} name='AIResultCheckPage' />
         <Stack.Screen component={OnboardingPage} name='OnboardingPage' />
       </Stack.Navigator>
       <BottomSheet />

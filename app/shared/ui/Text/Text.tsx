@@ -33,7 +33,13 @@ const Text = ({ variant = 'body1', color = 'textPrimary', style, ...props }: Tex
     }
   };
 
-  return <RNText style={[typography[variant], { color: getColor(color) }, style]} {...props} />;
+  return (
+    <RNText
+      style={[typography[variant], { color: getColor(color) }, style]}
+      {...props}
+      allowFontScaling={false}
+    />
+  );
 };
 
 Text.H1 = (props: Omit<TextProps, 'variant'>) => <Text variant='h1' {...props} />;

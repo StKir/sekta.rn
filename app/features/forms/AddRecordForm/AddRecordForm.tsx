@@ -68,10 +68,21 @@ const AddRecordForm = ({ type }: AddRecordFormProps) => {
       return;
     }
 
+    const isDuplicate = existingRecords.some(
+      (record) => record.text.toLowerCase().trim() === textToSave.toLowerCase().trim()
+    );
+
+    if (isDuplicate) {
+      BottomSheetManager.hide();
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       addRecord(type, textToSave);
+      setSelectedTag(textToSave);
+      setValue(textToSave);
       BottomSheetManager.hide();
     } catch {
       Alert.alert('Ошибка', 'Не удалось сохранить запись');

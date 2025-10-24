@@ -13,6 +13,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 type DynamicFormProps = {
   formData: FormTest;
+  showBackButton?: boolean;
   stickyButton?: boolean;
   onComplete: (answers: FormAnswers) => void;
   customFirstStep?: React.ComponentType<{ onNext: () => void }>;
@@ -27,6 +28,7 @@ type CarouselItemData = {
 const DynamicForm = ({
   formData,
   onComplete,
+  showBackButton = true,
   customFirstStep: CustomFirstStep,
   stickyButton,
 }: DynamicFormProps) => {
@@ -73,6 +75,10 @@ const DynamicForm = ({
     if (item.type === 'form') {
       const isLastStep = item.stepIndex === formData.data.length - 1;
 
+      const currentCarouselIndex = carouselData.findIndex(
+        (carouselItem) => carouselItem.type === 'form' && carouselItem.stepIndex === item.stepIndex
+      );
+
       const handleNext = () => {
         if (isLastStep) {
           onComplete(answers);
@@ -82,20 +88,12 @@ const DynamicForm = ({
       };
 
       const handlePrev = () => {
-        const currentCarouselIndex = carouselData.findIndex(
-          (carouselItem) =>
-            carouselItem.type === 'form' && carouselItem.stepIndex === item.stepIndex
-        );
         if (currentCarouselIndex > 0) {
           prevStep();
         }
       };
 
       const shouldShowPrev = (() => {
-        const currentCarouselIndex = carouselData.findIndex(
-          (carouselItem) =>
-            carouselItem.type === 'form' && carouselItem.stepIndex === item.stepIndex
-        );
         return currentCarouselIndex > 0;
       })();
 
@@ -103,6 +101,7 @@ const DynamicForm = ({
         <View style={styles.carouselItem}>
           <FormStep
             answers={answers}
+            showBackButton={currentCarouselIndex === 0 && showBackButton}
             step={item.stepData}
             stepIndex={item.stepIndex}
             stickyButton={stickyButton}
@@ -120,24 +119,26 @@ const DynamicForm = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <CarouselLib
-        containerStyle={styles.containerStyle}
-        data={carouselData}
-        enabled={false}
-        height={Dimensions.get('screen').height}
-        loop={false}
-        mode='parallax'
-        modeConfig={{
-          parallaxScrollingScale: 1,
-          parallaxScrollingOffset: 0.5,
-          parallaxAdjacentItemScale: 0.6,
-        }}
-        ref={carouselRef}
-        renderItem={renderItem}
-        style={styles.carousel}
-        width={SCREEN_WIDTH}
-      />
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={styles.container}>
+      <>
+        <CarouselLib
+          containerStyle={styles.containerStyle}
+          data={carouselData}
+          enabled={false}
+          height={Dimensions.get('screen').height}
+          loop={false}
+          mode='parallax'
+          modeConfig={{
+            parallaxScrollingScale: 1,
+            parallaxScrollingOffset: 0.5,
+            parallaxAdjacentItemScale: 0.6,
+          }}
+          ref={carouselRef}
+          renderItem={renderItem}
+          style={styles.carousel}
+          width={SCREEN_WIDTH}
+        />
+      </>
     </SafeAreaView>
   );
 };
@@ -150,7 +151,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     carousel: {
       flex: 1,
-      height: Dimensions.get('screen').height,
+      // height: Dimensions.get('screen').height,
     },
     carouselItem: {
       flex: 1,

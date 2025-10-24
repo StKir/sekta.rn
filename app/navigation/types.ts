@@ -12,7 +12,10 @@ export type RootStackParamList = {
   AIQuestionPage: undefined;
   OnboardingPage: undefined;
   AIResultPage: {
-    requestId: number;
+    requestId: string;
+  };
+  AIResultCheckPage: {
+    requestId: string | number;
   };
 };
 
