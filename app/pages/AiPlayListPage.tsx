@@ -8,7 +8,7 @@ import { transformJsonToFormData } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { useUser } from '@/shared/hooks/useUser';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
-import { sendToGPT } from '@/shared/api/AIActions';
+import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import { useUserStore } from '@/entities/user/store/userStore';
@@ -30,7 +30,7 @@ const AiPlayListPage = () => {
     }
     try {
       const prompt = playlistPrompt(postsData.slice(0, 5), user.userData, JSON.stringify(answers));
-      const aiResponseID = await sendToGPT(prompt);
+      const aiResponseID = await sendToAI(prompt);
 
       if (typeof aiResponseID === 'number') {
         minusAiToken();

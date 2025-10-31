@@ -13,6 +13,7 @@ import { useTheme } from '@/shared/theme';
 import { useGetAIPost } from '@/shared/hooks/useGetAIPost';
 import { SPACING } from '@/shared/constants';
 import { RootStackParamList } from '@/navigation/types';
+import CarouselCheckIn from '@/features/aiResponce/CarouselCheckIn/CarouselCheckIn';
 
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -24,11 +25,26 @@ const AIResultPage = () => {
 
   const { post: updatedPost, isPolling, isError } = useGetAIPost(Number(requestId));
 
+  const isSlides = (() => {
+    const result = updatedPost?.data.result;
+    if (result) {
+      try {
+        const data = JSON.parse(result);
+        return data.slides.length > 0;
+      } catch {
+        return false;
+      }
+    }
+
+    return false;
+  })();
+
   if (isError) {
     return (
       <View style={styles.center}>
         <Icon color={colors.DANGER} name='alert-circle' size={43} />
         <Text
+          allowFontScaling={true}
           color={colors.TEXT_SECONDARY}
           style={{ textAlign: 'center', marginTop: SPACING.MEDIUM }}
         >
@@ -50,6 +66,20 @@ const AIResultPage = () => {
       </View>
     );
   }
+
+  if (isSlides) {
+    const data = JSON.parse(updatedPost?.data.result || '{}');
+    const dataSlides = {
+      slides: data.slides.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+      })),
+    };
+
+    return <CarouselCheckIn data={dataSlides} onComplete={navigation.goBack} />;
+  }
+  console.log(updatedPost);
 
   return (
     <SafeAreaView style={styles.container}>

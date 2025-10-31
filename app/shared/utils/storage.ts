@@ -12,12 +12,16 @@ const STORAGE_KEYS = {
   NOTIFICATION: 'notification',
   AI_TOKEN: 'ai_token',
   LAST_LOGIN_DATE: 'last_login_date',
+  SELECTED_AI_MODEL: 'selected_ai_model',
 };
 
 export const StorageService = {
   setItem: (key: string, value: string) => storage.set(key, value),
   getItem: (key: string) => storage.getString(key) ?? null,
   removeItem: (key: string) => storage.delete(key),
+
+  setSelectedAIModel: (model: string) => storage.set(STORAGE_KEYS.SELECTED_AI_MODEL, model),
+  getSelectedAIModel: () => storage.getString(STORAGE_KEYS.SELECTED_AI_MODEL) ?? null,
 
   setUser: (userData: FormAnswers) => {
     try {

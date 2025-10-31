@@ -1,0 +1,456 @@
+
+**Base URL:** `https://d5dvnkk82lmmsbbr7ob1.4b4k4pg5.apigw.yandexcloud.net`
+
+### POST /register
+
+Регистрация нового пользователя или авторизация существующего.
+
+**Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "Имя Фамилия",
+  "birthDate": "1990-01-01",
+  "gender": "male"
+}
+```
+
+**Response (новый пользователь):**
+```json
+{
+  "token": "eyJhbGci...",
+  "user": {
+    "email": "user@example.com",
+    "name": "Имя Фамилия",
+    "birthDate": "1990-01-01",
+    "gender": "male",
+    "registrationDate": "2025-10-11T16:32:33.150Z",
+    "tariff_info": {
+      "status": "TRIAL",
+      "trialCount": 4
+    }
+  }
+}
+```
+
+**Response (существующий пользователь):**
+```json
+{
+  "token": "eyJhbGci..."
+}
+```
+
+### POST /login
+
+Авторизация существующего пользователя.
+
+**Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGci..."
+}
+```
+
+**Error (404):**
+```json
+{
+  "error": "User not found"
+}
+```
+
+**Error (401):**
+```json
+{
+  "error": "Invalid password"
+}
+```
+
+### GET /user/me
+
+Получение данных текущего пользователя.
+
+**Headers:**
+```
+Authorization: Bearer eyJhbGci...
+```
+
+**Response:**
+```json
+{
+  "user": {
+    "email": "user@example.com",
+    "name": "Имя Фамилия",
+    "birthDate": "1990-01-01",
+    "gender": "male",
+    "registrationDate": "2025-10-11T16:32:33.150Z",
+    "tariff_info": {
+      "status": "TRIAL",
+      "trialCount": 2
+    }
+  }
+}
+```
+
+### POST /subscription/activate
+
+Активация подписки PRO на выбранный период.
+
+**Headers:**
+```
+Authorization: Bearer eyJhbGci...
+```
+
+**Request:**
+```json
+{
+  "duration": "1month",
+  "paymentId": "yukassa_payment_123"
+}
+```
+
+**Доступные значения duration:**
+- `"1month"` - 1 месяц
+- `"3months"` - 3 месяца
+- `"1year"` - 1 год
+
+**Response:**
+```json
+{
+  "success": true,
+  "tariff_info": {
+    "status": "PRO",
+    "start": "2025-10-11T16:32:33.150Z",
+    "end": "2025-11-11T16:32:33.150Z"
+  },
+  "transaction": {
+    "id": "57bcdcc2-c502-468e-8f39-54120b9e8704",
+    "userId": "user@example.com",
+    "duration": "1month",
+    "description": "Активация подписки PRO на 1 месяц(ев)",
+    "createdAt": "2025-10-11T16:19:12.032Z",
+    "paymentId": "yukassa_payment_123"
+  }
+}
+```
+
+### POST /subscription/check-access
+
+Проверка доступа к PRO функциям. Если есть TRIAL попытки или активная PRO подписка - разрешает доступ и уменьшает счетчик TRIAL.
+
+**Headers:**
+```
+Authorization: Bearer eyJhbGci...
+```
+
+**Response (успешный доступ - PRO):**
+```json
+{
+  "hasAccess": true,
+  "tariff_info": {
+    "status": "PRO",
+    "start": "2025-10-11T16:32:33.150Z",
+    "end": "2025-11-11T16:32:33.150Z"
+  }
+}
+```
+
+**Response (успешный доступ - TRIAL):**
+```json
+{
+  "hasAccess": true,
+  "tariff_info": {
+    "status": "TRIAL",
+    "trialCount": 3
+  },
+  "remainingTrials": 3
+}
+```
+
+**Response (отказ - TRIAL попытки закончились):**
+```json
+{
+  "hasAccess": false,
+  "reason": "Бесплатные попытки закончились. Приобретите подписку PRO"
+}
+```
+
+**Response (отказ - подписка PRO истекла):**
+```json
+{
+  "hasAccess": false,
+  "reason": "Подписка PRO истекла. Пожалуйста, продлите подписку"
+}
+```
+
+## 🔧 Переменные окружения
+
+Настраиваются при создании версии функции:
+
+- `JWT_SECRET` - секретный ключ для подписи JWT токенов
+- `YC_S3_ENDPOINT` - адрес Object Storage (обычно `https://storage.yandexcloud.net`)
+- `YC_ACCESS_KEY_ID` - ID ключа доступа к Object Storage
+- `YC_SECRET_ACCESS_KEY` - секретный ключ доступа к Object Storage
+- `YC_S3_BUCKET_USER` - имя бакета для хранения пользователей
+
+## 💾 Хранение данных
+
+### Пользователи
+
+Данные пользователей хранятся в JSON файлах в Object Storage:
+
+```
+s3://sekta-users/users/{email}.json
+```
+
+**Формат файла:**
+```json
+{
+  "email": "user@example.com",
+  "name": "Имя Фамилия",
+  "birthDate": "1990-01-01",
+  "gender": "male",
+  "registrationDate": "2025-10-11T16:32:33.150Z",
+  "tariff_info": {
+    "status": "PRO",
+    "start": "2025-10-11T16:32:33.150Z",
+    "end": "2025-11-11T16:32:33.150Z"
+  },
+  "passwordHash": "$2a$10$..."
+}
+```
+
+### Транзакции подписок
+
+История операций с подписками:
+
+```
+s3://sekta-users/transactions/{transaction_id}.json
+```
+
+**Формат файла:**
+```json
+{
+  "id": "57bcdcc2-c502-468e-8f39-54120b9e8704",
+  "userId": "user@example.com",
+  "duration": "1month",
+  "description": "Активация подписки PRO на 1 месяц(ев)",
+  "createdAt": "2025-10-11T16:19:12.032Z",
+  "paymentId": "yukassa_payment_123"
+}
+```
+
+## 🧪 Тестирование
+
+### Регистрация пользователя
+
+```bash
+curl -X POST https://d5dvnkk82lmmsbbr7ob1.4b4k4pg5.apigw.yandexcloud.net/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "password": "test123",
+    "name": "Test User",
+    "birthDate": "1990-01-01",
+    "gender": "male"
+  }'
+```
+
+### Проверка доступа к PRO функциям
+
+```bash
+TOKEN="your_jwt_token_here"
+
+curl -X POST https://d5dvnkk82lmmsbbr7ob1.4b4k4pg5.apigw.yandexcloud.net/subscription/check-access \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### Активация подписки
+
+```bash
+TOKEN="your_jwt_token_here"
+
+curl -X POST https://d5dvnkk82lmmsbbr7ob1.4b4k4pg5.apigw.yandexcloud.net/subscription/activate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{
+    "duration": "1month",
+    "paymentId": "test_payment_123"
+  }'
+```
+
+### Получение данных пользователя
+
+```bash
+TOKEN="your_jwt_token_here"
+
+curl https://d5dvnkk82lmmsbbr7ob1.4b4k4pg5.apigw.yandexcloud.net/user/me \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+## 📱 React Native интеграция
+
+### Пример использования
+
+```typescript
+const API_URL = 'https://d5dvnkk82lmmsbbr7ob1.4b4k4pg5.apigw.yandexcloud.net';
+
+const register = async (
+  email: string,
+  password: string,
+  name: string,
+  birthDate: string,
+  gender: string
+) => {
+  const response = await fetch(`${API_URL}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name, birthDate, gender }),
+  });
+  return await response.json();
+};
+
+const checkAccess = async (token: string) => {
+  const response = await fetch(`${API_URL}/subscription/check-access`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  return await response.json();
+};
+
+const activateSubscription = async (
+  token: string,
+  duration: '1month' | '3months' | '1year',
+  paymentId?: string
+) => {
+  const response = await fetch(`${API_URL}/subscription/activate`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ duration, paymentId }),
+  });
+  return await response.json();
+};
+
+const useProFeature = async (token: string, featureFunction: () => Promise<void>) => {
+  const accessResult = await checkAccess(token);
+  
+  if (accessResult.hasAccess) {
+    await featureFunction();
+    return { success: true };
+  } else {
+    return {
+      success: false,
+      reason: accessResult.reason,
+    };
+  }
+};
+```
+
+## 🔄 Логика работы системы подписок
+
+### При регистрации:
+```typescript
+tariff_info: {
+  status: 'TRIAL',
+  trialCount: 4
+}
+```
+
+### Проверка доступа (`/subscription/check-access`):
+
+**Для PRO:**
+1. Проверяет, не истекла ли подписка (`end > now`)
+2. Если истекла → переводит на TRIAL с 0 попыток
+3. Если активна → возвращает `hasAccess: true`
+
+**Для TRIAL:**
+1. Проверяет `trialCount > 0`
+2. Если есть попытки → уменьшает счетчик и возвращает `hasAccess: true`
+3. Если попытки закончились → возвращает `hasAccess: false` с причиной
+
+### Активация подписки (`/subscription/activate`):
+
+```typescript
+// Запрос
+{
+  duration: '1month' | '3months' | '1year',
+  paymentId?: string
+}
+
+// Результат
+tariff_info: {
+  status: 'PRO',
+  start: '2025-10-11T16:32:33.150Z',
+  end: '2025-11-11T16:32:33.150Z'  // +1/3/12 месяцев
+}
+```
+
+## ⚠️ Важные моменты
+
+1. **TRIAL счетчик уменьшается автоматически** при вызове `/subscription/check-access` (если `hasAccess: true`)
+2. **Не нужно отдельно списывать попытки** - метод check-access делает это сам
+3. **При истечении PRO** пользователь автоматически переводится на TRIAL с 0 попыток
+4. **Всегда вызывайте check-access** перед использованием PRO функций
+5. **Пароль теперь обязателен** при регистрации и логине
+
+## 🗄️ Миграция существующих пользователей
+
+Для существующих пользователей с полем `tokens` необходимо создать миграционный скрипт:
+
+```typescript
+// Пример миграции
+if (user.tokens !== undefined) {
+  user.tariff_info = {
+    status: 'TRIAL',
+    trialCount: Math.max(user.tokens, 0)
+  };
+  delete user.tokens;
+}
+```
+
+## 📊 Мониторинг
+
+Логи и статистика доступны в [консоли Yandex Cloud](https://console.cloud.yandex.ru/):
+
+- API Gateway → sekta-api
+- Cloud Functions → список всех функций
+
+## 🔄 Обновление API Gateway
+
+После изменения функций или `gateway.yaml`:
+
+```bash
+yc serverless api-gateway update sekta-api --spec gateway.yaml
+```
+
+## 📋 Checklist для завершения миграции
+
+- [x] Удалены файлы токенов
+- [x] Созданы файлы подписок
+- [x] Обновлены типы
+- [x] Обновлена документация API
+- [x] Обновлен gateway.yaml
+- [x] Задеплоены новые Cloud Functions
+- [x] Обновлен API Gateway
+- [ ] Мигрированы существующие пользователи (если есть)
+- [ ] Обновлен клиент (React Native)
+- [ ] Протестированы все сценарии
+
+## 📄 Лицензия
+
+MIT

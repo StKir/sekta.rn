@@ -2,7 +2,6 @@
 import { View } from 'react-native';
 import React from 'react';
 
-import Title from '@/shared/ui/Title';
 import Text from '@/shared/ui/Text';
 import MainContainer from '@/shared/ui/Container/MainContainer';
 import { useTheme } from '@/shared/theme';
@@ -41,7 +40,9 @@ const MoodCardLent = ({ color, mood, colorText }: MoodCardLentProps) => {
               : {}
           }
         >
-          <Title fontSize={48}>{mood?.slice(0, 2)}</Title>
+          <Text allowFontScaling={true} style={{ fontSize: 50, lineHeight: 50 }}>
+            {mood?.slice(0, 2)}
+          </Text>
         </View>
         <View style={{ maxWidth: 135 }}>
           <Text.Body1 color={colors.TEXT_PRIMARY}>{mood?.slice(2, 100)}</Text.Body1>

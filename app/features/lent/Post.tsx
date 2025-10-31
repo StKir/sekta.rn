@@ -21,7 +21,7 @@ const Post = ({ post }: { post: PostType }) => {
       return <NotePost key={postData.id} post={postData} />;
     }
 
-    if (postData.type === 'ai_text') {
+    if (postData.type === 'ai_text' || postData.type === 'ai_slides') {
       return <AIWeekAnalysisPostComponent key={postData.id} post={postData} />;
     }
 

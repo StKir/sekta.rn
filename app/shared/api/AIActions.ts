@@ -1,8 +1,14 @@
 import axios from 'axios';
 
+import { StorageService } from '../utils';
+
+import { AIModel, AIModelResponseFormat } from '@/types/aiTypes';
 import { GEN_API_TOKEN, GEN_API_URL } from '@/env';
 
-export async function sendToGPT(prompt: string, model: string = 'gpt-4-1'): Promise<number> {
+export async function sendToAI(
+  prompt: string,
+  response_format: AIModelResponseFormat = AIModelResponseFormat.TEXT
+): Promise<number> {
   const payload: GPTRequest = {
     messages: [
       {
@@ -15,15 +21,23 @@ export async function sendToGPT(prompt: string, model: string = 'gpt-4-1'): Prom
         ],
       },
     ],
+    response_format: response_format,
+    n: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    temperature: 1,
+    top_p: 1,
   };
 
   console.log('==== Отправляемый промпт ====');
   console.log(payload.messages[0].content[0].text);
   console.log('=============================');
+  const selectedAIModel = StorageService.getSelectedAIModel() || AIModel.GPT_4_1;
+  console.log(selectedAIModel);
 
   try {
     const initialResponse = await axios.post<GPTResponseInitial>(
-      `${GEN_API_URL}/networks/${model}`,
+      `${GEN_API_URL}/networks/${selectedAIModel}`,
       payload,
       {
         headers: {
@@ -36,9 +50,6 @@ export async function sendToGPT(prompt: string, model: string = 'gpt-4-1'): Prom
     console.log('==== Первоначальный ответ ====');
     console.log(initialResponse.data);
     console.log('=============================');
-
-    const requestId = initialResponse.data.request_id;
-    console.log('Request ID:', requestId);
 
     if (initialResponse.data.status === 'error') {
       throw new Error('Ошибка при отправке запроса');
@@ -53,17 +64,15 @@ export async function sendToGPT(prompt: string, model: string = 'gpt-4-1'): Prom
 
 export const pollForResult = async (requestId: number): Promise<GPTResponseResult> => {
   const maxAttempts = 30;
-  const delayMs = 10000;
+  const delayMs = 4000;
   let attempts = 0;
 
   while (attempts < maxAttempts) {
     if (attempts !== 0) {
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
-    console.log(attempts);
-    attempts++;
 
-    console.log(`Попытка ${attempts}/${maxAttempts} получения результата`);
+    attempts++;
 
     try {
       const statusResponse = await axios.get<GPTResponse>(
@@ -94,7 +103,6 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
         continue;
       }
     } catch (error) {
-      console.error(`Ошибка при получении статуса (попытка ${attempts}):`, error);
       if (attempts === maxAttempts) {
         throw error;
       }
@@ -104,7 +112,6 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
   throw new Error('Превышено максимальное количество попыток получения результата');
 };
 
-// Вспомогательная функция для минификации
 function minifyText(text: string): string {
   return text
     .replace(/\s+/g, ' ')
@@ -112,8 +119,13 @@ function minifyText(text: string): string {
     .trim();
 }
 
-// Типы для TypeScript
 interface GPTRequest {
+  response_format?: AIModelResponseFormat;
+  n?: number;
+  frequency_penalty?: number;
+  presence_penalty?: number;
+  temperature?: number;
+  top_p?: number;
   messages: Array<{
     role: 'user' | 'assistant' | 'system';
     content: Array<{

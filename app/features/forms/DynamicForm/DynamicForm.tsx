@@ -3,6 +3,7 @@ import CarouselLib, { ICarouselInstance } from 'react-native-reanimated-carousel
 import { View, StyleSheet, Dimensions } from 'react-native';
 import React, { useState, useRef } from 'react';
 
+import RegistrationStep from './RegistrationStep';
 import FormStep from './FormStep';
 
 import { FormTest, FormAnswers } from '@/shared/types/form.types';
@@ -17,10 +18,12 @@ type DynamicFormProps = {
   stickyButton?: boolean;
   onComplete: (answers: FormAnswers) => void;
   customFirstStep?: React.ComponentType<{ onNext: () => void }>;
+  enableRegistration?: boolean;
+  onRegistrationComplete?: (userData: any) => void;
 };
 
 type CarouselItemData = {
-  type: 'custom' | 'form';
+  type: 'custom' | 'form' | 'registration';
   stepData?: any;
   stepIndex: number;
 };
@@ -31,6 +34,8 @@ const DynamicForm = ({
   showBackButton = true,
   customFirstStep: CustomFirstStep,
   stickyButton,
+  enableRegistration = false,
+  onRegistrationComplete,
 }: DynamicFormProps) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
@@ -55,6 +60,8 @@ const DynamicForm = ({
   const carouselData: CarouselItemData[] = [
     // Добавляем кастомный первый шаг если он есть
     ...(CustomFirstStep ? [{ type: 'custom' as const, stepIndex: -1 }] : []),
+    // Добавляем регистрацию если включена
+    ...(enableRegistration ? [{ type: 'registration' as const, stepIndex: -2 }] : []),
     // Добавляем все шаги формы
     ...formData.data.map((step, index) => ({
       type: 'form' as const,
@@ -68,6 +75,14 @@ const DynamicForm = ({
       return (
         <View style={styles.carouselItem}>
           <CustomFirstStep onNext={nextStep} />
+        </View>
+      );
+    }
+
+    if (item.type === 'registration') {
+      return (
+        <View style={styles.carouselItem}>
+          <RegistrationStep onComplete={onRegistrationComplete || (() => {})} onNext={nextStep} />
         </View>
       );
     }

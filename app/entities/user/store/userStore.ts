@@ -2,6 +2,7 @@
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 
+import { AIModel } from '@/types/aiTypes';
 import { StorageService } from '@/shared/utils/storage';
 import { UserData } from '@/shared/types/user.types';
 import { FormAnswers } from '@/shared/types/form.types';
@@ -10,6 +11,8 @@ interface UserState {
   userData: UserData | null;
   isLoading: boolean;
   ai_tokens: number;
+  selectedAIModel: AIModel;
+
   notification: {
     active: boolean;
     time: Date | null;
@@ -32,6 +35,8 @@ interface UserActions {
   setAiTokens: (ai_tokens: number) => void;
   setUserTime: () => void;
   getNotification: () => { active: boolean; time: Date | null };
+  setSelectedAIModel: (model: AIModel) => void;
+  getSelectedAIModel: () => AIModel;
 }
 
 type UserStore = UserState & UserActions;
@@ -43,6 +48,7 @@ export const useUserStore = create<UserStore>()(
       isLoading: false,
       theme: 'light',
       ai_tokens: 0,
+      selectedAIModel: AIModel.GROK_4,
       notification: {
         active: false,
         time: null,
@@ -65,7 +71,7 @@ export const useUserStore = create<UserStore>()(
 
         setState({
           userData: userWithDate,
-          isAuthenticated: true,
+          isAuthenticated: false,
           isLoading: false,
         });
       },
@@ -157,6 +163,15 @@ export const useUserStore = create<UserStore>()(
           isLoading: false,
         });
       },
+
+      setSelectedAIModel: (model: AIModel) => {
+        setState({ selectedAIModel: model });
+        StorageService.setSelectedAIModel(model);
+      },
+
+      getSelectedAIModel: () => {
+        return get().selectedAIModel;
+      },
     }),
     {
       name: 'user-storage',
@@ -166,6 +181,7 @@ export const useUserStore = create<UserStore>()(
           const theme = StorageService.getTheme();
           const ai_tokens = StorageService.getAiToken();
           const notification = StorageService.getNotification();
+          const selectedAIModel = StorageService.getSelectedAIModel() || 'grok-4';
           return JSON.stringify({
             state: {
               userData: userData as UserData,
@@ -174,6 +190,7 @@ export const useUserStore = create<UserStore>()(
               theme: theme as 'light' | 'dark',
               ai_tokens: ai_tokens,
               notification: notification,
+              selectedAIModel: selectedAIModel,
             },
           });
         },
@@ -181,6 +198,9 @@ export const useUserStore = create<UserStore>()(
           const parsed = JSON.parse(value);
           if (parsed.state?.userData) {
             StorageService.setUser(parsed.state.userData as FormAnswers);
+          }
+          if (parsed.state?.selectedAIModel) {
+            StorageService.setSelectedAIModel(parsed.state.selectedAIModel);
           }
         },
         removeItem: () => {

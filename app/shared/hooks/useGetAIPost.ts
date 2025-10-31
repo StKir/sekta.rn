@@ -80,7 +80,14 @@ export const useGetAIPost = (requestId: number) => {
             },
           };
 
+          if (updatedAIPost.data.result.includes('```json')) {
+            updatedAIPost.data.result = updatedAIPost.data.result
+              .replace('```json', '')
+              .replace('```', '');
+          }
+
           changePost(String(aiPost.id), updatedAIPost);
+
           setPost(updatedAIPost);
           console.log(`AI пост обновлен с результатом для requestId: ${requestId}`);
         }

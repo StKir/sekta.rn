@@ -1,25 +1,47 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, Image, View, ScrollView } from 'react-native';
-import React from 'react';
+import { StyleSheet, Image, View, ScrollView, Alert } from 'react-native';
+import React, { useState } from 'react';
 
 import Text from '@/shared/ui/Text/Text';
+import Input from '@/shared/ui/Input/Input';
 import { Button } from '@/shared/ui';
 import { typography } from '@/shared/theme/typography';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useSubscription } from '@/shared/hooks/useSubscription';
 import { IMAGES } from '@/shared/constants/images';
 import { SPACING } from '@/shared/constants';
 
 const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const { login, isLoading } = useSubscription();
+
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginData, setLoginData] = useState({
+    email: '',
+    password: '',
+  });
+
   const handleStart = () => {
     onNext();
   };
 
-  // const handleLogin = () => {
-  //   onNext();
-  // };
+  const handleLogin = async () => {
+    if (!loginData.email || !loginData.password) {
+      Alert.alert('Ошибка', 'Заполните все поля');
+      return;
+    }
+
+    const success = await login(loginData);
+    if (success) {
+      onNext();
+    }
+  };
+
+  const handleLoginPress = () => {
+    setShowLogin(true);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,14 +68,45 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
           </Text>
         </View>
         <View>
-          <Button fullWidth title={'Начать'} onPress={handleStart} />
-          {/* <Button
-          style={styles.link}
-          textStyle={styles.linkText}
-          title={'У меня уже есть аккаунт'}
-          variant='text'
-          onPress={handleLogin}
-        /> */}
+          {!showLogin ? (
+            <>
+              <Button fullWidth title={'Начать'} onPress={handleStart} />
+              <Button
+                style={styles.link}
+                textStyle={styles.linkText}
+                title={'У меня уже есть аккаунт'}
+                variant='text'
+                onPress={handleLoginPress}
+              />
+            </>
+          ) : (
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginTitle}>Вход в аккаунт</Text>
+              <Input
+                autoCapitalize='none'
+                keyboardType='email-address'
+                label='Email'
+                placeholder='example@email.com'
+                value={loginData.email}
+                onChangeText={(value) => setLoginData((prev) => ({ ...prev, email: value }))}
+              />
+              <Input
+                secureTextEntry
+                label='Пароль'
+                placeholder='Введите пароль'
+                value={loginData.password}
+                onChangeText={(value) => setLoginData((prev) => ({ ...prev, password: value }))}
+              />
+              <Button fullWidth loading={isLoading} title={'Войти'} onPress={handleLogin} />
+              <Button
+                style={styles.link}
+                textStyle={styles.linkText}
+                title={'Назад'}
+                variant='text'
+                onPress={() => setShowLogin(false)}
+              />
+            </View>
+          )}
         </View>
         <View style={{ height: 60 }} />
       </ScrollView>
@@ -100,6 +153,15 @@ const createStyles = (colors: ThemeColors) =>
       ...typography.body2,
       color: colors.PRIMARY,
       textAlign: 'center',
+    },
+    loginContainer: {
+      gap: 16,
+    },
+    loginTitle: {
+      ...typography.h3,
+      color: colors.TEXT_PRIMARY,
+      textAlign: 'center',
+      marginBottom: 8,
     },
   });
 

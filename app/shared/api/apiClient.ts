@@ -22,8 +22,10 @@ class ApiClient {
   private setupInterceptors() {
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        if (this.token) {
-          config.headers.Authorization = `Bearer ${this.token}`;
+        // Ensure token is hydrated from storage on cold start
+        const token = this.getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-deprecated */
+/* eslint-disable no-console */
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   launchImageLibrary,
@@ -5,6 +7,7 @@ import {
   ImagePickerResponse,
   MediaType,
   CameraOptions,
+  ImageLibraryOptions,
 } from 'react-native-image-picker';
 import { View, TouchableOpacity, FlatList, Alert, Platform, Linking } from 'react-native';
 import React from 'react';
@@ -132,7 +135,7 @@ const MediaPicker = ({ value = [], onChange, maxItems = 5 }: MediaPickerProps) =
       includeExtra: true,
     };
 
-    launchImageLibrary(options, async (response: ImagePickerResponse) => {
+    launchImageLibrary(options as ImageLibraryOptions, async (response: ImagePickerResponse) => {
       if (response.didCancel) {
         return;
       }

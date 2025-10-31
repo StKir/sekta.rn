@@ -49,7 +49,6 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.BACKGROUND_PRIMARY,
       width: SCREEN_WIDTH,
       justifyContent: 'center',
       alignItems: 'center',

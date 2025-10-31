@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+import PaywallPage from '@/pages/PaywallPage';
 import OnboardingPage from '@/pages/OnboardingPage';
 import NotePage from '@/pages/NotePage';
 import NewRegisterPage from '@/pages/NewRegisterPage';
@@ -11,6 +12,7 @@ import CheckInPage from '@/pages/CheckInPage';
 import AiPlayListPage from '@/pages/AiPlayListPage';
 import AiPlans from '@/pages/AiPlans';
 import AIResultPage from '@/pages/AIResultPage';
+import AIResultCheckPage from '@/pages/AIResultCheckPage';
 
 import { RootStackParamList } from './types';
 import TabNavigator from './TabNavigator';
@@ -18,17 +20,34 @@ import TabNavigator from './TabNavigator';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
-import AIResultCheckPage from '@/pages/AIResultCheckPage';
+import { subscriptionApi } from '@/shared/api/subscriptionApi';
+import { apiClient } from '@/shared/api/apiClient';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   const { colors } = useTheme();
-  const { isAuthenticated, isLoading, loadUser } = useUser();
+  const { isAuthenticated, isLoading, loadUser, setUser, userData } = useUser();
 
   useEffect(() => {
     loadUser();
   }, [loadUser]);
+
+  // Rehydrate user from API if token exists but local user is missing
+  useEffect(() => {
+    const hydrateUser = async () => {
+      try {
+        const token = apiClient.getToken();
+        if (token && !isAuthenticated && !userData) {
+          const me = await subscriptionApi.getCurrentUser();
+          setUser(me.user as any);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    hydrateUser();
+  }, [isAuthenticated, setUser, userData]);
 
   if (isLoading) {
     return (
@@ -57,6 +76,7 @@ const AppNavigator = () => {
         <Stack.Screen component={AIResultPage} name='AIResultPage' />
         <Stack.Screen component={AIResultCheckPage} name='AIResultCheckPage' />
         <Stack.Screen component={OnboardingPage} name='OnboardingPage' />
+        <Stack.Screen component={PaywallPage} name='PaywallPage' />
       </Stack.Navigator>
       <BottomSheet />
     </NavigationContainer>

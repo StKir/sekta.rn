@@ -17,6 +17,9 @@ export type RootStackParamList = {
   AIResultCheckPage: {
     requestId: string | number;
   };
+  PaywallPage: {
+    onSuccess?: () => void;
+  };
 };
 
 export type TabParamList = {

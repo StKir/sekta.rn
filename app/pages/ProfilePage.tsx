@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-unused-styles */
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeviceInfo from 'react-native-device-info';
-import { Alert, Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -13,6 +13,7 @@ import ThemeController from '@/shared/ui/ThemeController/ThemeController';
 import TextArea from '@/shared/ui/TextArea/TextArea';
 import Text from '@/shared/ui/Text';
 import NotificationInput from '@/shared/ui/NotificationInput/NotificationInput';
+import { SubscriptionBanner } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
@@ -35,14 +36,20 @@ const ProfilePage = () => {
   const { clearResults } = useTestResultsStore();
   const { userData, isLoading, loadUser, removeUser } = useUser();
   const { setNotification, getNotification, notification, updateUser } = useUserStore();
+
   useEffect(() => {
     if (!userData) {
       loadUser();
     }
   }, [getNotification, loadUser, notification, userData]);
 
-  const handleFeedback = () => {
-    Linking.openURL('https://t.me/OG_Kurasaki');
+  const showPaywall = () => {
+    navigation.navigate('PaywallPage', {
+      onSuccess: () => {
+        // Можно добавить логику после успешной подписки
+        console.log('Подписка активирована!');
+      },
+    });
   };
 
   const getGenderText = (gender: any) => {
@@ -217,6 +224,17 @@ const ProfilePage = () => {
           {/* <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
           </TouchableOpacity> */}
+          <SubscriptionBanner
+            subtitle='Получите персонального AI-ассистента'
+            title='Разблокируйте PRO функции'
+            onPress={showPaywall}
+          />
+
+          {/* Тестовая кнопка */}
+          <TouchableOpacity style={styles.testButton} onPress={showPaywall}>
+            <Text style={styles.testButtonText}>ТЕСТ: Открыть Paywall</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={[styles.button, styles.feedbackButton]}
             onPress={handleOnboarding}
@@ -229,7 +247,7 @@ const ProfilePage = () => {
           <Text variant='body2'>
             Версия: {DeviceInfo.getVersion() + '.' + version.state.version}
           </Text>
-          <View style={{ height: 150 }} />
+          <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -353,11 +371,21 @@ const createStyles = (colors: ThemeColors) =>
     clearButtonText: {
       color: 'white',
     },
+    testButton: {
+      backgroundColor: 'red',
+      padding: 20,
+      margin: 20,
+      borderRadius: 10,
+    },
+    testButtonText: {
+      color: 'white',
+      textAlign: 'center',
+    },
+    bottomSpacer: {
+      height: 150,
+    },
     reminderButton: {
       backgroundColor: colors.SUCCESS || '#34C759',
-    },
-    testButton: {
-      backgroundColor: colors.INFO || '#007AFF',
     },
     timezoneButton: {
       backgroundColor: colors.WARNING || '#FF9500',

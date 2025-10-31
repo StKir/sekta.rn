@@ -9,9 +9,16 @@ type TypographyVariant = keyof typeof typography;
 type TextProps = RNTextProps & {
   variant?: TypographyVariant;
   color?: string;
+  allowFontScaling?: boolean;
 };
 
-const Text = ({ variant = 'body1', color = 'textPrimary', style, ...props }: TextProps) => {
+const Text = ({
+  variant = 'body1',
+  color = 'textPrimary',
+  style,
+  allowFontScaling = false,
+  ...props
+}: TextProps) => {
   const { colors } = useTheme();
 
   const getColor = (colorProp: string) => {
@@ -35,9 +42,9 @@ const Text = ({ variant = 'body1', color = 'textPrimary', style, ...props }: Tex
 
   return (
     <RNText
+      allowFontScaling={allowFontScaling}
       style={[typography[variant], { color: getColor(color) }, style]}
       {...props}
-      allowFontScaling={false}
     />
   );
 };

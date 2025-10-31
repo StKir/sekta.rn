@@ -76,7 +76,7 @@ export type NotePostData = {
 export type AIPost = {
   date: string;
   id: string | number;
-  type: 'ai_text';
+  type: 'ai_text' | 'ai_slides';
   title: string;
   data: {
     result: string;

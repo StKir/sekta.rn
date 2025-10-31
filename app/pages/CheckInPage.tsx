@@ -14,6 +14,7 @@ import { useLentStore } from '@/entities/lent/store/store';
 
 const CheckInPage = () => {
   const formData = transformJsonToFormData(jsonData);
+
   const navigation = useNavigation();
   const { addResult } = useTestResultsStore();
   const { addCheckIn } = useLentStore();

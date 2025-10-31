@@ -3,12 +3,13 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import { PostData } from '@/types/lentTypes';
+import { AIModelResponseFormat } from '@/types/aiTypes';
 import Text from '@/shared/ui/Text';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { SPACING } from '@/shared/constants';
-import { sendToGPT } from '@/shared/api/AIActions';
+import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user';
 import { useLentStore } from '@/entities/lent/store/store';
@@ -23,7 +24,6 @@ const AiCheck = ({ post }: { post: PostData }) => {
   const findAiCheckResult = useCallback(() => {
     return (
       aiData.find((item) => {
-        console.log(item.postId, post?.id);
         return String(item.postId) === String(post?.id);
       }) || null
     );
@@ -59,7 +59,7 @@ const AiCheck = ({ post }: { post: PostData }) => {
       }
 
       const prompt = aiCheckPrompt(user, post);
-      const aiResponseID = await sendToGPT(prompt);
+      const aiResponseID = await sendToAI(prompt, AIModelResponseFormat.JSON);
 
       if (typeof aiResponseID === 'number') {
         minusAiToken();
