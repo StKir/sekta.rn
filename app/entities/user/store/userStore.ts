@@ -19,6 +19,7 @@ interface UserState {
   };
   theme: 'light' | 'dark';
   userTime: Date;
+  token: string | null;
   isAuthenticated: boolean;
 }
 
@@ -37,6 +38,8 @@ interface UserActions {
   getNotification: () => { active: boolean; time: Date | null };
   setSelectedAIModel: (model: AIModel) => void;
   getSelectedAIModel: () => AIModel;
+  setToken: (token: string | null) => void;
+  setAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 type UserStore = UserState & UserActions;
@@ -48,13 +51,14 @@ export const useUserStore = create<UserStore>()(
       isLoading: false,
       theme: 'light',
       ai_tokens: 0,
-      selectedAIModel: AIModel.GROK_4,
+      selectedAIModel: AIModel.GPT_4o,
       notification: {
         active: false,
         time: null,
       },
       userTime: new Date(),
       isAuthenticated: false,
+      token: null,
 
       setUserTime: () => {
         setState({ userTime: new Date() });
@@ -71,7 +75,7 @@ export const useUserStore = create<UserStore>()(
 
         setState({
           userData: userWithDate,
-          isAuthenticated: false,
+          isAuthenticated: true,
           isLoading: false,
         });
       },
@@ -171,6 +175,14 @@ export const useUserStore = create<UserStore>()(
 
       getSelectedAIModel: () => {
         return get().selectedAIModel;
+      },
+
+      setToken: (token: string | null) => {
+        setState({ token, isAuthenticated: !!token });
+      },
+
+      setAuthenticated: (isAuthenticated: boolean) => {
+        setState({ isAuthenticated });
       },
     }),
     {

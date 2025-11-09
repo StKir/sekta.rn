@@ -1,27 +1,38 @@
 export interface RegisterRequest {
   email: string;
+  password: string;
   name?: string;
   birthDate?: string;
   gender?: 'male' | 'female' | 'other';
 }
 
+export interface TariffInfo {
+  status: 'TRIAL' | 'PRO';
+  trialCount?: number;
+}
+
+export interface RegisterResponseUser {
+  email: string;
+  name?: string;
+  birthDate?: string;
+  gender?: 'male' | 'female' | 'other';
+  registrationDate?: string;
+  tariff_info?: TariffInfo;
+}
+
 export interface RegisterResponse {
-  success: boolean;
-  userId: string;
-  tokens: number;
-  accessToken: string;
-  message?: string;
+  token: string;
+  user: RegisterResponseUser;
 }
 
 export interface LoginRequest {
   email: string;
+  password: string;
 }
 
 export interface LoginResponse {
-  success: boolean;
-  userId: string;
-  accessToken: string;
-  message?: string;
+  token: string;
+  user: RegisterResponseUser;
 }
 
 export interface UserData {
@@ -34,8 +45,7 @@ export interface UserData {
 }
 
 export interface MeResponse {
-  success: boolean;
-  user: UserData;
+  user: RegisterResponseUser;
 }
 
 export interface BalanceResponse {

@@ -40,7 +40,7 @@ const MoodCardLent = ({ color, mood, colorText }: MoodCardLentProps) => {
               : {}
           }
         >
-          <Text allowFontScaling={true} style={{ fontSize: 50, lineHeight: 50 }}>
+          <Text allowFontScaling={true} style={{ fontSize: 50, lineHeight: 62 }}>
             {mood?.slice(0, 2)}
           </Text>
         </View>

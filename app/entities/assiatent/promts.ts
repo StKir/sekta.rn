@@ -57,7 +57,7 @@ ${JSON.stringify(postsData)}
     id: string;
     title: string;
     description: string;
-    image?: 'happy' | 'sad' | 'neutral' | 'angry' | 'surprised' | 'confused' | 'disappointed' | 'excited' | 'grateful' | 'hopeful' | 'grateful' | 'hopeful' | 'grateful' | 'hopeful';
+    smile: string; Смайлик который подходит слайду 
   }
 ]}
 

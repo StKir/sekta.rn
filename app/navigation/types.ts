@@ -4,12 +4,13 @@ export type RootStackParamList = {
   Calendar: undefined;
   Feed: undefined;
   Register: undefined;
+  LoginScreen: undefined;
   CheckInPage: undefined;
   AiPlayListPage: undefined;
   MomentPage: undefined;
   AiPlans: undefined;
   NotePage: undefined;
-  AIQuestionPage: undefined;
+  AiQuestionPage: undefined;
   OnboardingPage: undefined;
   AIResultPage: {
     requestId: string;

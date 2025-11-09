@@ -9,6 +9,7 @@ import NotePage from '@/pages/NotePage';
 import NewRegisterPage from '@/pages/NewRegisterPage';
 import MomentPage from '@/pages/MomentPage';
 import CheckInPage from '@/pages/CheckInPage';
+import AiQuestionPage from '@/pages/AiQuestionPage';
 import AiPlayListPage from '@/pages/AiPlayListPage';
 import AiPlans from '@/pages/AiPlans';
 import AIResultPage from '@/pages/AIResultPage';
@@ -20,34 +21,57 @@ import TabNavigator from './TabNavigator';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
-import { subscriptionApi } from '@/shared/api/subscriptionApi';
+import { authApi } from '@/shared/api/authApi';
 import { apiClient } from '@/shared/api/apiClient';
+import LoginScreen from '@/features/auth/LoginScreen/LoginScreen';
+import { useUserStore } from '@/entities/user/store/userStore';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   const { colors } = useTheme();
-  const { isAuthenticated, isLoading, loadUser, setUser, userData } = useUser();
+  const { isLoading, loadUser, setUser } = useUser();
+  const { setToken, setAuthenticated, isAuthenticated } = useUserStore();
 
   useEffect(() => {
     loadUser();
   }, [loadUser]);
 
-  // Rehydrate user from API if token exists but local user is missing
   useEffect(() => {
     const hydrateUser = async () => {
       try {
         const token = apiClient.getToken();
-        if (token && !isAuthenticated && !userData) {
-          const me = await subscriptionApi.getCurrentUser();
-          setUser(me.user as any);
+
+        if (token) {
+          setToken(token);
+          setAuthenticated(true);
+
+          const me = await authApi.getUserMe();
+
+          if (me.user) {
+            setUser({
+              email: me.user.email,
+              name: me.user.name,
+              birthDate: me.user.birthDate,
+              gender: me.user.gender,
+              registrationDate: me.user.registrationDate || new Date().toISOString(),
+              tariff_info: me.user.tariff_info,
+            });
+          }
+        } else {
+          setToken(null);
+          setAuthenticated(false);
         }
       } catch {
-        // ignore
+        apiClient.clearToken();
+        setToken(null);
+        setAuthenticated(false);
       }
     };
     hydrateUser();
-  }, [isAuthenticated, setUser, userData]);
+  }, [setUser, setToken, setAuthenticated]);
+
+  const hasToken = apiClient.getToken();
 
   if (isLoading) {
     return (
@@ -60,16 +84,19 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={isAuthenticated ? 'TabNavigator' : 'Register'}
+        initialRouteName={hasToken && isAuthenticated ? 'TabNavigator' : 'Register'}
         screenOptions={{
           headerShown: false,
           ...TransitionPresets.ModalSlideFromBottomIOS,
         }}
       >
         <Stack.Screen component={NewRegisterPage} name='Register' />
+        <Stack.Screen component={LoginScreen} name='LoginScreen' />
         <Stack.Screen component={TabNavigator} name='TabNavigator' />
         <Stack.Screen component={CheckInPage} name='CheckInPage' />
         <Stack.Screen component={AiPlayListPage} name='AiPlayListPage' />
+        <Stack.Screen component={AiQuestionPage} name='AiQuestionPage' />
+
         <Stack.Screen component={AiPlans} name='AiPlans' />
         <Stack.Screen component={MomentPage} name='MomentPage' />
         <Stack.Screen component={NotePage} name='NotePage' />

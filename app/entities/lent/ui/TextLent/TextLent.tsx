@@ -20,6 +20,7 @@ const TextLent = ({ text, type }: TextLentProps) => {
           color={colors.TEXT_PRIMARY}
           fontSize={SIZES.FONT_SIZE.XXLARGE}
           fontWeight={SIZES.FONT_WEIGHT.REGULAR}
+          lineHeight={SIZES.FONT_SIZE.XXLARGE}
         >
           {' '}
           - “{text}”

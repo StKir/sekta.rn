@@ -72,15 +72,26 @@ export const useGetAIPost = (requestId: number) => {
         const result = await pollForResult(requestId);
 
         if (result.type === 'ai_text') {
-          const updatedAIPost: AIPost = {
-            ...aiPost,
-            data: {
-              result: result.result,
-              status: 'success',
-            },
-          };
+          let updatedAIPost: AIPost;
+          if ('message' in result.result) {
+            updatedAIPost = {
+              ...aiPost,
+              data: {
+                result: result.result.message.content,
+                status: 'success',
+              },
+            };
+          } else {
+            updatedAIPost = {
+              ...aiPost,
+              data: {
+                result: result.result,
+                status: 'success',
+              },
+            };
+          }
 
-          if (updatedAIPost.data.result.includes('```json')) {
+          if (updatedAIPost?.data?.result?.includes('```json')) {
             updatedAIPost.data.result = updatedAIPost.data.result
               .replace('```json', '')
               .replace('```', '');

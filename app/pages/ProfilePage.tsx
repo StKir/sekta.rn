@@ -19,6 +19,8 @@ import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useOTAUpdate } from '@/shared/hooks/useOTAUpdate';
 import { SPACING, SIZES } from '@/shared/constants';
+import { authApi } from '@/shared/api/authApi';
+import { apiClient } from '@/shared/api/apiClient';
 import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
@@ -35,7 +37,17 @@ const ProfilePage = () => {
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
   const { userData, isLoading, loadUser, removeUser } = useUser();
-  const { setNotification, getNotification, notification, updateUser } = useUserStore();
+  const {
+    setNotification,
+    getNotification,
+    notification,
+    updateUser,
+    token,
+    setToken,
+    setAuthenticated,
+  } = useUserStore();
+
+  const hasToken = token || apiClient.getToken();
 
   useEffect(() => {
     if (!userData) {
@@ -63,6 +75,10 @@ const ProfilePage = () => {
     navigation.navigate('Register');
   };
 
+  const navigateToLogin = () => {
+    navigation.navigate('LoginScreen');
+  };
+
   const handleOnboarding = () => {
     navigation.navigate('OnboardingPage');
   };
@@ -74,6 +90,10 @@ const ProfilePage = () => {
         {
           text: 'Выйти',
           onPress: () => {
+            authApi.logout();
+            apiClient.clearToken();
+            setToken(null);
+            setAuthenticated(false);
             removeUser();
             clearLentStore();
             clearResults();
@@ -168,6 +188,13 @@ const ProfilePage = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {renderUserProfile()}
+        {/* {!hasToken && (
+          <View style={styles.userCard}>
+            <TouchableOpacity style={styles.loginButton} onPress={navigateToLogin}>
+              <Text style={styles.loginButtonText}>Войти / Зарегистрироваться</Text>
+            </TouchableOpacity>
+          </View>
+        )} */}
         <View style={styles.buttonContainer}>
           <TextArea
             label='О тебе'
@@ -224,16 +251,11 @@ const ProfilePage = () => {
           {/* <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
           </TouchableOpacity> */}
-          <SubscriptionBanner
+          {/* <SubscriptionBanner
             subtitle='Получите персонального AI-ассистента'
             title='Разблокируйте PRO функции'
             onPress={showPaywall}
-          />
-
-          {/* Тестовая кнопка */}
-          <TouchableOpacity style={styles.testButton} onPress={showPaywall}>
-            <Text style={styles.testButtonText}>ТЕСТ: Открыть Paywall</Text>
-          </TouchableOpacity>
+          /> */}
 
           <TouchableOpacity
             style={[styles.button, styles.feedbackButton]}
@@ -241,9 +263,11 @@ const ProfilePage = () => {
           >
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Обучение</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-            <Text style={[styles.buttonText, styles.logoutButtonText]}>Выйти</Text>
-          </TouchableOpacity>
+          {hasToken && (
+            <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
+              <Text style={[styles.buttonText, styles.logoutButtonText]}>Очистить данные</Text>
+            </TouchableOpacity>
+          )}
           <Text variant='body2'>
             Версия: {DeviceInfo.getVersion() + '.' + version.state.version}
           </Text>
@@ -291,6 +315,18 @@ const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
     },
     registerButtonText: {
+      color: 'white',
+      fontSize: SIZES.FONT_SIZE.MEDIUM,
+      fontWeight: '600',
+    },
+    loginButton: {
+      backgroundColor: colors.PRIMARY,
+      borderRadius: 12,
+      paddingHorizontal: SPACING.LARGE,
+      paddingVertical: SPACING.MEDIUM,
+      alignItems: 'center',
+    },
+    loginButtonText: {
       color: 'white',
       fontSize: SIZES.FONT_SIZE.MEDIUM,
       fontWeight: '600',

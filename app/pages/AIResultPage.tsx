@@ -74,12 +74,13 @@ const AIResultPage = () => {
         id: item.id,
         title: item.title,
         description: item.description,
+        image: item?.image,
+        smile: item?.smile,
       })),
     };
 
     return <CarouselCheckIn data={dataSlides} onComplete={navigation.goBack} />;
   }
-  console.log(updatedPost);
 
   return (
     <SafeAreaView style={styles.container}>
