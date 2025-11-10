@@ -43,6 +43,9 @@ const AiCheck = ({ post }: { post: PostData }) => {
   };
 
   const onAiCheck = async () => {
+    if (!checkAiTokens()) {
+      return;
+    }
     setIsLoading(true);
 
     try {

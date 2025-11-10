@@ -21,7 +21,13 @@ const MomentPost = ({ post }: MomentPostProps) => {
   const { colors } = useTheme();
 
   return (
-    <Share id={post.id} key={post.id} message='Посмотри на мой пост в приложении!' title='Мой пост'>
+    <Share
+      aiData={post}
+      id={post.id}
+      key={post.id}
+      message='Посмотри на мой пост в приложении!'
+      title='Мой пост'
+    >
       <View
         style={{
           gap: SPACING.MEDIUM,

@@ -70,6 +70,7 @@ export const useGetAICheck = (requestId: number) => {
 
       try {
         const result = await pollForResult(requestId);
+        console.log(result);
 
         if (result.type === 'ai_text') {
           const updatedAIPost: AiResult = {

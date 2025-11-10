@@ -37,7 +37,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { addCustomPost } = useLentStore();
   const user = useUser();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { ai_tokens, selectedAIModel } = useUserStore();
+  const { ai_tokens, selectedAIModel, minusAiToken } = useUserStore();
   const insets = useSafeAreaInsets();
   const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
     '1': false, // Анализ недели
@@ -47,10 +47,10 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   });
 
   const checkAiTokens = () => {
-    // if (ai_tokens <= 0) {
-    //   Alert.alert('У вас закончились токены(');
-    //   return false;
-    // }
+    if (ai_tokens <= 0) {
+      Alert.alert('У вас закончились токены(');
+      return false;
+    }
     return true;
   };
 
@@ -62,18 +62,18 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   };
 
   const handleWeekAnalysis = async () => {
-    // if (!checkAiTokens()) {
-    //   return;
-    // }
+    if (!checkAiTokens()) {
+      return;
+    }
 
     try {
       setLoadingState('1', true);
       const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
       const aiResponseID = await sendToAI(prompt);
 
-      // if (typeof aiResponseID === 'number') {
-      //   minusAiToken();
-      // }
+      if (typeof aiResponseID === 'number') {
+        minusAiToken();
+      }
 
       addCustomPost({
         date: new Date().toISOString(),

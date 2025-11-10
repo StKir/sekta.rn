@@ -85,9 +85,12 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
       );
 
       if (statusResponse.data.status === 'success') {
+        const text = getCurrentText(statusResponse.data.result?.[0] as any);
+        console.log(text);
+
         return {
-          result: statusResponse.data.result?.[0] || '',
-          requestId: statusResponse.data.request_id,
+          result: text || '',
+          requestId,
           type: 'ai_text',
         };
       }
@@ -118,6 +121,22 @@ function minifyText(text: string): string {
     .replace(/\s([.,!?;:])/g, '$1')
     .trim();
 }
+
+const getCurrentText = (initialRes: any) => {
+  if (!initialRes) {
+    return '';
+  }
+
+  if ('message' in initialRes) {
+    return initialRes.message.content;
+  }
+
+  if ('choices' in initialRes) {
+    return initialRes.choices[0].message.content;
+  }
+
+  return initialRes.result;
+};
 
 interface GPTRequest {
   response_format?: AIModelResponseFormat;

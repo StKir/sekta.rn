@@ -30,8 +30,8 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   const { colors } = useTheme();
-  const { isLoading, loadUser, setUser } = useUser();
-  const { setToken, setAuthenticated, isAuthenticated } = useUserStore();
+  const { isLoading, loadUser, setUser, userName } = useUser();
+  const { setToken, setAuthenticated } = useUserStore();
 
   useEffect(() => {
     loadUser();
@@ -46,32 +46,37 @@ const AppNavigator = () => {
           setToken(token);
           setAuthenticated(true);
 
-          const me = await authApi.getUserMe();
+          try {
+            const me = await authApi.getUserMe();
 
-          if (me.user) {
-            setUser({
-              email: me.user.email,
-              name: me.user.name,
-              birthDate: me.user.birthDate,
-              gender: me.user.gender,
-              registrationDate: me.user.registrationDate || new Date().toISOString(),
-              tariff_info: me.user.tariff_info,
-            });
+            if (me.user) {
+              setUser({
+                email: me.user.email,
+                name: me.user.name,
+                birthDate: me.user.birthDate,
+                gender: me.user.gender,
+                registrationDate: me.user.registrationDate || new Date().toISOString(),
+                tariff_info: me.user.tariff_info,
+              });
+            }
+          } catch {
+            // Если токен невалидный, просто очищаем его, но не блокируем доступ к приложению
+            apiClient.clearToken();
+            setToken(null);
+            setAuthenticated(false);
           }
         } else {
           setToken(null);
           setAuthenticated(false);
         }
       } catch {
-        apiClient.clearToken();
+        // Игнорируем ошибки при загрузке токена
         setToken(null);
         setAuthenticated(false);
       }
     };
     hydrateUser();
   }, [setUser, setToken, setAuthenticated]);
-
-  const hasToken = apiClient.getToken();
 
   if (isLoading) {
     return (
@@ -84,7 +89,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={hasToken && isAuthenticated ? 'TabNavigator' : 'Register'}
+        initialRouteName={userName ? 'TabNavigator' : 'Register'}
         screenOptions={{
           headerShown: false,
           ...TransitionPresets.ModalSlideFromBottomIOS,

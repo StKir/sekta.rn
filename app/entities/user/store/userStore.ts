@@ -6,6 +6,7 @@ import { AIModel } from '@/types/aiTypes';
 import { StorageService } from '@/shared/utils/storage';
 import { UserData } from '@/shared/types/user.types';
 import { FormAnswers } from '@/shared/types/form.types';
+import { apiClient } from '@/shared/api/apiClient';
 
 interface UserState {
   userData: UserData | null;
@@ -135,15 +136,20 @@ export const useUserStore = create<UserStore>()(
         setState({ isLoading: true });
         try {
           const userData = StorageService.getUser();
+          const token = StorageService.getItem('auth_token');
+          const isAuthenticated = !!token;
+
           setState({
             userData: userData as UserData,
-            isAuthenticated: !!userData,
+            token: token,
+            isAuthenticated: isAuthenticated,
             isLoading: false,
           });
         } catch (error) {
           console.error('Error loading user:', error);
           setState({
             userData: null,
+            token: null,
             isAuthenticated: false,
             isLoading: false,
           });
@@ -161,8 +167,10 @@ export const useUserStore = create<UserStore>()(
 
       clearAll: () => {
         StorageService.removeUser();
+        StorageService.removeItem('auth_token');
         setState({
           userData: null,
+          token: null,
           isAuthenticated: false,
           isLoading: false,
         });
@@ -178,6 +186,13 @@ export const useUserStore = create<UserStore>()(
       },
 
       setToken: (token: string | null) => {
+        if (token) {
+          StorageService.setItem('auth_token', token);
+          apiClient.setToken(token);
+        } else {
+          StorageService.removeItem('auth_token');
+          apiClient.clearToken();
+        }
         setState({ token, isAuthenticated: !!token });
       },
 
@@ -194,15 +209,19 @@ export const useUserStore = create<UserStore>()(
           const ai_tokens = StorageService.getAiToken();
           const notification = StorageService.getNotification();
           const selectedAIModel = StorageService.getSelectedAIModel() || 'grok-4';
+          const token = StorageService.getItem('auth_token');
+          const isAuthenticated = !!token;
+
           return JSON.stringify({
             state: {
               userData: userData as UserData,
-              isAuthenticated: !!userData,
+              isAuthenticated: isAuthenticated,
               isLoading: false,
               theme: theme as 'light' | 'dark',
               ai_tokens: ai_tokens,
               notification: notification,
               selectedAIModel: selectedAIModel,
+              token: token,
             },
           });
         },
@@ -214,9 +233,14 @@ export const useUserStore = create<UserStore>()(
           if (parsed.state?.selectedAIModel) {
             StorageService.setSelectedAIModel(parsed.state.selectedAIModel);
           }
+          if (parsed.state?.token) {
+            StorageService.setItem('auth_token', parsed.state.token);
+            apiClient.setToken(parsed.state.token);
+          }
         },
         removeItem: () => {
           StorageService.removeUser();
+          StorageService.removeItem('auth_token');
         },
       })),
     }
