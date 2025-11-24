@@ -37,7 +37,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { addCustomPost } = useLentStore();
   const user = useUser();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { ai_tokens, selectedAIModel, minusAiToken } = useUserStore();
+  const { ai_tokens, selectedAIModel } = useUserStore();
   const insets = useSafeAreaInsets();
   const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
     '1': false, // Анализ недели
@@ -45,14 +45,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     '3': false, // Составить плейлист
     '4': false, // Придумать планы
   });
-
-  const checkAiTokens = () => {
-    if (ai_tokens <= 0) {
-      Alert.alert('У вас закончились токены(');
-      return false;
-    }
-    return true;
-  };
 
   const setLoadingState = (id: string, isLoading: boolean) => {
     setLoadingStates((prev) => ({
@@ -62,30 +54,29 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   };
 
   const handleWeekAnalysis = async () => {
-    if (!checkAiTokens()) {
-      return;
-    }
-
     try {
+      const hasAccess = await user.checkSubscription();
+      if (!hasAccess) {
+        return;
+      }
+
       setLoadingState('1', true);
       const prompt = weekAnalysisPrompt(checkIns, user.userData || {});
       const aiResponseID = await sendToAI(prompt);
 
       if (typeof aiResponseID === 'number') {
-        minusAiToken();
+        addCustomPost({
+          date: new Date().toISOString(),
+          id: aiResponseID,
+          type: 'ai_text',
+          title: 'AI Анализ недели' + ' ' + formatDateRange(new Date().toISOString()),
+          data: {
+            status: 'processing',
+            result: '',
+          },
+        });
+        changeTab(0);
       }
-
-      addCustomPost({
-        date: new Date().toISOString(),
-        id: aiResponseID,
-        type: 'ai_text',
-        title: 'AI Анализ недели' + ' ' + formatDateRange(new Date().toISOString()),
-        data: {
-          status: 'processing',
-          result: '',
-        },
-      });
-      changeTab(0);
     } catch {
       Alert.alert('Ошибка', 'Не удалось выполнить анализ. Попробуйте позже.');
     } finally {
@@ -103,10 +94,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   };
 
   const handleCreatePlans = async () => {
-    if (!checkAiTokens()) {
-      return;
-    }
-
     try {
       setLoadingState('4', true);
       navigation.navigate('AiPlans');

@@ -1,6 +1,6 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 
 import QuestionRenderer from './QuestionRenderer';
 
@@ -34,6 +34,7 @@ const FormStep = ({
   title = 'Тест',
   stickyButton,
 }: FormStepProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const insets = useSafeAreaInsets();
   const isLastStep = stepIndex === totalSteps - 1;
   const isFirstStep = stepIndex === 0;
@@ -128,6 +129,18 @@ const FormStep = ({
     );
   }
 
+  const handleNextPress = () => {
+    if (isLastStep) {
+      setIsLoading(true);
+      onNext();
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      return;
+    }
+    onNext();
+  };
+
   return (
     <>
       <FormStepWrapper
@@ -156,11 +169,11 @@ const FormStep = ({
               <Button icon='arrow-back' variant='primary-light' onPress={onPrev} />
             )}
             <Button
-              disabled={!isStepValid()}
+              disabled={!isStepValid() || isLoading}
               sticky={stickyButton}
               style={{ flex: 2 }}
               title={isLastStep ? 'Завершить' : 'Далее'}
-              onPress={onNext}
+              onPress={handleNextPress}
             />
           </View>
         )}
@@ -182,9 +195,9 @@ const FormStep = ({
             <Button icon='arrow-back' variant='primary-light' onPress={onPrev} />
           )}
           <Button
-            disabled={!isStepValid()}
+            disabled={!isStepValid() || isLoading}
             title={isLastStep ? 'Завершить' : 'Далее'}
-            onPress={onNext}
+            onPress={handleNextPress}
           />
         </View>
       )}

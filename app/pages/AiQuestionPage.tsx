@@ -11,7 +11,6 @@ import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
-import { useUserStore } from '@/entities/user/store/userStore';
 import { useLentStore } from '@/entities/lent/store/store';
 import { questionPrompt } from '@/entities/assiatent/promts';
 
@@ -19,7 +18,6 @@ const AiQuestionPage = () => {
   const formData = transformJsonToFormData(jsonData);
   const { postsData } = useDaysPosts(4);
   const user = useUser();
-  const { minusAiToken } = useUserStore();
   const { addCustomPost } = useLentStore();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
@@ -40,21 +38,19 @@ const AiQuestionPage = () => {
       const aiResponseID = await sendToAI(prompt);
 
       if (typeof aiResponseID === 'number') {
-        minusAiToken();
+        addCustomPost({
+          date: new Date().toISOString(),
+          id: aiResponseID,
+          type: 'ai_text',
+          title: `AI Ответ на вопрос: ${answers.question.substring(0, 30)}${
+            answers.question.length > 30 ? '...' : ''
+          }`,
+          data: {
+            status: 'processing',
+            result: '',
+          },
+        });
       }
-
-      addCustomPost({
-        date: new Date().toISOString(),
-        id: aiResponseID,
-        type: 'ai_text',
-        title: `AI Ответ на вопрос: ${answers.question.substring(0, 30)}${
-          answers.question.length > 30 ? '...' : ''
-        }`,
-        data: {
-          status: 'processing',
-          result: '',
-        },
-      });
 
       navigation.goBack();
     } catch {

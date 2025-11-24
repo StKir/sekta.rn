@@ -1,12 +1,19 @@
 import { AxiosError } from 'axios';
 
-import { ApiError, BalanceResponse, MeResponse } from './types';
+import {
+  ApiError,
+  BalanceResponse,
+  MeResponse,
+  UpdateUserRequest,
+  UpdateUserResponse,
+} from './types';
 import { api } from './apiClient';
 
 export const userApi = {
   getMe: async (): Promise<MeResponse> => {
     try {
       const response = await api.get<MeResponse>('/user/me');
+
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>;
@@ -31,6 +38,24 @@ export const userApi = {
       }
 
       throw new Error(axiosError.response?.data?.message || 'Ошибка получения баланса');
+    }
+  },
+
+  updateUser: async (data: UpdateUserRequest): Promise<UpdateUserResponse> => {
+    try {
+      const response = await api.patch<UpdateUserResponse>('/user/me', data);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>;
+
+      if (axiosError.response?.status === 401) {
+        throw new Error('Не авторизован');
+      }
+
+      throw new Error(
+        axiosError.response?.data?.message || 'Ошибка обновления данных пользователя'
+      );
     }
   },
 };

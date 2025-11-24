@@ -88,7 +88,7 @@ const ProfilePage = () => {
       Alert.alert('Вы уверены, что хотите выйти?', 'Это действие нельзя будет отменить', [
         { text: 'Отмена', style: 'cancel' },
         {
-          text: 'Выйти',
+          text: 'Очистить данные',
           onPress: () => {
             authApi.logout();
             apiClient.clearToken();
@@ -188,13 +188,7 @@ const ProfilePage = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {renderUserProfile()}
-        {/* {!hasToken && (
-          <View style={styles.userCard}>
-            <TouchableOpacity style={styles.loginButton} onPress={navigateToLogin}>
-              <Text style={styles.loginButtonText}>Войти / Зарегистрироваться</Text>
-            </TouchableOpacity>
-          </View>
-        )} */}
+
         <View style={styles.buttonContainer}>
           <TextArea
             label='О тебе'
@@ -235,6 +229,14 @@ const ProfilePage = () => {
             }}
           />
 
+          {!hasToken && (
+            <View style={styles.userCard}>
+              <TouchableOpacity style={styles.loginButton} onPress={navigateToLogin}>
+                <Text style={styles.loginButtonText}>Войти / Зарегистрироваться</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* <TouchableOpacity
           style={[styles.button, styles.testButton]}
           onPress={async () => {
@@ -251,11 +253,11 @@ const ProfilePage = () => {
           {/* <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
           </TouchableOpacity> */}
-          {/* <SubscriptionBanner
+          <SubscriptionBanner
             subtitle='Получите персонального AI-ассистента'
             title='Разблокируйте PRO функции'
             onPress={showPaywall}
-          /> */}
+          />
 
           <TouchableOpacity
             style={[styles.button, styles.feedbackButton]}

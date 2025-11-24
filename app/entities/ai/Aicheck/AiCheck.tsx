@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
@@ -11,13 +11,11 @@ import { useUser } from '@/shared/hooks/useUser';
 import { SPACING } from '@/shared/constants';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
-import { useUserStore } from '@/entities/user';
 import { useLentStore } from '@/entities/lent/store/store';
 import { aiCheckPrompt } from '@/entities/assiatent/promts';
 
 const AiCheck = ({ post }: { post: PostData }) => {
   const { colors } = useTheme();
-  const { minusAiToken, ai_tokens } = useUserStore();
   const { addAiData, aiData } = useLentStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,22 +28,12 @@ const AiCheck = ({ post }: { post: PostData }) => {
   }, [aiData, post?.id]);
 
   const user = useUser().userData;
+  const checkSubscription = useUser().checkSubscription;
 
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const checkAiTokens = () => {
-    if (ai_tokens <= 0) {
-      Alert.alert('У вас закончились токены(');
-      return false;
-    }
-    return true;
-  };
-
   const onAiCheck = async () => {
-    if (!checkAiTokens()) {
-      return;
-    }
     setIsLoading(true);
 
     try {
@@ -61,12 +49,14 @@ const AiCheck = ({ post }: { post: PostData }) => {
         return;
       }
 
+      const hasAccess = await checkSubscription();
+      if (!hasAccess) {
+        return;
+      }
       const prompt = aiCheckPrompt(user, post);
       const aiResponseID = await sendToAI(prompt, AIModelResponseFormat.JSON);
 
       if (typeof aiResponseID === 'number') {
-        minusAiToken();
-
         addAiData({
           postId: String(postId),
           requestId: aiResponseID,

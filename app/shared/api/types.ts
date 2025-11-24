@@ -78,6 +78,24 @@ export interface SpendTokensResponse {
   message?: string;
 }
 
+export interface UpdateUserRequest {
+  name?: string;
+  birthDate?: string;
+  gender?: 'male' | 'female' | 'other';
+  about_me?: string;
+  feeling?: string;
+  stress_level?: string;
+  bad_habits?: string;
+  tracking_goals?: string[];
+  app_experience?: string;
+  communication_style?: string;
+  [key: string]: any;
+}
+
+export interface UpdateUserResponse {
+  user: RegisterResponseUser;
+}
+
 export interface ApiError {
   success: false;
   error: string;

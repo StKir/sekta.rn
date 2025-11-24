@@ -117,6 +117,7 @@ export const subscriptionApi = {
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>;
+
       throw new Error(axiosError.response?.data?.error || 'Ошибка получения данных пользователя');
     }
   },

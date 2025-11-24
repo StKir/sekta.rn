@@ -1,3 +1,5 @@
+// import { CheckAccessResponse } from '../api/subscriptionApi';
+
 import { MediaItem } from '@/shared/ui/MediaPicker/MediaPicker';
 
 export interface UserAvatar {
@@ -53,6 +55,7 @@ export interface UseUserReturn {
   loadUser: () => void;
   removeUser: () => void;
 
+  checkSubscription: () => Promise<boolean | null>;
   // Вычисляемые свойства
   isLoggedIn: boolean;
   userName: string;

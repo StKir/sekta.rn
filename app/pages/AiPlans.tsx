@@ -29,6 +29,11 @@ const AiPlans = () => {
       return;
     }
     try {
+      const hasAccess = await user.checkSubscription();
+      if (!hasAccess) {
+        return;
+      }
+
       const prompt = plansPrompt(postsData.slice(0, 5), user.userData, JSON.stringify(answers));
       const aiResponseID = await sendToAI(prompt);
 

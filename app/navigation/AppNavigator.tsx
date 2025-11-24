@@ -31,7 +31,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => {
   const { colors } = useTheme();
   const { isLoading, loadUser, setUser, userName } = useUser();
-  const { setToken, setAuthenticated } = useUserStore();
+  const { setToken, setAuthenticated, setAiTokens } = useUserStore();
 
   useEffect(() => {
     loadUser();
@@ -58,9 +58,9 @@ const AppNavigator = () => {
                 registrationDate: me.user.registrationDate || new Date().toISOString(),
                 tariff_info: me.user.tariff_info,
               });
+              setAiTokens(me.user.tariff_info?.trialCount || 0);
             }
           } catch {
-            // Если токен невалидный, просто очищаем его, но не блокируем доступ к приложению
             apiClient.clearToken();
             setToken(null);
             setAuthenticated(false);
@@ -76,7 +76,7 @@ const AppNavigator = () => {
       }
     };
     hydrateUser();
-  }, [setUser, setToken, setAuthenticated]);
+  }, [setUser, setToken, setAuthenticated, setAiTokens]);
 
   if (isLoading) {
     return (
