@@ -177,7 +177,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     });
   };
 
-  const showPayButton = tariffInfo?.status === undefined || tariffInfo?.status === 'TRIAL' || true;
+  const showPayButton = tariffInfo?.status === undefined || tariffInfo?.status === 'TRIAL';
 
   const handleActivateSubscription = () => {
     navigation.navigate('PaywallPage', {});
