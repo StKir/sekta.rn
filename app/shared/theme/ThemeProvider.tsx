@@ -22,11 +22,7 @@ type ThemeProviderProps = {
 };
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const { theme, loadUser } = useUserStore();
-
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
+  const { theme } = useUserStore();
 
   const isDark = theme === 'dark';
   const colors = isDark ? darkColors : lightColors;

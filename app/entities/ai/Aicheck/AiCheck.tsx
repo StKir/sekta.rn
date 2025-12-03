@@ -8,6 +8,7 @@ import Text from '@/shared/ui/Text';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
+import { useSubscription } from '@/shared/hooks/useSubscription';
 import { SPACING } from '@/shared/constants';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
@@ -28,7 +29,7 @@ const AiCheck = ({ post }: { post: PostData }) => {
   }, [aiData, post?.id]);
 
   const user = useUser().userData;
-  const checkSubscription = useUser().checkSubscription;
+  const { checkSubscription } = useSubscription();
 
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();

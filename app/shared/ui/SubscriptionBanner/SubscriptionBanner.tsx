@@ -4,23 +4,30 @@ import React from 'react';
 import Text from '@/shared/ui/Text/Text';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useAppNavigation } from '@/shared/hooks/useAppNavigation';
 
 interface SubscriptionBannerProps {
-  onPress: () => void;
   title?: string;
   subtitle?: string;
 }
 
 const SubscriptionBanner: React.FC<SubscriptionBannerProps> = ({
-  onPress,
   title = 'Разблокируйте все возможности',
   subtitle = 'Получите персонального AI-ассистента',
 }) => {
+  const navigation = useAppNavigation();
+  const showPaywall = () => {
+    navigation.navigate('PaywallPage', {
+      onSuccess: () => {
+        console.log('Подписка активирована!');
+      },
+    });
+  };
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
   return (
-    <TouchableOpacity activeOpacity={0.8} style={styles.container} onPress={onPress}>
+    <TouchableOpacity activeOpacity={0.8} style={styles.container} onPress={showPaywall}>
       <View style={styles.content}>
         <View style={styles.textContainer}>
           <Text style={styles.title}>{title}</Text>
@@ -38,7 +45,6 @@ const SubscriptionBanner: React.FC<SubscriptionBannerProps> = ({
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      marginHorizontal: 20,
       marginVertical: 10,
       borderRadius: 16,
       overflow: 'hidden',
@@ -57,12 +63,12 @@ const createStyles = (colors: ThemeColors) =>
     title: {
       fontSize: 16,
       fontWeight: '600',
-      color: colors.BACKGROUND_PRIMARY,
+      color: '#fff',
       marginBottom: 4,
     },
     subtitle: {
       fontSize: 14,
-      color: colors.BACKGROUND_PRIMARY,
+      color: '#fff',
       opacity: 0.9,
     },
     iconContainer: {

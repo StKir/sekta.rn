@@ -1,7 +1,10 @@
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import { useState, useCallback } from 'react';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 import { subscriptionApi, RegisterRequest, LoginRequest } from '@/shared/api/subscriptionApi';
+import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user';
 
 interface UseSubscriptionReturn {
@@ -9,15 +12,15 @@ interface UseSubscriptionReturn {
   register: (data: RegisterRequest) => Promise<boolean>;
   login: (data: LoginRequest) => Promise<boolean>;
   checkAccess: () => Promise<boolean>;
-  activateSubscription: (
-    duration: '1month' | '3months' | '1year',
-    paymentId?: string
-  ) => Promise<boolean>;
+  activateSubscription: (duration: string, paymentId?: string) => Promise<boolean>;
+  checkSubscription: () => Promise<boolean | null>;
 }
+type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export const useSubscription = (): UseSubscriptionReturn => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser } = useUserStore();
+  const { setUser, setAiTokens, ai_tokens, minusAiToken } = useUserStore();
+  const navigation = useNavigation<NavigationProp>();
 
   const register = useCallback(
     async (data: RegisterRequest): Promise<boolean> => {
@@ -25,16 +28,13 @@ export const useSubscription = (): UseSubscriptionReturn => {
         setIsLoading(true);
         const response = await subscriptionApi.register(data);
 
-        // Получаем данные пользователя после регистрации
         if (response.user) {
           setUser(response.user);
         } else {
-          // Если user не вернулся в ответе, получаем его отдельно
           const userData = await subscriptionApi.getCurrentUser();
           setUser(userData.user);
         }
 
-        // Убираем Alert, чтобы не блокировать UI
         return true;
       } catch (error) {
         Alert.alert(
@@ -87,25 +87,50 @@ export const useSubscription = (): UseSubscriptionReturn => {
     }
   }, []);
 
-  const activateSubscription = useCallback(
-    async (duration: '1month' | '3months' | '1year', paymentId?: string): Promise<boolean> => {
-      try {
-        setIsLoading(true);
-        await subscriptionApi.activateSubscription({ duration, paymentId });
-        Alert.alert('Успешно!', 'Подписка активирована');
+  const activateSubscription = useCallback(async (duration: string): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+      const a = await subscriptionApi.activateSubscription({ duration });
+      Linking.openURL(a.paymentUrl);
+      return true;
+    } catch (error) {
+      Alert.alert(
+        'Ошибка активации',
+        error instanceof Error ? error.message : 'Неизвестная ошибка'
+      );
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const checkSubscription = useCallback(async () => {
+    if (ai_tokens) {
+      minusAiToken();
+      return true;
+    }
+    try {
+      const response = await subscriptionApi.checkAccess();
+      if (response.hasAccess) {
+        await subscriptionApi.getCurrentUser().then((res) => {
+          setUser(res.user);
+          if (res.user.tariff_info?.trialCount || res.user.tariff_info.trialCount === 0) {
+            setAiTokens(res.user.tariff_info.trialCount);
+          }
+        });
         return true;
-      } catch (error) {
-        Alert.alert(
-          'Ошибка активации',
-          error instanceof Error ? error.message : 'Неизвестная ошибка'
-        );
+      } else {
+        navigation.navigate('PaywallPage', {
+          onSuccess: () => {},
+        });
+
         return false;
-      } finally {
-        setIsLoading(false);
       }
-    },
-    []
-  );
+    } catch (error) {
+      Alert.alert('Ошибка', error instanceof Error ? error.message : 'Неизвестная ошибка');
+      return null;
+    }
+  }, [ai_tokens, navigation, setAiTokens, setUser]);
 
   return {
     isLoading,
@@ -113,5 +138,6 @@ export const useSubscription = (): UseSubscriptionReturn => {
     login,
     checkAccess,
     activateSubscription,
+    checkSubscription,
   };
 };

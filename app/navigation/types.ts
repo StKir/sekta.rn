@@ -4,7 +4,10 @@ export type RootStackParamList = {
   Calendar: undefined;
   Feed: undefined;
   Register: undefined;
-  LoginScreen: undefined;
+  LoginScreen: {
+    isPaywall?: boolean;
+    duration?: string;
+  };
   CheckInPage: undefined;
   AiPlayListPage: undefined;
   MomentPage: undefined;

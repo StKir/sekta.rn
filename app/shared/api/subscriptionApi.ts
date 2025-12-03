@@ -48,8 +48,7 @@ export interface CheckAccessResponse {
 }
 
 export interface ActivateSubscriptionRequest {
-  duration: '1month' | '3months' | '1year';
-  paymentId?: string;
+  duration: string;
 }
 
 export interface Transaction {
@@ -63,8 +62,9 @@ export interface Transaction {
 
 export interface ActivateSubscriptionResponse {
   success: boolean;
-  tariff_info: TariffInfo;
-  transaction: Transaction;
+  duration: '1month' | '3months' | '1year';
+  message: string;
+  paymentUrl: string;
 }
 
 export interface ApiError {

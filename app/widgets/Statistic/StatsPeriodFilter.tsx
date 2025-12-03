@@ -18,7 +18,7 @@ type StatsPeriodFilterProps = {
 
 const StatsPeriodFilter = ({ selectedPeriod, onPeriodChange }: StatsPeriodFilterProps) => {
   const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const styles = createStyles();
 
   const getCurrentDay = () => {
     return new Date().getDate();
@@ -73,7 +73,7 @@ const StatsPeriodFilter = ({ selectedPeriod, onPeriodChange }: StatsPeriodFilter
   );
 };
 
-const createStyles = (colors: any) =>
+const createStyles = () =>
   StyleSheet.create({
     container: {
       marginBottom: SPACING.MEDIUM,

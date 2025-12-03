@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { transformJsonToFormData } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { useUser } from '@/shared/hooks/useUser';
+import { useSubscription } from '@/shared/hooks/useSubscription';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
@@ -19,6 +20,7 @@ const AiPlans = () => {
   const formData = transformJsonToFormData(jsonData);
   const { postsData } = useDaysPosts(4);
   const user = useUser();
+  const { checkSubscription } = useSubscription();
   const { minusAiToken } = useUserStore();
   const { addCustomPost } = useLentStore();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -29,7 +31,7 @@ const AiPlans = () => {
       return;
     }
     try {
-      const hasAccess = await user.checkSubscription();
+      const hasAccess = await checkSubscription();
       if (!hasAccess) {
         return;
       }

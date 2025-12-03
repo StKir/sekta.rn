@@ -20,12 +20,12 @@ import { getInitialReminderID, updateReminder } from '@/shared/utils/reminder';
 import { AlertProvider } from '@/shared/ui/CustomAlert';
 import BottomSheet from '@/shared/ui/BottomSheet/BottomSheet';
 import { ThemeProvider } from '@/shared/theme';
-import { useUser } from '@/shared/hooks/useUser';
 import { useOTAUpdate } from '@/shared/hooks/useOTAUpdate';
+import { useUserStore } from '@/entities/user';
 
 const App = (): React.JSX.Element => {
   const { version } = useOTAUpdate();
-  const { notification } = useUser();
+  const { notification } = useUserStore();
 
   useEffect(() => {
     version.onCheckVersion();

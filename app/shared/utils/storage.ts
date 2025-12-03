@@ -1,12 +1,14 @@
 import { MMKV } from 'react-native-mmkv';
 
 import { FormAnswers } from '../types/form.types';
+import { TariffInfo } from '../api';
 
 const storage = new MMKV();
 
 const STORAGE_KEYS = {
   USER: 'user',
   LENT: 'lent',
+  TARIFF_INFO: 'tariff_info',
   THEME: 'theme',
   USER_TIME: 'user_time',
   NOTIFICATION: 'notification',
@@ -16,6 +18,13 @@ const STORAGE_KEYS = {
 };
 
 export const StorageService = {
+  setTariffInfo: (tariffInfo: TariffInfo) => {
+    try {
+      storage.set(STORAGE_KEYS.TARIFF_INFO, JSON.stringify(tariffInfo));
+    } catch (error) {
+      console.error('Error saving tariff info:', error);
+    }
+  },
   setItem: (key: string, value: string) => storage.set(key, value),
   getItem: (key: string) => storage.getString(key) ?? null,
   removeItem: (key: string) => storage.delete(key),

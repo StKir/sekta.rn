@@ -3,7 +3,7 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeviceInfo from 'react-native-device-info';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
@@ -18,6 +18,7 @@ import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useOTAUpdate } from '@/shared/hooks/useOTAUpdate';
+import useCheckUser from '@/shared/hooks/useCheckUser';
 import { SPACING, SIZES } from '@/shared/constants';
 import { authApi } from '@/shared/api/authApi';
 import { apiClient } from '@/shared/api/apiClient';
@@ -36,33 +37,18 @@ const ProfilePage = () => {
 
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
-  const { userData, isLoading, loadUser, removeUser } = useUser();
+  const { userData, isLoading, removeUser } = useUser();
   const {
     setNotification,
-    getNotification,
     notification,
     updateUser,
+    tariffInfo,
     token,
     setToken,
     setAuthenticated,
   } = useUserStore();
-
+  useCheckUser();
   const hasToken = token || apiClient.getToken();
-
-  useEffect(() => {
-    if (!userData) {
-      loadUser();
-    }
-  }, [getNotification, loadUser, notification, userData]);
-
-  const showPaywall = () => {
-    navigation.navigate('PaywallPage', {
-      onSuccess: () => {
-        // Можно добавить логику после успешной подписки
-        console.log('Подписка активирована!');
-      },
-    });
-  };
 
   const getGenderText = (gender: any) => {
     if (typeof gender === 'object' && gender?.name) {
@@ -76,7 +62,7 @@ const ProfilePage = () => {
   };
 
   const navigateToLogin = () => {
-    navigation.navigate('LoginScreen');
+    navigation.navigate('LoginScreen', { isPaywall: false });
   };
 
   const handleOnboarding = () => {
@@ -175,6 +161,16 @@ const ProfilePage = () => {
               </Text>
             </View>
           )}
+          {tariffInfo && (
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel} variant='body2'>
+                Подписка:
+              </Text>
+              <Text style={styles.infoValue} variant='body2'>
+                {tariffInfo?.status}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     );
@@ -256,7 +252,6 @@ const ProfilePage = () => {
           <SubscriptionBanner
             subtitle='Получите персонального AI-ассистента'
             title='Разблокируйте PRO функции'
-            onPress={showPaywall}
           />
 
           <TouchableOpacity

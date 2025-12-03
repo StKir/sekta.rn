@@ -44,7 +44,6 @@ export const userApi = {
   updateUser: async (data: UpdateUserRequest): Promise<UpdateUserResponse> => {
     try {
       const response = await api.patch<UpdateUserResponse>('/user/me', data);
-
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>;

@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
 
@@ -6,6 +5,7 @@ import { AIModel } from '@/types/aiTypes';
 import { StorageService } from '@/shared/utils/storage';
 import { UserData } from '@/shared/types/user.types';
 import { FormAnswers } from '@/shared/types/form.types';
+import { TariffInfo } from '@/shared/api/subscriptionApi';
 import { apiClient } from '@/shared/api/apiClient';
 
 interface UserState {
@@ -13,6 +13,7 @@ interface UserState {
   isLoading: boolean;
   ai_tokens: number;
   selectedAIModel: AIModel;
+  tariffInfo: TariffInfo | null;
 
   notification: {
     active: boolean;
@@ -29,7 +30,7 @@ interface UserActions {
   updateUser: (userData: Partial<UserData>) => void;
   setTheme: (theme: 'light' | 'dark') => void;
   setNotification: (notification?: { active: boolean; time: Date | null }) => void;
-  loadUser: () => void;
+  setTariffInfo: (tariffInfo: TariffInfo) => void;
   removeUser: () => void;
   clearAll: () => void;
   plusAiToken: () => void;
@@ -49,6 +50,7 @@ export const useUserStore = create<UserStore>()(
   persist(
     (setState, get) => ({
       userData: null,
+      tariffInfo: null,
       isLoading: false,
       theme: 'light',
       ai_tokens: 0,
@@ -67,9 +69,12 @@ export const useUserStore = create<UserStore>()(
       },
 
       setUser: (userData: UserData | FormAnswers) => {
+        const currentUser = get().userData;
         const userWithDate: UserData = {
+          ...(currentUser || {}),
           ...userData,
-          registrationDate: userData.registrationDate || new Date().toISOString(),
+          registrationDate:
+            userData.registrationDate || currentUser?.registrationDate || new Date().toISOString(),
         };
 
         StorageService.setUser(userWithDate as FormAnswers);
@@ -105,6 +110,11 @@ export const useUserStore = create<UserStore>()(
         StorageService.setAiToken(ai_tokens);
       },
 
+      setTariffInfo: (tariffInfo: TariffInfo) => {
+        setState({ tariffInfo });
+        StorageService.setTariffInfo(tariffInfo);
+      },
+
       setNotification: (notification?: { active: boolean; time: Date | null }) => {
         if (!notification) {
           return;
@@ -129,29 +139,11 @@ export const useUserStore = create<UserStore>()(
           setState({
             userData: updatedUser,
           });
-        }
-      },
-
-      loadUser: () => {
-        setState({ isLoading: true });
-        try {
-          const userData = StorageService.getUser();
-          const token = StorageService.getItem('auth_token');
-          const isAuthenticated = !!token;
-
+        } else {
+          const newUser: UserData = updatedData as UserData;
+          StorageService.setUser(newUser as FormAnswers);
           setState({
-            userData: userData as UserData,
-            token: token,
-            isAuthenticated: isAuthenticated,
-            isLoading: false,
-          });
-        } catch (error) {
-          console.error('Error loading user:', error);
-          setState({
-            userData: null,
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
+            userData: newUser,
           });
         }
       },
@@ -208,7 +200,7 @@ export const useUserStore = create<UserStore>()(
           const theme = StorageService.getTheme();
           const ai_tokens = StorageService.getAiToken();
           const notification = StorageService.getNotification();
-          const selectedAIModel = StorageService.getSelectedAIModel() || 'grok-4';
+          const selectedAIModel = StorageService.getSelectedAIModel() || AIModel.GPT_4o;
           const token = StorageService.getItem('auth_token');
           const isAuthenticated = !!token;
 

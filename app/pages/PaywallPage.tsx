@@ -7,15 +7,13 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { AIModel } from '@/types/aiTypes';
 import Text from '@/shared/ui/Text/Text';
-import SimpleRegistrationBottomSheet from '@/shared/ui/SimpleRegistrationBottomSheet';
 import Button from '@/shared/ui/Button/Button';
-import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
@@ -145,6 +143,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
   const styles = createStyles(colors);
   const { activateSubscription, isLoading } = useSubscription();
   const { isAuthenticated } = useUser();
+
   const [selectedTariff, setSelectedTariff] = useState<string>('3months');
   const navigation = useNavigation<Nav>();
   const route = useRoute();
@@ -156,17 +155,10 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
     '1year': useSharedValue(1),
   };
 
-  // Ensure any open bottom sheets are closed when leaving the page
-  useEffect(() => {
-    return () => {
-      BottomSheetManager.hide();
-    };
-  }, []);
-
   const handleSelectTariff = async () => {
     try {
       if (!isAuthenticated) {
-        showRegistrationBottomSheet();
+        navigation.navigate('LoginScreen', { isPaywall: true, duration: selectedTariff });
         return;
       }
 
@@ -201,45 +193,6 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
       }
     });
     setSelectedTariff(tariffId);
-  };
-
-  const showRegistrationBottomSheet = () => {
-    BottomSheetManager.show(
-      <SimpleRegistrationBottomSheet
-        onClose={() => BottomSheetManager.hide()}
-        onComplete={handleRegistrationComplete}
-      />,
-      {
-        snapPoints: ['90%', '100%'],
-        detached: false,
-      }
-    );
-  };
-
-  const handleRegistrationComplete = async (_userData: any) => {
-    try {
-      // Сначала закрываем BottomSheet
-      BottomSheetManager.hide();
-
-      // Небольшая задержка, чтобы UI обновился
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      // После регистрации активируем подписку
-      const success = await activateSubscription(
-        selectedTariff as '1month' | '3months' | '1year',
-        `payment_${Date.now()}`
-      );
-
-      if (success) {
-        // Еще одна небольшая задержка перед навигацией
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        onSuccessParam?.();
-        navigation.goBack();
-      }
-    } catch {
-      // Если что-то пошло не так, все равно закрываем экран
-      navigation.goBack();
-    }
   };
 
   return (

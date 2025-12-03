@@ -1,5 +1,5 @@
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import Text from '@/shared/ui/Text';
 import { ThemeColors } from '@/shared/theme/types';
@@ -24,13 +24,19 @@ const AICard = ({
   icon,
 }: AICardProps) => {
   const { colors } = useTheme();
+  const [isLoadingLocal, setLoading] = useState(false);
   const styles = createStyles(colors);
+  const handlePress = useCallback(async () => {
+    setLoading(true);
+    await onPress();
+    setLoading(false);
+  }, [onPress]);
 
   return (
     <TouchableOpacity
-      disabled={disabled || isLoading}
+      disabled={disabled || isLoading || isLoadingLocal}
       style={[styles.blockContainer, disabled && styles.blockContainerDisabled]}
-      onPress={onPress}
+      onPress={handlePress}
     >
       <View style={styles.headerContainer}>
         <Text style={[styles.blockTitle, disabled && styles.textDisabled]} variant='h3'>

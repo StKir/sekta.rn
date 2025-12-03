@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import { removeAllReminders, setReminders } from '@/shared/utils/reminder';
 import { transformJsonToFormData, formatAnswersToTestResult } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
-import { useUser } from '@/shared/hooks/useUser';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import HelloScreen from '@/features/auth/Register/HelloScreen/HelloScreen';
@@ -20,7 +19,7 @@ const NewRegisterPage = () => {
   const formData = transformJsonToFormData(registrationData);
   const navigation = useNavigation<NavigationProp>();
   const { addResult } = useTestResultsStore();
-  const { setUser } = useUser();
+  const { setUser } = useUserStore();
 
   const handleFormComplete = async (answers: FormAnswers) => {
     const testResult = formatAnswersToTestResult(formData, answers);

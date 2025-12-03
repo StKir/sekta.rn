@@ -52,10 +52,8 @@ export interface UseUserReturn {
   // Методы
   setUser: (userData: UserData) => void;
   updateUser: (userData: Partial<UserData>) => void;
-  loadUser: () => void;
   removeUser: () => void;
 
-  checkSubscription: () => Promise<boolean | null>;
   // Вычисляемые свойства
   isLoggedIn: boolean;
   userName: string;

@@ -2,7 +2,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, View, ScrollView, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 import Text from '@/shared/ui/Text/Text';
 import Input from '@/shared/ui/Input/Input';
@@ -10,6 +10,7 @@ import { Button } from '@/shared/ui';
 import { typography } from '@/shared/theme/typography';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useSubscription } from '@/shared/hooks/useSubscription';
 import { SPACING } from '@/shared/constants';
 import { authApi } from '@/shared/api/authApi';
 import { apiClient } from '@/shared/api/apiClient';
@@ -19,11 +20,12 @@ import { useUserStore } from '@/entities/user/store/userStore';
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const LoginScreen = () => {
+  const { isPaywall, duration } = useRoute<RouteProp<RootStackParamList, 'LoginScreen'>>().params;
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
   const { setUser, setToken, setAuthenticated, userData } = useUserStore();
-
+  const { activateSubscription } = useSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -80,6 +82,11 @@ const LoginScreen = () => {
           tariff_info: response.user.tariff_info,
         });
         setAuthenticated(true);
+        if (isPaywall) {
+          activateSubscription(duration || '1month');
+          navigation.navigate('TabNavigator');
+          return;
+        }
         navigation.navigate('TabNavigator');
       }
     } catch (error) {

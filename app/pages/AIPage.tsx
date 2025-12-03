@@ -7,10 +7,13 @@ import { useNavigation } from '@react-navigation/native';
 
 import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
+import Button from '@/shared/ui/Button/Button';
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
+import { SubscriptionBanner } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
+import { useSubscription } from '@/shared/hooks/useSubscription';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { useDailyFirstLogin } from '@/shared/hooks/useDailyFirstLogin';
 import { SPACING } from '@/shared/constants';
@@ -37,7 +40,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { addCustomPost } = useLentStore();
   const user = useUser();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { ai_tokens, selectedAIModel } = useUserStore();
+  const { ai_tokens, selectedAIModel, tariffInfo } = useUserStore();
   const insets = useSafeAreaInsets();
   const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
     '1': false, // Анализ недели
@@ -46,6 +49,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     '4': false, // Придумать планы
   });
 
+  const { checkSubscription } = useSubscription();
   const setLoadingState = (id: string, isLoading: boolean) => {
     setLoadingStates((prev) => ({
       ...prev,
@@ -55,7 +59,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
 
   const handleWeekAnalysis = async () => {
     try {
-      const hasAccess = await user.checkSubscription();
+      const hasAccess = await checkSubscription();
       if (!hasAccess) {
         return;
       }
@@ -85,7 +89,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   };
 
   const handleAskQuestion = () => {
-    // Просто переходим на страницу для задания вопроса AI
     navigation.navigate('AiQuestionPage');
   };
 
@@ -138,7 +141,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     const isLoading = loadingStates[item.id];
     const isDisabled = false;
 
-    // Иконки для разных типов карточек
     let icon;
     switch (item.id) {
       case '1':
@@ -175,6 +177,14 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     });
   };
 
+  const showPayButton = tariffInfo?.status === undefined || tariffInfo?.status === 'TRIAL' || true;
+
+  const handleActivateSubscription = () => {
+    navigation.navigate('PaywallPage', {});
+  };
+
+  const tokensText = ai_tokens !== 0 ? `${ai_tokens} ⭐` : '⭐ PRO функции';
+
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle} variant='h2'>
@@ -189,17 +199,31 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         ListHeaderComponent={
           <View style={{ marginBottom: SPACING.LARGE }}>
             <View style={styles.headerRow}>
-              <Text style={{ color: colors.PRIMARY }} variant='h3'>
-                {ai_tokens} <Icon color={colors.PRIMARY} name='star' size={18} />
-              </Text>
-
-              <TouchableOpacity style={styles.modelSelector} onPress={showModelSelector}>
-                <Text style={styles.modelSelectorText}>
-                  Модель: {getModelDisplayName(selectedAIModel)}
-                </Text>
-                <Icon color={colors.PRIMARY} name='chevron-down' size={16} />
-              </TouchableOpacity>
+              <>
+                {showPayButton && (
+                  <Button
+                    style={styles.subscribeButton}
+                    title={tokensText}
+                    variant='primary-light'
+                    onPress={handleActivateSubscription}
+                  />
+                )}
+              </>
+              {!showPayButton && (
+                <TouchableOpacity style={styles.modelSelector} onPress={showModelSelector}>
+                  <Text style={styles.modelSelectorText}>
+                    Модель: {getModelDisplayName(selectedAIModel)}
+                  </Text>
+                  <Icon color={colors.PRIMARY} name='chevron-down' size={16} />
+                </TouchableOpacity>
+              )}
             </View>
+            {showPayButton && (
+              <SubscriptionBanner
+                subtitle='Получите персонального AI-ассистента'
+                title='Разблокируйте PRO функции'
+              />
+            )}
             <Text color='textSecondary' variant='body2'>
               Получайте токены каждый день за вход в приложение
             </Text>
@@ -248,6 +272,9 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.PRIMARY,
       marginRight: SPACING.SMALL,
       fontSize: 14,
+    },
+    subscribeButton: {
+      height: 40,
     },
   });
 

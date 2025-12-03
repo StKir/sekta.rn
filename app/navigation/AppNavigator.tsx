@@ -30,12 +30,8 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
   const { colors } = useTheme();
-  const { isLoading, loadUser, setUser, userName } = useUser();
+  const { isLoading, setUser, userName } = useUser();
   const { setToken, setAuthenticated, setAiTokens } = useUserStore();
-
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
 
   useEffect(() => {
     const hydrateUser = async () => {
@@ -85,6 +81,7 @@ const AppNavigator = () => {
       </View>
     );
   }
+  console.log(userName);
 
   return (
     <NavigationContainer>
