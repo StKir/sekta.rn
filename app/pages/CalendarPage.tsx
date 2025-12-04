@@ -12,7 +12,7 @@ import { SPACING, SIZES } from '@/shared/constants';
 import SwipeableTabView, { SwipeableTabViewRef } from '@/shared/components/SwipeableTabView';
 import TabSelectorTitle from '@/features/auth/TabSelectorTitle/TabSelectorTitle';
 
-const tabs = ['Дневник', 'Статистика', 'AI'];
+const tabs = ['Дневник', 'AI', 'Статистика'];
 
 const CalendarPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -46,8 +46,8 @@ const CalendarPage = () => {
       >
         <Feed />
 
-        <Statistic />
         <AIPage changeTab={handleTabPress} />
+        <Statistic />
       </SwipeableTabView>
     </SafeAreaView>
   );

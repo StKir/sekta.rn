@@ -22,7 +22,6 @@ interface UserState {
   theme: 'light' | 'dark';
   userTime: Date;
   token: string | null;
-  isAuthenticated: boolean;
 }
 
 interface UserActions {
@@ -41,7 +40,6 @@ interface UserActions {
   setSelectedAIModel: (model: AIModel) => void;
   getSelectedAIModel: () => AIModel;
   setToken: (token: string | null) => void;
-  setAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 type UserStore = UserState & UserActions;
@@ -54,13 +52,12 @@ export const useUserStore = create<UserStore>()(
       isLoading: false,
       theme: 'light',
       ai_tokens: 0,
-      selectedAIModel: AIModel.GPT_4o,
+      selectedAIModel: AIModel.GEMINI_2_5_FLASH,
       notification: {
         active: false,
         time: null,
       },
       userTime: new Date(),
-      isAuthenticated: false,
       token: null,
 
       setUserTime: () => {
@@ -79,11 +76,13 @@ export const useUserStore = create<UserStore>()(
 
         StorageService.setUser(userWithDate as FormAnswers);
 
-        setState({
+        const tariff_info = (userWithDate as any).tariff_info;
+
+        setState((state) => ({
           userData: userWithDate,
-          isAuthenticated: true,
+          tariffInfo: tariff_info || state.tariffInfo,
           isLoading: false,
-        });
+        }));
       },
 
       getNotification: () => {
@@ -101,8 +100,11 @@ export const useUserStore = create<UserStore>()(
       },
 
       minusAiToken: () => {
-        StorageService.setAiToken(get().ai_tokens - 1);
-        setState((state) => ({ ai_tokens: state.ai_tokens - 1 }));
+        const tokens = get().ai_tokens;
+        if (tokens) {
+          StorageService.setAiToken(tokens - 1);
+          setState((state) => ({ ai_tokens: state.ai_tokens - 1 }));
+        }
       },
 
       setAiTokens: (ai_tokens: number) => {
@@ -152,7 +154,6 @@ export const useUserStore = create<UserStore>()(
         StorageService.removeUser();
         setState({
           userData: null,
-          isAuthenticated: false,
           isLoading: false,
         });
       },
@@ -163,7 +164,6 @@ export const useUserStore = create<UserStore>()(
         setState({
           userData: null,
           token: null,
-          isAuthenticated: false,
           isLoading: false,
         });
       },
@@ -185,11 +185,7 @@ export const useUserStore = create<UserStore>()(
           StorageService.removeItem('auth_token');
           apiClient.clearToken();
         }
-        setState({ token, isAuthenticated: !!token });
-      },
-
-      setAuthenticated: (isAuthenticated: boolean) => {
-        setState({ isAuthenticated });
+        setState({ token });
       },
     }),
     {
@@ -200,14 +196,12 @@ export const useUserStore = create<UserStore>()(
           const theme = StorageService.getTheme();
           const ai_tokens = StorageService.getAiToken();
           const notification = StorageService.getNotification();
-          const selectedAIModel = StorageService.getSelectedAIModel() || AIModel.GPT_4o;
+          const selectedAIModel = StorageService.getSelectedAIModel() || AIModel.GEMINI_2_5_FLASH;
           const token = StorageService.getItem('auth_token');
-          const isAuthenticated = !!token;
 
           return JSON.stringify({
             state: {
               userData: userData as UserData,
-              isAuthenticated: isAuthenticated,
               isLoading: false,
               theme: theme as 'light' | 'dark',
               ai_tokens: ai_tokens,

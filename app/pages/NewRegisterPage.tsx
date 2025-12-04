@@ -37,7 +37,7 @@ const NewRegisterPage = () => {
         await setReminders(new Date(answers.notification.time));
       }
 
-      setAiTokens(3);
+      setAiTokens(5);
       navigation.replace('OnboardingPage');
     } catch (error) {
       console.log(error);

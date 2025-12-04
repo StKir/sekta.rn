@@ -31,7 +31,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const AppNavigator = () => {
   const { colors } = useTheme();
   const { isLoading, setUser, userName } = useUser();
-  const { setToken, setAuthenticated, setAiTokens } = useUserStore();
+  const { setToken, setAiTokens } = useUserStore();
 
   useEffect(() => {
     const hydrateUser = async () => {
@@ -40,7 +40,6 @@ const AppNavigator = () => {
 
         if (token) {
           setToken(token);
-          setAuthenticated(true);
 
           try {
             const me = await authApi.getUserMe();
@@ -59,20 +58,17 @@ const AppNavigator = () => {
           } catch {
             apiClient.clearToken();
             setToken(null);
-            setAuthenticated(false);
           }
         } else {
           setToken(null);
-          setAuthenticated(false);
         }
       } catch {
         // Игнорируем ошибки при загрузке токена
         setToken(null);
-        setAuthenticated(false);
       }
     };
     hydrateUser();
-  }, [setUser, setToken, setAuthenticated, setAiTokens]);
+  }, [setUser, setToken, setAiTokens]);
 
   if (isLoading) {
     return (

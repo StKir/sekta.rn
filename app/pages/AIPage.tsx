@@ -33,7 +33,7 @@ type AIBlock = {
 };
 
 const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
-  useDailyFirstLogin();
+  // useDailyFirstLogin();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const { checkIns } = useDaysPosts(4);
@@ -224,9 +224,9 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                 title='Разблокируйте PRO функции'
               />
             )}
-            <Text color='textSecondary' variant='body2'>
+            {/* <Text color='textSecondary' variant='body2'>
               Получайте токены каждый день за вход в приложение
-            </Text>
+            </Text> */}
           </View>
         }
         renderItem={renderAIBlock}

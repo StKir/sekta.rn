@@ -3,17 +3,15 @@ import { UseUserReturn } from '@/shared/types/user.types';
 import { useUserStore } from '@/entities/user';
 
 export const useUser = (): UseUserReturn => {
-  const { userData, isLoading, isAuthenticated, setUser, updateUser, removeUser } = useUserStore();
+  const { userData, isLoading, setUser, updateUser, removeUser } = useUserStore();
 
   return {
     userData,
     isLoading,
-    isAuthenticated,
     setUser,
     theme: userData?.theme || 'light',
     updateUser,
     removeUser,
-    isLoggedIn: isAuthenticated && !!userData,
     userName: userData?.name || '',
     userBirthDate: userData?.birthDate || null,
     notification: userData?.notification || { active: false, time: null },

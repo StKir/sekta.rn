@@ -4,6 +4,7 @@ import { StyleSheet, View, ScrollView, ActivityIndicator } from 'react-native';
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import Text from '@/shared/ui/Text';
 import MainContainer from '@/shared/ui/Container/MainContainer';
@@ -21,9 +22,15 @@ const AIResultCheckPage = () => {
   const styles = createStyles(colors);
   const { requestId } = useRoute<RouteProp<RootStackParamList, 'AIResultPage'>>().params;
   const navigation = useNavigation<NavigationProp>();
-  console.log(requestId, 'requestId');
 
   const { post: updatedPost, isPolling, isError } = useGetAICheck(Number(requestId));
+
+  const handleCopyText = () => {
+    const textToCopy = updatedPost?.result || '';
+    if (textToCopy) {
+      Clipboard.setString(textToCopy);
+    }
+  };
 
   if (isError) {
     return (
@@ -57,6 +64,14 @@ const AIResultCheckPage = () => {
       <MainContainer>
         <ScrollView showsVerticalScrollIndicator={false}>
           <FormattedText>{updatedPost?.result || ''}</FormattedText>
+          <View style={styles.copyButtonContainer}>
+            <Button
+              icon='copy-outline'
+              title='Копировать'
+              variant='text'
+              onPress={handleCopyText}
+            />
+          </View>
           <Button fullWidth title='Назад' variant='primary' onPress={navigation.goBack} />
         </ScrollView>
       </MainContainer>
@@ -75,6 +90,11 @@ const createStyles = (colors: ThemeColors) =>
     container: {
       flex: 1,
       backgroundColor: colors.BACKGROUND_PRIMARY,
+    },
+    copyButtonContainer: {
+      paddingHorizontal: SPACING.LARGE,
+      paddingTop: SPACING.MEDIUM,
+      alignItems: 'flex-end',
     },
     scrollContainer: {
       flexGrow: 1,

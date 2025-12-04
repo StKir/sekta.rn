@@ -27,6 +27,13 @@ const OnboardingSlide = ({ slide, onNext, onPrev, isLastSlide }: OnboardingSlide
       {slide.image && (
         <Image resizeMode='center' source={{ uri: slide.image }} style={styles.image} />
       )}
+      {!slide.image && slide.smile && (
+        <View style={styles.smileContainer}>
+          <Text style={styles.smile} variant='h1'>
+            {slide.smile}
+          </Text>
+        </View>
+      )}
       <View style={styles.content}>
         <Text style={styles.title} variant='h1'>
           {slide.title}
@@ -65,6 +72,16 @@ const createStyles = (colors: ThemeColors) =>
     },
     content: {
       padding: 20,
+    },
+    smileContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    smile: {
+      fontSize: 64,
+      lineHeight: 80,
+      textAlign: 'center',
     },
     title: {
       marginBottom: 16,

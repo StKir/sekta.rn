@@ -12,7 +12,6 @@ import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
-import { useUserStore } from '@/entities/user/store/userStore';
 import { useLentStore } from '@/entities/lent/store/store';
 import { plansPrompt } from '@/entities/assiatent/promts';
 
@@ -21,7 +20,6 @@ const AiPlans = () => {
   const { postsData } = useDaysPosts(4);
   const user = useUser();
   const { checkSubscription } = useSubscription();
-  const { minusAiToken } = useUserStore();
   const { addCustomPost } = useLentStore();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
@@ -38,10 +36,6 @@ const AiPlans = () => {
 
       const prompt = plansPrompt(postsData.slice(0, 5), user.userData, JSON.stringify(answers));
       const aiResponseID = await sendToAI(prompt);
-
-      if (typeof aiResponseID === 'number') {
-        minusAiToken();
-      }
 
       addCustomPost({
         date: new Date().toISOString(),

@@ -24,14 +24,14 @@ const LoginScreen = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
-  const { setUser, setToken, setAuthenticated, userData } = useUserStore();
+  const { setUser, setToken, userData } = useUserStore();
   const { activateSubscription } = useSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-
+  console.log(isPaywall, duration);
   const handleSubmit = async () => {
     if (!formData.email || !formData.password) {
       Alert.alert('Ошибка', 'Заполните email и пароль');
@@ -81,10 +81,10 @@ const LoginScreen = () => {
           registrationDate: response.user.registrationDate || new Date().toISOString(),
           tariff_info: response.user.tariff_info,
         });
-        setAuthenticated(true);
+
         if (isPaywall) {
           activateSubscription(duration || '1month');
-          navigation.navigate('TabNavigator');
+          navigation.navigate('Profile');
           return;
         }
         navigation.navigate('TabNavigator');

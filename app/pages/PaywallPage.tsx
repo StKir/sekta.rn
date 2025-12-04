@@ -16,9 +16,9 @@ import Text from '@/shared/ui/Text/Text';
 import Button from '@/shared/ui/Button/Button';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
-import { useUser } from '@/shared/hooks/useUser';
 import { useSubscription } from '@/shared/hooks/useSubscription';
 import { RootStackParamList } from '@/navigation/types';
+import { useUserStore } from '@/entities/user';
 
 export interface TariffOption {
   id: '1month' | '3months' | '1year';
@@ -142,7 +142,8 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const { activateSubscription, isLoading } = useSubscription();
-  const { isAuthenticated } = useUser();
+  const { tariffInfo } = useUserStore();
+  const hasTariffInfo = !!tariffInfo;
 
   const [selectedTariff, setSelectedTariff] = useState<string>('3months');
   const navigation = useNavigation<Nav>();
@@ -157,7 +158,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
 
   const handleSelectTariff = async () => {
     try {
-      if (!isAuthenticated) {
+      if (!hasTariffInfo) {
         navigation.navigate('LoginScreen', { isPaywall: true, duration: selectedTariff });
         return;
       }
@@ -237,7 +238,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
               ))}
             </View>
 
-            {!isAuthenticated && (
+            {!hasTariffInfo && (
               <Text style={styles.registrationNote}>
                 Для активации подписки необходимо создать аккаунт
               </Text>
@@ -262,7 +263,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
             fullWidth
             loading={isLoading}
             style={styles.continueButton}
-            title={isAuthenticated ? 'Активировать подписку' : 'Создать аккаунт и активировать'}
+            title={hasTariffInfo ? 'Активировать подписку' : 'Создать аккаунт и активировать'}
             onPress={handleSelectTariff}
           />
           <Text style={styles.footerText}>

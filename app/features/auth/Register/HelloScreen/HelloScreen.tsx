@@ -32,12 +32,17 @@ const HelloScreen = ({ onNext }: { onNext: () => unknown }) => {
           </View>
 
           <Text variant='h3'></Text>
-
           <Text style={styles.subtitle} variant={'button'}>
             &quot;Sekta&quot; - это ритуал заботы о себе. Веди свой дневник, рефлексируй, храни
             моменты, тут есть все что тебе нужно + новые возможности от ИИ. Просто добавляй мысли,
             эмоции и моменты дня — а наш ИИ сделает выводы и даст ценные советы.
           </Text>
+
+          <Text style={styles.subtitle} variant={'button'}>
+            Чем честнее и регулярнее ты делишься тем, что с тобой происходит, тем точнее Sekta
+            помогает увидеть картину и подсказать следующий шаг.
+          </Text>
+
           <Text style={styles.question} variant={'body1'}>
             Готов начать?{'\n'}
           </Text>

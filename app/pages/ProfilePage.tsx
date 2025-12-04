@@ -38,15 +38,7 @@ const ProfilePage = () => {
   const { clearAll: clearLentStore } = useLentStore();
   const { clearResults } = useTestResultsStore();
   const { userData, isLoading, removeUser } = useUser();
-  const {
-    setNotification,
-    notification,
-    updateUser,
-    tariffInfo,
-    token,
-    setToken,
-    setAuthenticated,
-  } = useUserStore();
+  const { setNotification, notification, updateUser, tariffInfo, token, setToken } = useUserStore();
   useCheckUser();
   const hasToken = token || apiClient.getToken();
 
@@ -79,7 +71,6 @@ const ProfilePage = () => {
             authApi.logout();
             apiClient.clearToken();
             setToken(null);
-            setAuthenticated(false);
             removeUser();
             clearLentStore();
             clearResults();

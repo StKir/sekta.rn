@@ -47,7 +47,6 @@ export interface UseUserReturn {
   // Основные данные
   userData: UserData | null;
   isLoading: boolean;
-  isAuthenticated: boolean;
 
   // Методы
   setUser: (userData: UserData) => void;
@@ -55,7 +54,6 @@ export interface UseUserReturn {
   removeUser: () => void;
 
   // Вычисляемые свойства
-  isLoggedIn: boolean;
   userName: string;
   userBirthDate: string | null;
   userAge: number | null;

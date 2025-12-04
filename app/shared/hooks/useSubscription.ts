@@ -19,7 +19,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export const useSubscription = (): UseSubscriptionReturn => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setAiTokens, ai_tokens, minusAiToken } = useUserStore();
+  const { setUser, setAiTokens, ai_tokens, minusAiToken, tariffInfo } = useUserStore();
   const navigation = useNavigation<NavigationProp>();
 
   const register = useCallback(
@@ -105,7 +105,7 @@ export const useSubscription = (): UseSubscriptionReturn => {
   }, []);
 
   const checkSubscription = useCallback(async () => {
-    if (ai_tokens) {
+    if (ai_tokens && !tariffInfo) {
       minusAiToken();
       return true;
     }
@@ -130,7 +130,7 @@ export const useSubscription = (): UseSubscriptionReturn => {
       Alert.alert('Ошибка', error instanceof Error ? error.message : 'Неизвестная ошибка');
       return null;
     }
-  }, [ai_tokens, navigation, setAiTokens, setUser]);
+  }, [ai_tokens, minusAiToken, navigation, setAiTokens, setUser]);
 
   return {
     isLoading,
