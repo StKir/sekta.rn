@@ -5,6 +5,7 @@ import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+import { StorageService } from '@/shared/utils/storage';
 import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
 import Button from '@/shared/ui/Button/Button';
@@ -15,7 +16,6 @@ import { useTheme } from '@/shared/theme';
 import { useUser } from '@/shared/hooks/useUser';
 import { useSubscription } from '@/shared/hooks/useSubscription';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
-import { useDailyFirstLogin } from '@/shared/hooks/useDailyFirstLogin';
 import { SPACING } from '@/shared/constants';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
@@ -33,7 +33,6 @@ type AIBlock = {
 };
 
 const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
-  // useDailyFirstLogin();
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const { checkIns } = useDaysPosts(4);
@@ -42,6 +41,11 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { ai_tokens, selectedAIModel, tariffInfo } = useUserStore();
   const insets = useSafeAreaInsets();
+  const [canShowWeekAnalysis, setCanShowWeekAnalysis] = React.useState(() => {
+    const lastDate = StorageService.getItem('week_analysis_last_date');
+    const today = new Date().toISOString().slice(0, 10);
+    return lastDate !== today;
+  });
   const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
     '1': false, // Анализ недели
     '2': false, // Задать вопрос
@@ -79,6 +83,9 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
             result: '',
           },
         });
+        const today = new Date().toISOString().slice(0, 10);
+        StorageService.setItem('week_analysis_last_date', today);
+        setCanShowWeekAnalysis(false);
         changeTab(0);
       }
     } catch {
@@ -107,7 +114,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     }
   };
 
-  const aiBlocks: AIBlock[] = [
+  const baseAiBlocks: AIBlock[] = [
     {
       id: '1',
       title: 'Анализ недели',
@@ -115,6 +122,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         'Расскажем нейросети о твоей неделе — и вернём вдохновляющие советы, которые помогут почувствовать себя лучше 💛',
       action: handleWeekAnalysis,
     },
+
     {
       id: '2',
       title: 'Задать вопрос',
@@ -136,6 +144,10 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
       action: handleCreatePlans,
     },
   ];
+
+  const aiBlocks = canShowWeekAnalysis
+    ? baseAiBlocks
+    : baseAiBlocks.filter((block) => block.id !== '1');
 
   const renderAIBlock = ({ item }: { item: AIBlock }) => {
     const isLoading = loadingStates[item.id];
@@ -188,7 +200,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.pageTitle} variant='h2'>
-        AI Помощник
+        AI Помощник {!showPayButton && '⭐ PRO'}
       </Text>
 
       <FlatList

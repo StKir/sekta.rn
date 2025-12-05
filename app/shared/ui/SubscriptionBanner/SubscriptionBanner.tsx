@@ -5,6 +5,7 @@ import Text from '@/shared/ui/Text/Text';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { useAppNavigation } from '@/shared/hooks/useAppNavigation';
+import { useUserStore } from '@/entities/user';
 
 interface SubscriptionBannerProps {
   title?: string;
@@ -15,6 +16,8 @@ const SubscriptionBanner: React.FC<SubscriptionBannerProps> = ({
   title = 'Разблокируйте все возможности',
   subtitle = 'Получите персонального AI-ассистента',
 }) => {
+  const { tariffInfo } = useUserStore();
+
   const navigation = useAppNavigation();
   const showPaywall = () => {
     navigation.navigate('PaywallPage', {
@@ -25,6 +28,10 @@ const SubscriptionBanner: React.FC<SubscriptionBannerProps> = ({
   };
   const { colors } = useTheme();
   const styles = createStyles(colors);
+
+  if (tariffInfo?.status === 'PRO') {
+    return null;
+  }
 
   return (
     <TouchableOpacity activeOpacity={0.8} style={styles.container} onPress={showPaywall}>

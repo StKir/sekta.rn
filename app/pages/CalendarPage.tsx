@@ -12,7 +12,7 @@ import { SPACING, SIZES } from '@/shared/constants';
 import SwipeableTabView, { SwipeableTabViewRef } from '@/shared/components/SwipeableTabView';
 import TabSelectorTitle from '@/features/auth/TabSelectorTitle/TabSelectorTitle';
 
-const tabs = ['Дневник', 'AI', 'Статистика'];
+const tabs = ['Дневник', 'AI✨', 'Статистика'];
 
 const CalendarPage = () => {
   const [activeTab, setActiveTab] = useState(0);

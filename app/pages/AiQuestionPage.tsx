@@ -48,7 +48,7 @@ const AiQuestionPage = () => {
           date: new Date().toISOString(),
           id: aiResponseID,
           type: 'ai_text',
-          title: `AI Ответ на вопрос: ${answers.question.substring(0, 30)}${
+          title: `Вопрос: ${answers.question.substring(0, 30)}${
             answers.question.length > 30 ? '...' : ''
           }`,
           data: {

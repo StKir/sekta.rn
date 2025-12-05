@@ -64,7 +64,7 @@ const AIWeekAnalysisPostComponent = ({ post }: Props) => {
                 ]}
               />
               <Text style={[styles.statusText, { color: colors.TEXT_SECONDARY }]}>
-                {post.data.status === 'processing' ? 'Обработка' : 'Готово'}
+                {post.data.status === 'processing' ? 'Кликните чтобы узнать статус' : 'Готово'}
               </Text>
             </View>
             <View style={styles.buttonContainer}>

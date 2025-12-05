@@ -42,7 +42,7 @@ const AiPlayListPage = () => {
           date: new Date().toISOString(),
           id: aiResponseID,
           type: 'ai_text',
-          title: `Плейлист на основе ${answers.name}`,
+          title: `Плейлист: ${answers.name}`,
           data: {
             status: 'processing',
             result: '',
