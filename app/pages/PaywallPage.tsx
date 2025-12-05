@@ -6,7 +6,7 @@ import Animated, {
   FadeInDown,
   SharedValue,
 } from 'react-native-reanimated';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -196,6 +196,15 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
     setSelectedTariff(tariffId);
   };
 
+  const benefits = [
+    { name: 'Подробная статистика', value: '1' },
+    { name: 'Весь новый функционал', value: '2' },
+    { name: 'Анализ записей', value: '3' },
+    { name: 'Выбор нейросетей', value: '4' },
+  ];
+
+  const featues = [...benefits, ...AI_MODELS];
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
@@ -225,7 +234,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
             <Text style={styles.modelsText}>Неограниченные запросы</Text>
 
             <View style={styles.modelsContainer}>
-              {AI_MODELS.map((model, index) => (
+              {featues.map((model, index) => (
                 <Animated.View
                   entering={FadeInDown.delay(index * 50)
                     .duration(300)
@@ -266,9 +275,15 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
             title={hasTariffInfo ? 'Активировать подписку' : 'Создать аккаунт и активировать'}
             onPress={handleSelectTariff}
           />
-          <Text style={styles.footerText}>
-            Подписка продлевается автоматически. Отменить можно в любое время.
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL('https://storage.yandexcloud.net/sekta/offerta.html');
+            }}
+          >
+            <Text style={styles.footerText}>
+              Нажимая на кнопку выше вы по соглашаетесь с публичной афертой
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.skipButton}
             onPress={() => navigation.navigate('TabNavigator')}
@@ -532,8 +547,8 @@ const createStyles = (colors: ThemeColors) =>
     },
     footerText: {
       textAlign: 'center',
-      fontSize: 11,
-      color: colors.TEXT_SECONDARY,
+      fontSize: 14,
+      color: colors.PRIMARY,
       lineHeight: 16,
       marginBottom: 16,
     },
