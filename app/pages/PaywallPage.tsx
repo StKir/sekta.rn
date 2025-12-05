@@ -281,7 +281,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
             }}
           >
             <Text style={styles.footerText}>
-              Нажимая на кнопку выше вы по соглашаетесь с публичной афертой
+              Нажимая на кнопку выше вы по соглашаетесь с офертой
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
