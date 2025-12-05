@@ -20,18 +20,18 @@ import { useUserStore } from '@/entities/user/store/userStore';
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const LoginScreen = () => {
-  const { isPaywall, duration } = useRoute<RouteProp<RootStackParamList, 'LoginScreen'>>().params;
+  const route = useRoute<RouteProp<RootStackParamList, 'LoginScreen'>>();
+  const { isPaywall, duration, promo } = route.params || {};
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const navigation = useNavigation<NavigationProp>();
   const { setUser, setToken, userData } = useUserStore();
-  const { activateSubscription } = useSubscription();
+  const { activateSubscription, activatePromo } = useSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  console.log(isPaywall, duration);
   const handleSubmit = async () => {
     if (!formData.email || !formData.password) {
       Alert.alert('Ошибка', 'Заполните email и пароль');
@@ -72,23 +72,30 @@ const LoginScreen = () => {
         apiClient.setToken(response.token);
       }
 
-      if (response.user) {
-        setUser({
-          email: response.user.email,
-          name: response.user.name || userData?.name,
-          birthDate: response.user.birthDate || userData?.birthDate,
-          gender: response.user.gender || userData?.gender,
-          registrationDate: response.user.registrationDate || new Date().toISOString(),
-          tariff_info: response.user.tariff_info,
-        });
-
-        if (isPaywall) {
-          activateSubscription(duration || '1month');
-          navigation.navigate('Profile');
-          return;
-        }
-        navigation.navigate('TabNavigator');
+      if (!response.user) {
+        return;
       }
+
+      setUser({
+        email: response.user.email,
+        name: response.user.name || userData?.name,
+        birthDate: response.user.birthDate || userData?.birthDate,
+        gender: response.user.gender || userData?.gender,
+        registrationDate: response.user.registrationDate || new Date().toISOString(),
+        tariff_info: response.user.tariff_info,
+      });
+
+      if (promo) {
+        await activatePromo(promo);
+      }
+
+      if (isPaywall) {
+        activateSubscription(duration || '1month');
+        navigation.navigate('Profile');
+        return;
+      }
+
+      navigation.navigate('TabNavigator');
     } catch (error) {
       Alert.alert('Ошибка', error instanceof Error ? error.message : 'Неизвестная ошибка');
     } finally {

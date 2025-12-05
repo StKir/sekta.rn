@@ -7,6 +7,7 @@ export type RootStackParamList = {
   LoginScreen: {
     isPaywall?: boolean;
     duration?: string;
+    promo?: string;
   };
   CheckInPage: undefined;
   AiPlayListPage: undefined;

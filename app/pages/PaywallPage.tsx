@@ -6,13 +6,22 @@ import Animated, {
   FadeInDown,
   SharedValue,
 } from 'react-native-reanimated';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  Alert,
+  InteractionManager,
+} from 'react-native';
 import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { AIModel } from '@/types/aiTypes';
 import Text from '@/shared/ui/Text/Text';
+import Input from '@/shared/ui/Input/Input';
 import Button from '@/shared/ui/Button/Button';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
@@ -141,11 +150,13 @@ const TariffCard: React.FC<TariffCardProps> = ({ tariff, isSelected, scale, onPr
 const PaywallPage: React.FC<PaywallPageProps> = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { activateSubscription, isLoading } = useSubscription();
-  const { tariffInfo } = useUserStore();
+  const { activateSubscription, isLoading, activatePromo } = useSubscription();
+  const { tariffInfo, token } = useUserStore();
   const hasTariffInfo = !!tariffInfo;
+  const isAuthorized = !!token;
 
   const [selectedTariff, setSelectedTariff] = useState<string>('3months');
+  const [promoCode, setPromoCode] = useState('');
   const navigation = useNavigation<Nav>();
   const route = useRoute();
   const onSuccessParam = (route as any)?.params?.onSuccess as (() => void) | undefined;
@@ -194,6 +205,35 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
       }
     });
     setSelectedTariff(tariffId);
+  };
+
+  const handleActivatePromo = async () => {
+    const trimmedPromo = promoCode.trim().toLowerCase();
+
+    if (!trimmedPromo) {
+      Alert.alert('Ошибка', 'Введите промокод');
+      return;
+    }
+
+    if (!isAuthorized) {
+      navigation.navigate('LoginScreen', {
+        isPaywall: false,
+        duration: undefined,
+        promo: trimmedPromo,
+      });
+      return;
+    }
+
+    const response = await activatePromo(trimmedPromo);
+    InteractionManager.runAfterInteractions(() => {
+      if (response) {
+        setPromoCode('');
+      }
+
+      if (response?.success) {
+        navigation.goBack();
+      }
+    });
   };
 
   const benefits = [
@@ -265,6 +305,24 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
                 onPress={handleTariffPress}
               />
             ))}
+          </View>
+
+          <View style={styles.promoContainer}>
+            <Text style={styles.promoTitle}>Активировать промокод</Text>
+            <Input
+              autoCapitalize='characters'
+              label='Промокод'
+              placeholder='Введите промокод'
+              value={promoCode.toUpperCase()}
+              onChangeText={setPromoCode}
+            />
+            <Button
+              fullWidth
+              loading={isLoading}
+              style={styles.promoButton}
+              title='Применить промокод'
+              onPress={handleActivatePromo}
+            />
           </View>
         </View>
         <View style={styles.footer}>
@@ -560,6 +618,21 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 16,
       fontWeight: '600',
       color: colors.TEXT_SECONDARY,
+    },
+    promoContainer: {
+      marginBottom: 24,
+      padding: 20,
+      borderRadius: 16,
+      backgroundColor: colors.BACKGROUND_SECONDARY,
+      gap: 12,
+    },
+    promoTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: colors.TEXT_PRIMARY,
+    },
+    promoButton: {
+      marginTop: 8,
     },
   });
 

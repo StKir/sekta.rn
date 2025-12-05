@@ -71,6 +71,13 @@ export interface ApiError {
   error: string;
 }
 
+export interface ActivatePromoResponse {
+  success: boolean;
+  title?: string;
+  tokens?: number;
+  tariff_info?: TariffInfo;
+}
+
 export const subscriptionApi = {
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
     try {
@@ -141,6 +148,20 @@ export const subscriptionApi = {
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>;
       throw new Error(axiosError.response?.data?.error || 'Ошибка активации подписки');
+    }
+  },
+
+  activatePromo: async (promo: string): Promise<ActivatePromoResponse> => {
+    try {
+      const response = await api.post<ActivatePromoResponse>('/promo/activate', { promo });
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string; error?: string }>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          'Не удалось активировать промокод'
+      );
     }
   },
 

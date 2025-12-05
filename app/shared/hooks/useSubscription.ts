@@ -1,9 +1,14 @@
-import { Alert, Linking } from 'react-native';
+import { Alert, InteractionManager, Linking } from 'react-native';
 import { useState, useCallback } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-import { subscriptionApi, RegisterRequest, LoginRequest } from '@/shared/api/subscriptionApi';
+import {
+  subscriptionApi,
+  RegisterRequest,
+  LoginRequest,
+  ActivatePromoResponse,
+} from '@/shared/api/subscriptionApi';
 import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user';
 
@@ -14,6 +19,7 @@ interface UseSubscriptionReturn {
   checkAccess: () => Promise<boolean>;
   activateSubscription: (duration: string, paymentId?: string) => Promise<boolean>;
   checkSubscription: () => Promise<boolean | null>;
+  activatePromo: (promo: string) => Promise<ActivatePromoResponse | null>;
 }
 type NavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -104,6 +110,32 @@ export const useSubscription = (): UseSubscriptionReturn => {
     }
   }, []);
 
+  const activatePromo = useCallback(
+    async (promo: string): Promise<ActivatePromoResponse | null> => {
+      try {
+        setIsLoading(true);
+        const response = await subscriptionApi.activatePromo(promo);
+        InteractionManager.runAfterInteractions(() => {
+          if (response.title) {
+            Alert.alert('Промокод', response.title || 'Промокод успешно активирован');
+          }
+        });
+        return response;
+      } catch (error) {
+        InteractionManager.runAfterInteractions(() => {
+          Alert.alert(
+            'Ошибка промокода',
+            error instanceof Error ? error.message : 'Не удалось активировать промокод'
+          );
+        });
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
   const checkSubscription = useCallback(async () => {
     if (ai_tokens && !tariffInfo) {
       minusAiToken();
@@ -130,7 +162,7 @@ export const useSubscription = (): UseSubscriptionReturn => {
       Alert.alert('Ошибка', error instanceof Error ? error.message : 'Неизвестная ошибка');
       return null;
     }
-  }, [ai_tokens, minusAiToken, navigation, setAiTokens, setUser]);
+  }, [ai_tokens, minusAiToken, navigation, setAiTokens, setUser, tariffInfo]);
 
   return {
     isLoading,
@@ -139,5 +171,6 @@ export const useSubscription = (): UseSubscriptionReturn => {
     checkAccess,
     activateSubscription,
     checkSubscription,
+    activatePromo,
   };
 };
