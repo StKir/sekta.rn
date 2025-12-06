@@ -62,6 +62,10 @@ const ProfilePage = () => {
     navigation.navigate('OnboardingPage');
   };
 
+  const handleReRegister = () => {
+    navigation.navigate('Register');
+  };
+
   const handleLogout = () => {
     try {
       Alert.alert('Вы уверены, что хотите выйти?', 'Это действие нельзя будет отменить', [
@@ -257,6 +261,14 @@ const ProfilePage = () => {
               <Text style={[styles.buttonText, styles.logoutButtonText]}>Очистить данные</Text>
             </TouchableOpacity>
           )}
+
+          <TouchableOpacity
+            style={[styles.button, styles.feedbackButton]}
+            onPress={handleReRegister}
+          >
+            <Text style={[styles.buttonText, styles.logoutButtonText]}>Настроить аккаунт</Text>
+          </TouchableOpacity>
+
           <Text variant='body2'>
             Версия: {DeviceInfo.getVersion() + '.' + version.state.version}
           </Text>

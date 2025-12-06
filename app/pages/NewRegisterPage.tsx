@@ -8,7 +8,6 @@ import { transformJsonToFormData, formatAnswersToTestResult } from '@/shared/uti
 import { FormAnswers } from '@/shared/types/form.types';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
-import HelloScreen from '@/features/auth/Register/HelloScreen/HelloScreen';
 import { useUserStore } from '@/entities/user/store/userStore';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 
@@ -38,20 +37,13 @@ const NewRegisterPage = () => {
       }
 
       setAiTokens(5);
-      navigation.replace('OnboardingPage');
+      navigation.replace('TabNavigator');
     } catch (error) {
       console.log(error);
     }
   };
 
-  return (
-    <DynamicForm
-      customFirstStep={HelloScreen}
-      formData={formData}
-      showBackButton={true}
-      onComplete={handleFormComplete}
-    />
-  );
+  return <DynamicForm formData={formData} showBackButton={true} onComplete={handleFormComplete} />;
 };
 
 export default NewRegisterPage;

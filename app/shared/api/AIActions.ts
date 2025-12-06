@@ -62,6 +62,57 @@ export async function sendToAI(
   }
 }
 
+export async function sendChatMessage(
+  messages: Array<{
+    role: 'user' | 'assistant' | 'system';
+    content: Array<{
+      type: 'text';
+      text: string;
+    }>;
+  }>,
+  response_format: AIModelResponseFormat = AIModelResponseFormat.TEXT
+): Promise<number> {
+  const payload: GPTRequest = {
+    messages: messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content.map((c) => ({
+        type: c.type,
+        text: c.type === 'text' ? minifyText(c.text) : c.text,
+      })),
+    })),
+    response_format: response_format,
+    n: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    temperature: 1,
+    top_p: 1,
+  };
+
+  const selectedAIModel = AIModel.GEMINI_2_5_FLASH_LITE;
+
+  try {
+    const initialResponse = await axios.post<GPTResponseInitial>(
+      `${GEN_API_URL}/networks/${selectedAIModel}`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${GEN_API_TOKEN}`,
+        },
+      }
+    );
+
+    if (initialResponse.data.status === 'error') {
+      throw new Error('Ошибка при отправке запроса');
+    }
+
+    return initialResponse.data.request_id;
+  } catch (error) {
+    console.error('Ошибка в работе с GPT API:', error instanceof Error ? error.message : error);
+    throw error;
+  }
+}
+
 export const pollForResult = async (requestId: number): Promise<GPTResponseResult> => {
   const maxAttempts = 30;
   const delayMs = 4000;
@@ -112,6 +163,65 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
     }
   }
 
+  throw new Error('Превышено максимальное количество попыток получения результата');
+};
+
+export const pollForResultWithCallback = async (
+  requestId: number,
+  onUpdate: (status: 'processing' | 'starting' | 'success' | 'error', result?: string) => void
+): Promise<GPTResponseResult> => {
+  const maxAttempts = 60;
+  const delayMs = 2000;
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    if (attempts !== 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    attempts++;
+
+    try {
+      const statusResponse = await axios.get<GPTResponse>(
+        `${GEN_API_URL}/request/get/${requestId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${GEN_API_TOKEN}`,
+          },
+        }
+      );
+
+      if (statusResponse.data.status === 'success') {
+        const text = getCurrentText(statusResponse.data.result?.[0] as any);
+        onUpdate('success', text || '');
+        return {
+          result: text || '',
+          requestId,
+          type: 'ai_text',
+        };
+      }
+
+      if (statusResponse.data.status === 'error') {
+        onUpdate('error');
+        throw new Error('Ошибка при обработке запроса');
+      }
+
+      if (
+        statusResponse.data.status === 'processing' ||
+        statusResponse.data.status === 'starting'
+      ) {
+        onUpdate(statusResponse.data.status);
+        continue;
+      }
+    } catch (error) {
+      if (attempts === maxAttempts) {
+        onUpdate('error');
+        throw error;
+      }
+    }
+  }
+
+  onUpdate('error');
   throw new Error('Превышено максимальное количество попыток получения результата');
 };
 

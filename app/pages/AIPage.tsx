@@ -8,7 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 import { StorageService } from '@/shared/utils/storage';
 import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
-import Button from '@/shared/ui/Button/Button';
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
 import { SubscriptionBanner } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
@@ -47,10 +46,11 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     return lastDate !== today;
   });
   const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
-    '1': false, // Анализ недели
-    '2': false, // Задать вопрос
-    '3': false, // Составить плейлист
-    '4': false, // Придумать планы
+    '1': false,
+    '2': false,
+    '3': false,
+    '4': false,
+    '5': false,
   });
 
   const { checkSubscription } = useSubscription();
@@ -114,7 +114,18 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     }
   };
 
+  const handleOpenChat = () => {
+    navigation.navigate('AiChatPage');
+  };
+
   const baseAiBlocks: AIBlock[] = [
+    {
+      id: '5',
+      title: 'Чат',
+      description:
+        'Общайся с AI-помощником в режиме реального времени. Задавай вопросы и получай ответы в формате диалога 💬',
+      action: handleOpenChat,
+    },
     {
       id: '1',
       title: 'Анализ недели',
@@ -122,7 +133,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         'Расскажем нейросети о твоей неделе — и вернём вдохновляющие советы, которые помогут почувствовать себя лучше 💛',
       action: handleWeekAnalysis,
     },
-
     {
       id: '2',
       title: 'Задать вопрос',
@@ -166,6 +176,9 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         break;
       case '4':
         icon = <Icon color={colors.PRIMARY} name='calendar-outline' size={24} />;
+        break;
+      case '5':
+        icon = <Icon color={colors.PRIMARY} name='chatbubbles-outline' size={24} />;
         break;
     }
 
@@ -211,16 +224,14 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         ListHeaderComponent={
           <View style={{ marginBottom: SPACING.LARGE }}>
             <View style={styles.headerRow}>
-              <>
-                {showPayButton && (
-                  <Button
-                    style={styles.subscribeButton}
-                    title={tokensText}
-                    variant='primary-light'
-                    onPress={handleActivateSubscription}
-                  />
-                )}
-              </>
+              {showPayButton && (
+                <TouchableOpacity
+                  style={styles.subscribeButton}
+                  onPress={handleActivateSubscription}
+                >
+                  <Text style={styles.subscribeButtonText}>{tokensText}</Text>
+                </TouchableOpacity>
+              )}
               {!showPayButton && (
                 <TouchableOpacity style={styles.modelSelector} onPress={showModelSelector}>
                   <Text style={styles.modelSelectorText}>
@@ -236,9 +247,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                 title='Разблокируйте PRO функции'
               />
             )}
-            {/* <Text color='textSecondary' variant='body2'>
-              Получайте токены каждый день за вход в приложение
-            </Text> */}
           </View>
         }
         renderItem={renderAIBlock}
@@ -286,7 +294,14 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
     },
     subscribeButton: {
-      height: 40,
+      backgroundColor: colors.PRIMARY,
+      paddingHorizontal: SPACING.MEDIUM,
+      paddingVertical: SPACING.SMALL,
+      borderRadius: 8,
+    },
+    subscribeButtonText: {
+      color: '#FFFFFF',
+      fontSize: 14,
     },
   });
 

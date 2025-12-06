@@ -15,6 +15,7 @@ export type RootStackParamList = {
   AiPlans: undefined;
   NotePage: undefined;
   AiQuestionPage: undefined;
+  AiChatPage: undefined;
   OnboardingPage: undefined;
   AIResultPage: {
     requestId: string;

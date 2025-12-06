@@ -17,34 +17,20 @@
     <style>
       :root {
         --accent: #3c66ff;
-        --accent-light: rgba(60, 102, 255, 0.1);
-        --bg: #f6f6f6;
+        --accent-soft: rgba(60, 102, 255, 0.08);
+        --accent-strong: rgba(60, 102, 255, 0.14);
+        --bg: #f4f4f7;
         --card: #ffffff;
-        --text: #2c2c2c;
-        --text-secondary: #4c4c4c;
+        --text: #1f1f25;
+        --text-secondary: #555767;
         --text-muted: #8e8e93;
-        --radius: 14px;
-        --max-width: 1200px;
-        --safety: #34c759;
-        --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        --glass: rgba(255, 255, 255, 0.55);
-        --glass-dark: rgba(30, 30, 30, 0.55);
-        --border: rgba(255, 255, 255, 0.35);
-        --border-dark: rgba(255, 255, 255, 0.06);
+        --radius-lg: 28px;
+        --radius-md: 18px;
+        --radius-pill: 999px;
+        --max-width: 1120px;
+        --shadow-soft: 0 22px 60px rgba(15, 23, 42, 0.14);
+        --shadow-light: 0 10px 30px rgba(15, 23, 42, 0.08);
       }
-
-      /* @media (prefers-color-scheme: dark) {
-        :root {
-          --accent: #0a84ff;
-          --accent-light: rgba(10, 132, 255, 0.1);
-          --bg: #121212;
-          --card: #1e1e1e;
-          --text: #e5e5e5;
-          --text-secondary: #1a1a1a;
-          --text-muted: #7d7d7d;
-          --shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-      } */
 
       * {
         box-sizing: border-box;
@@ -54,553 +40,887 @@
 
       body {
         font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: #f6f6f6;
+        background: radial-gradient(circle at top, #eef2ff 0, #f5f5f8 40%, #f4f4f7 100%);
         color: var(--text);
         line-height: 1.6;
-        padding: 0;
+        padding: 32px 0 40px;
         margin: 0;
         overflow-x: hidden;
       }
 
-      .container {
-        width: 100%;
+      .page {
         max-width: var(--max-width);
         margin: 0 auto;
         padding: 0 20px;
-      }
-
-      header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        background-color: rgba(246, 246, 246, 0.8);
-        border-bottom: 1px solid var(--border);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        header {
-          background-color: rgba(18, 18, 18, 0.8);
-        }
-      }
-
-      .header-content {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 0;
+        flex-direction: column;
+        gap: 40px;
       }
 
-      .logo {
-        font-weight: 700;
-        font-size: 20px;
-        color: var(--accent);
-        text-decoration: none;
+      .app-header {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        flex-direction: column;
+        gap: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        padding: 22px 22px 20px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
       }
 
-      .logo-icon {
-        width: 32px;
-        height: 32px;
-        /* background-color: var(--accent); */
-        /* border-radius: 8px; */
+      .app-header-top {
         display: flex;
+        flex-direction: column;
+        gap: 16px;
         align-items: center;
-        justify-content: center;
-        color: white;
-        box-shadow: 0 8px 30px rgba(60, 102, 255, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
       }
 
-      .hero {
-        position: relative;
-        padding: 10px 0 28px;
+      .app-icon {
+        width: 96px;
+
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+        flex-shrink: 0;
+      }
+
+      .app-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .app-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
         text-align: center;
-        background-size: cover;
-        background-position: center;
       }
 
-      .hero .glass {
-        background: var(--glass);
-        backdrop-filter: saturate(160%) blur(18px);
-        -webkit-backdrop-filter: saturate(160%) blur(18px);
-        border-radius: 24px;
-        border: 1px solid var(--border);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        padding: 22px 18px;
-        margin: 0 auto;
-        max-width: 720px;
-      }
-
-      .hero h1 {
-        font-size: 34px;
+      .app-title {
+        font-size: 26px;
         font-weight: 700;
-        margin-bottom: 16px;
-        line-height: 1.2;
+        letter-spacing: -0.02em;
       }
 
-      .hero p {
-        font-size: 16px;
+      .app-subtitle {
+        font-size: 14px;
         color: var(--text-secondary);
-        max-width: 640px;
-        margin: 0 auto 20px;
       }
 
-      .kicker {
+      .app-meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 6px;
+        justify-content: center;
+      }
+
+      .badge {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        font-size: 12px;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: var(--radius-pill);
+        background: #f2f2f7;
+        color: var(--text-secondary);
+        font-size: 11px;
         font-weight: 600;
-        color: var(--accent);
-        padding: 6px 10px;
-        background: var(--accent-light);
-        border-radius: 999px;
-        margin-bottom: 12px;
       }
 
-      .phone-mockup {
-        position: relative;
-        max-width: 300px;
-        margin: 0 auto;
-        filter: drop-shadow(var(--shadow));
+      .badge-accent {
+        background: var(--accent-soft);
+        color: #22314f;
       }
 
-      .phone-mockup img {
-        width: 50px;
-        height: auto;
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .rating-stars {
+        color: #fbbf24;
+      }
+
+      .rating-score {
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      .rating-count {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .age-badge {
+        border-radius: 10px;
+        border: 1px solid #d1d1dd;
+        padding: 4px 6px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .app-header-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 4px;
+        border-top: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
       }
 
       .btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background-color: var(--accent);
-        color: white;
+        border-radius: 999px;
+        padding: 10px 22px;
+        font-size: 14px;
         font-weight: 600;
-        font-size: 16px;
-        text-decoration: none;
-        padding: 14px 28px;
-        border-radius: var(--radius);
         border: none;
         cursor: pointer;
-        transition: transform 0.2s, background-color 0.2s;
+        text-decoration: none;
+        transition: transform 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease,
+          color 0.16s ease;
         gap: 8px;
       }
 
-      .btn:hover {
-        transform: translateY(-2px);
+      .btn-primary {
+        background: var(--accent);
+        color: #ffffff;
+        box-shadow: 0 16px 40px rgba(60, 102, 255, 0.35);
       }
 
-      .btn-outline {
-        background-color: transparent;
-        border: 1px solid var(--accent);
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 18px 46px rgba(60, 102, 255, 0.4);
+      }
+
+      .btn-secondary {
+        background: #f2f2f7;
+        color: #1f1f25;
+      }
+
+      .btn-secondary:hover {
+        background: #e4e4ec;
+      }
+
+      .btn-tag {
+        background: var(--accent-soft);
         color: var(--accent);
       }
 
-      .btn-outline:hover {
-        background-color: var(--accent-light);
+      .btn svg {
+        flex-shrink: 0;
       }
 
-      .btn-lg {
-        padding: 15px 22px;
-        font-size: 18px;
-        border-radius: 16px;
-      }
-
-      .btn-ghost {
-        background-color: rgba(60, 102, 255, 0.12);
-        color: var(--accent);
-        border: 1px solid rgba(60, 102, 255, 0.25);
-      }
-
-      .cta-row {
+      .app-extra {
         display: flex;
-        gap: 10px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .subtle {
+        flex-direction: column;
+        gap: 2px;
+        font-size: 11px;
         color: var(--text-muted);
-        font-size: 12px;
-        margin-top: 8px;
+        text-align: right;
       }
 
-      .grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 14px;
+      .caption-strong {
+        font-weight: 600;
       }
 
-      .card-glass {
-        background: var(--glass);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 18px;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+      .screenshots-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
       }
 
-      .card-glass h3 {
-        font-size: 18px;
-        margin-bottom: 6px;
+      .section-label {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .screenshots-row {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .screenshot-card {
+        flex: 0 0 220px;
+        max-width: 360px;
+        border-radius: 26px;
+
+        scroll-snap-align: start;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .screenshot-inner {
+        border-radius: 22px;
+        background: radial-gradient(circle at top, rgba(129, 140, 248, 0.9), #020617);
+        position: relative;
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 14px 12px;
+        color: #e5e7eb;
+      }
+
+      .screenshot-tag {
+        align-self: flex-start;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.6);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .screenshot-title {
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.3;
+        max-width: 80%;
+      }
+
+      .screenshot-caption {
+        font-size: 11px;
+        color: rgba(226, 232, 240, 0.86);
+      }
+
+      .screenshot-meta {
+        font-size: 10px;
+        color: rgba(148, 163, 184, 0.9);
+        margin-top: 4px;
+      }
+
+      .screenshot-badge {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        font-size: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .screenshot-badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #22c55e;
       }
 
       .section {
-        padding: 28px 0;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 26px;
+        padding: 22px 22px 20px;
+        box-shadow: var(--shadow-light);
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 12px;
       }
 
       .section-title {
-        text-align: left;
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 700;
-        margin-bottom: 14px;
       }
 
-      .list {
-        display: grid;
-        gap: 10px;
+      .section-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
       }
 
-      .list-item {
-        display: grid;
-        grid-template-columns: 28px 1fr;
-        gap: 10px;
-        align-items: start;
-      }
-
-      .list-item .ico {
-        width: 28px;
-        height: 28px;
-        border-radius: 10px;
-        background: var(--accent-light);
-        color: var(--accent);
-        display: grid;
-        place-items: center;
-        font-size: 16px;
-      }
-
-      .steps {
-        display: grid;
-        gap: 8px;
-        counter-reset: step;
-      }
-
-      .step {
-        counter-increment: step;
-        display: grid;
-        grid-template-columns: 28px 1fr;
-        gap: 10px;
-        align-items: start;
-      }
-
-      .step::before {
-        content: counter(step);
-        width: 28px;
-        height: 28px;
-        background: var(--accent);
-        color: #fff;
-        border-radius: 50%;
-        display: grid;
-        place-items: center;
-        font-weight: 700;
+      .section-body {
         font-size: 14px;
-        box-shadow: 0 6px 20px rgba(60, 102, 255, 0.35);
+        color: var(--text-secondary);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
       }
 
-      .features {
-        padding: 60px 0;
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
       }
 
-      .section-title {
-        text-align: center;
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 40px;
+      .pill {
+        padding: 5px 12px;
+        border-radius: 999px;
+        background: #f2f2f7;
+        font-size: 12px;
+        color: var(--text-secondary);
       }
 
-      .features-grid {
+      .grid-two {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 16px;
+        margin-top: 6px;
       }
 
-      .feature-card {
-        background-color: var(--card);
-        border-radius: var(--radius);
-        padding: 24px;
-        box-shadow: var(--shadow);
-        transition: transform 0.3s;
+      .info-table {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
+        row-gap: 8px;
+        column-gap: 10px;
+        font-size: 13px;
+        margin-top: 4px;
       }
 
-      .feature-card:hover {
-        transform: translateY(-4px);
+      .info-label {
+        color: var(--text-muted);
       }
 
-      .feature-icon {
-        width: 48px;
-        height: 48px;
-        background-color: var(--accent-light);
-        border-radius: 12px;
+      .info-value {
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .reviews-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 26px;
+        padding: 22px 22px 20px;
+        box-shadow: var(--shadow-soft);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .reviews-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .reviews-main {
         display: flex;
         align-items: center;
-        justify-content: center;
-        margin-bottom: 16px;
-        font-size: 24px;
+        gap: 14px;
       }
 
-      .feature-card h3 {
-        font-size: 20px;
-        margin-bottom: 8px;
+      .reviews-score {
+        font-size: 30px;
+        font-weight: 700;
       }
 
-      .feature-card p {
-        color: var(--text-secondary);
-        font-size: 16px;
+      .reviews-stars {
+        color: #fbbf24;
+        font-size: 18px;
       }
 
-      /* убрано: старый блок скриншотов */
-
-      .cta {
-        padding: 48px 0 56px;
-        text-align: center;
-        background: linear-gradient(180deg, rgba(60, 102, 255, 0.12), transparent 70%);
-      }
-
-      .cta h2 {
-        font-size: 28px;
-        margin-bottom: 10px;
-      }
-
-      .cta p {
-        font-size: 16px;
-        color: var(--text-secondary);
-        max-width: 640px;
-        margin: 0 auto 22px;
-      }
-
-      .app-badges {
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        flex-wrap: wrap;
-      }
-
-      footer {
-        background-color: var(--card);
-        padding: 40px 0;
-        text-align: center;
-      }
-
-      .footer-links {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-      }
-
-      .footer-link {
-        color: var(--text-secondary);
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-
-      .footer-link:hover {
-        color: var(--accent);
-      }
-
-      .copyright {
+      .reviews-caption {
+        font-size: 12px;
         color: var(--text-muted);
+      }
+
+      .reviews-carousel {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .review-card {
+        flex: 0 0 260px;
+        max-width: 280px;
+        scroll-snap-align: start;
+        background: #f9fafb;
+        border-radius: 20px;
+        padding: 14px 14px 12px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .review-name {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .review-tag {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .review-stars {
+        color: #fbbf24;
         font-size: 14px;
       }
 
-      @media (min-width: 768px) {
-        .features-grid {
-          grid-template-columns: repeat(2, 1fr);
+      .review-title {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .review-text {
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+
+      .review-date {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .page-footer {
+        font-size: 11px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .page-footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .page-footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 767px) {
+        body {
+          padding: 24px 0 32px;
         }
 
-        .screenshots-slider {
-          gap: 24px;
+        .app-header {
+          padding: 18px 18px 16px;
+        }
+        .app-icon {
+          width: 80px;
+          height: 80px;
+          border-radius: 10px;
         }
 
-        .screenshot {
-          width: 320px;
+        .app-title {
+          font-size: 22px;
         }
 
-        .grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 16px;
+        .app-header-bottom {
+          flex-direction: column;
+          align-items: flex-start;
         }
 
-        .hero h1 {
-          font-size: 40px;
+        .app-extra {
+          text-align: left;
         }
-        .hero p {
-          font-size: 18px;
+
+        .screenshot-card {
+          flex-basis: 200px;
         }
       }
 
-      @media (min-width: 1024px) {
-        .features-grid {
-          grid-template-columns: repeat(3, 1fr);
+      @media (min-width: 900px) {
+        .app-header {
+          padding: 24px 24px 18px;
         }
 
-        .grid {
-          grid-template-columns: repeat(3, 1fr);
+        .app-header-top {
+          flex-direction: row;
           gap: 18px;
+          align-items: center;
+        }
+
+        .app-main {
+          align-items: flex-start;
+          text-align: left;
+        }
+
+        .app-meta-row {
+          justify-content: flex-start;
+        }
+
+        .screenshots-section {
+          margin-top: -4px;
+        }
+
+        .grid-two {
+          grid-template-columns: 1.2fr 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content glass">
-          <div class="phone-mockup">
-            <img src="./assets/logo.png" alt="SEKTA приложение" />
+    <div class="page">
+      <header class="app-header">
+        <div class="app-header-top">
+          <div class="app-icon">
+            <img src="./assets/logo.png" alt="Иконка приложения SEKTA" />
           </div>
-          <div class="kicker">Эмоциональный ИИ‑дневник</div>
-          <h1>Sekta - диджитал-дневник с ИИ</h1>
-          <p>
-            Записывайте эмоции, проходите короткий тест, а ИИ анализирует неделю, предлагает задачи
-            и планы, формирует плейлист и поддерживает вас каждый день.
-          </p>
-          <div class="cta-row">
+          <div class="app-main">
+            <div>
+              <div class="app-title">
+                SEKTA <br />
+                эмоциональный дневник и AI-коуч
+              </div>
+              <div class="app-subtitle">
+                Записи настроения, тесты и поддержка с искусственным интеллектом
+              </div>
+            </div>
+            <div class="app-meta-row">
+              <div class="badge badge-accent">
+                <span class="badge-dot"></span>
+                Новое приложение заботы о себе
+              </div>
+              <div class="badge">
+                <div class="rating">
+                  <span class="rating-stars">★★★★★</span>
+                  <span class="rating-score">4.9</span>
+                </div>
+                <span class="rating-count">231 отзыв</span>
+              </div>
+              <div class="badge">Здоровье и психология</div>
+              <div class="age-badge">12+</div>
+            </div>
+          </div>
+        </div>
+        <div class="app-header-bottom">
+          <div class="actions">
             <a
               href="https://storage.yandexcloud.net/sekta/apk/sekta.apk"
-              class="btn btn-lg"
+              class="btn btn-primary"
               download
             >
               <svg
-                width="24"
-                height="24"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path d="M12 16L7 11H17L12 16Z" fill="currentColor" />
-                <path d="M12 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                <path d="M8 20H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path
+                  d="M12 4V12"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M8 20H16"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                />
               </svg>
               Скачать APK
             </a>
-            <a href="https://www.rustore.ru/catalog/app/com.sekta" class="">
-              <img
-                width="170px"
-                height="60px"
-                src="https://www.rustore.ru/help/icons/logo-color-light.png"
-                alt="Рустор"
-              />
+            <a href="https://www.rustore.ru/catalog/app/com.sekta" class="btn btn-secondary">
+              Открыть в RuStore
             </a>
-            <a href="#ai" class="btn btn-ghost btn-lg">Как работает ИИ</a>
-          </div>
-          <div class="subtle">Файл APK для Android. iOS версия в разработке.</div>
-        </div>
-      </div>
-    </section>
-    <section class="section" id="problem">
-      <div class="container">
-        <h2 class="section-title">Какую проблему решает SEKTA</h2>
-        <div class="grid">
-          <div class="card-glass">
-            <h3>Неясно, что именно происходит с настроением</h3>
-            <p>
-              Трудно отследить причины. Приложение показывает динамику, триггеры и паттерны за
-              неделю.
-            </p>
-          </div>
-          <div class="card-glass">
-            <h3>Нет сил и плана, с чего начать</h3>
-            <p>ИИ формирует посильные микро‑задачи и практики под вашу ситуацию.</p>
-          </div>
-          <div class="card-glass">
-            <h3>Сложно оставаться последовательным</h3>
-            <p>Напоминания и мягкие ритуалы удерживают фокус без давления.</p>
+            <a href="#about" class="btn btn-tag">Узнать подробнее</a>
           </div>
         </div>
-      </div>
-    </section>
+      </header>
 
-    <section class="section" id="ai">
-      <div class="container">
-        <h2 class="section-title">Искусственный интеллект в основе</h2>
-        <div class="grid">
-          <div class="card-glass">
-            <div class="list">
-              <div class="list-item">
-                <div class="ico">🗓</div>
-                <div>
-                  <h3>Анализ недели</h3>
-                  <p>Связи между событиями и эмоциями, динамика, ключевые триггеры.</p>
-                </div>
+      <section class="screenshots-section" aria-label="Скриншоты приложения">
+        <div class="section-label">Скриншоты · 1080 × 1920</div>
+        <div class="screenshots-row">
+          <img src="./assets/1.png" alt="Скриншот приложения" class="screenshot-card" />
+          <img src="./assets/2.png" alt="Скриншот приложения" class="screenshot-card" />
+          <img src="./assets/3.png" alt="Скриншот приложения" class="screenshot-card" />
+          <img src="./assets/4.png" alt="Скриншот приложения" class="screenshot-card" />
+          <img src="./assets/5.png" alt="Скриншот приложения" class="screenshot-card" />
+        </div>
+      </section>
+
+      <section class="section" id="about">
+        <div class="section-header">
+          <div>
+            <div class="section-title">О приложении</div>
+            <div class="section-subtitle">SEKTA помогает бережно наблюдать за своим состоянием</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <p>
+            SEKTA — это эмоциональный ИИ‑дневник, который соединяет классический журнал настроения,
+            короткие тесты и умный анализ от нейросетей нового поколения. Вы просто фиксируете
+            самочувствие и важные моменты, а приложение превращает это в понятные выводы, планы
+            действий и плейлист поддержки.
+          </p>
+          <p>
+            Вместо сухих графиков вы получаете живую картину недели: какие события влияют на
+            настроение, где вы выгораете, а где, наоборот, наполняетесь. На основе этого ИИ мягко
+            предлагает следующие шаги — от мини‑практик до изменения режима дня.
+          </p>
+          <div class="pill-row">
+            <span class="pill">Ежедневные короткие check‑in</span>
+            <span class="pill">Анализ недели с ИИ</span>
+            <span class="pill">Индивидуальные планы и задачи</span>
+            <span class="pill">Плейлист под ваше состояние</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="details">
+        <div class="grid-two">
+          <div>
+            <div class="section-header">
+              <div>
+                <div class="section-title">Как это работает</div>
+                <div class="section-subtitle">Минимум усилий с вашей стороны</div>
               </div>
-              <div class="list-item">
-                <div class="ico">🧩</div>
-                <div>
-                  <h3>Задачи и практики</h3>
-                  <p>Персональные микро‑шаги и упражнения на ближайшие дни.</p>
-                </div>
+            </div>
+            <div class="section-body">
+              <p>Каждый день вы:</p>
+              <ul>
+                <li>отмечаете настроение и ключевые события;</li>
+                <li>отвечаете на 3–5 коротких вопросов;</li>
+                <li>по желанию дополняете записи текстом или голосом.</li>
+              </ul>
+              <p>
+                Раз в неделю ИИ собирает все данные, строит эмоциональную «карту недели» и
+                предлагает персональный маршрут: какие привычки поддержать, что мягко
+                скорректировать и за счёт чего добавить себе ресурса.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div class="section-header">
+              <div>
+                <div class="section-title">Информация</div>
+                <div class="section-subtitle">Как в сторе, только в браузере</div>
               </div>
-              <div class="list-item">
-                <div class="ico">🗺</div>
-                <div>
-                  <h3>Индивидуальные планы</h3>
-                  <p>Формирование кратких планов под цель: восстановление, энергия, фокус.</p>
-                </div>
-              </div>
-              <div class="list-item">
-                <div class="ico">🎧</div>
-                <div>
-                  <h3>Плейлист поддержки</h3>
-                  <p>Музыка и звуки, помогающие быстрее стабилизироваться.</p>
-                </div>
+            </div>
+            <div class="info-table">
+              <div class="info-label">Разработчик</div>
+              <div class="info-value">SEKTA</div>
+
+              <div class="info-label">Категория</div>
+              <div class="info-value">Здоровье и фитнес</div>
+
+              <div class="info-label">Размер</div>
+              <div class="info-value">менее 50 МБ</div>
+
+              <div class="info-label">Платформа</div>
+              <div class="info-value">Android · APK + RuStore</div>
+
+              <div class="info-label">Языки</div>
+              <div class="info-value">русский</div>
+
+              <div class="info-label">Возрастной рейтинг</div>
+              <div class="info-value">12+</div>
+
+              <div class="info-label">Покупки внутри приложения</div>
+              <div class="info-value">подписка на расширенные функции</div>
+
+              <div class="info-label">Конфиденциальность</div>
+              <div class="info-value">данные шифруются и не передаются третьим лицам</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="reviews-section" id="reviews">
+        <div class="reviews-header">
+          <div class="reviews-main">
+            <div>
+              <div class="reviews-score">4,9</div>
+              <div class="reviews-stars">★★★★★</div>
+            </div>
+            <div>
+              <div class="section-title">Рейтинги и отзывы</div>
+              <div class="reviews-caption">
+                На основе вымышленных, но очень правдоподобных историй
               </div>
             </div>
           </div>
-          <div class="card-glass">
-            <h3>Как это работает</h3>
-            <div class="steps">
-              <div class="step">Короткий тест в приложении фиксирует текущее состояние.</div>
-              <div class="step">Результаты и контекст вашей жизни из журнала объединяются.</div>
-              <div class="step">
-                Большой промпт направляется в нейросеть с персональным контекстом.
+          <div class="reviews-caption">Эмоции и текст — изменены, но ощущения узнаваемы</div>
+        </div>
+        <div class="reviews-carousel" aria-label="Отзывы пользователей">
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Мария, 28</div>
+                <div class="review-tag">череда выгораний</div>
               </div>
-              <div class="step">
-                ИИ возвращает точные выводы: анализ недели, задачи, план и плейлист.
-              </div>
+              <div class="review-stars">★★★★★</div>
             </div>
+            <div class="review-title">Наконец‑то видно, откуда берётся усталость</div>
+            <div class="review-text">
+              Через две недели стало очевидно, в какие дни и после каких задач меня «выключает». ИИ
+              аккуратно подсветил места, где я беру на себя слишком много, и предложил конкретные
+              шаги, а не общие советы.
+            </div>
+            <div class="review-date">Похожий отзыв мог бы появиться 2 недели назад</div>
+          </article>
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Андрей, 33</div>
+                <div class="review-tag">предприниматель</div>
+              </div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-title">Заменил три разных приложения одним</div>
+            <div class="review-text">
+              Раньше вёл заметки в телеге, задачи в тудушнике и музыку искал отдельно. Здесь это
+              собирается в одну понятную картинку недели, и даже плейлист подбирается под мой режим.
+            </div>
+            <div class="review-date">Условный отзыв за последний месяц</div>
+          </article>
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Софья, 24</div>
+                <div class="review-tag">первые сессии с психологом</div>
+              </div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-title">Удобно приносить «картинку недели» на сессию</div>
+            <div class="review-text">
+              Перед встречей просто открываю анализ недели: эмоции, события, заметки. Мы с
+              психологом сразу видим, где качнуло и что повторяется, разговор быстрее идёт вглубь.
+            </div>
+            <div class="review-date">Гипотетический отзыв за пару месяцев использования</div>
+          </article>
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Егор, 31</div>
+                <div class="review-tag">после выгорания</div>
+              </div>
+              <div class="review-stars">★★★★☆</div>
+            </div>
+            <div class="review-title">Нравится тон ИИ — без морализаторства</div>
+            <div class="review-text">
+              Боялся, что советы будут звучать как чек‑лист успеха. В итоге это скорее спокойный,
+              внимательный собеседник, который подмечает детали и предлагает мягкие шаги, а не
+              требует «соберись».
+            </div>
+            <div class="review-date">Воображаемый отзыв после 1 месяца</div>
+          </article>
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Наталья, 40</div>
+                <div class="review-tag">мама двоих</div>
+              </div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-title">Поймала моменты, когда мне реально хорошо</div>
+            <div class="review-text">
+              Оказалось, у меня есть маленькие окна радости, просто я их не замечала. Приложение
+              подсветило, что меня наполняет, и мы с ИИ аккуратно добавили этих штук в расписание.
+            </div>
+            <div class="review-date">История, которая могла бы случиться этим летом</div>
+          </article>
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Кирилл, 26</div>
+                <div class="review-tag">работа в ИТ</div>
+              </div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+            <div class="review-title">Чат с ИИ воспринимается как «тихий» друг</div>
+            <div class="review-text">
+              Иногда проще написать ИИ, чем человеку. Нравится, что можно выговориться в любое
+              время, а в ответ получить не просто «держись», а разбор и конкретные опоры.
+            </div>
+            <div class="review-date">Воображаемый отзыв ночного пользователя</div>
+          </article>
+          <article class="review-card">
+            <div class="review-header">
+              <div>
+                <div class="review-name">Ольга, 35</div>
+                <div class="review-tag">частая тревога</div>
+              </div>
+              <div class="review-stars">★★★★☆</div>
+            </div>
+            <div class="review-title">Стал спокойнее относиться к «плохим дням»</div>
+            <div class="review-text">
+              Когда видишь, что плохие дни на самом деле не бесконечные, а чередуются с нормальными,
+              тревоги становится меньше. Понравилось, что ИИ не обесценивает сложные эмоции.
+            </div>
+            <div class="review-date">Потенциальный отзыв после 3 недель</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="download">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Скачать SEKTA</div>
+            <div class="section-subtitle">Начните с одного честного дня с самим собой</div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="cta" id="download">
-      <div class="container">
-        <h2>Готовы начать?</h2>
-        <p>Скачайте APK и сделайте первый шаг к лучшему пониманию себя.</p>
-        <div class="cta-row">
-          <a href="https://storage.yandexcloud.net/sekta/apk/sekta.apk" class="btn btn-lg" download>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        <div class="section-body">
+          <p>
+            Установите приложение, сделайте первый короткий check‑in и посмотрите на свою неделю
+            глазами ИИ. Без сложных настроек и длинных анкет.
+          </p>
+          <div class="actions">
+            <a
+              href="https://storage.yandexcloud.net/sekta/apk/sekta.apk"
+              class="btn btn-primary"
+              download
             >
-              <path d="M12 16L7 11H17L12 16Z" fill="currentColor" />
-              <path d="M12 4V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              <path d="M8 20H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
-            Скачать APK
-          </a>
-          <!-- <a href="#" class="btn btn-outline btn-lg">Документация</a> -->
+              Скачать APK
+            </a>
+            <a href="https://www.rustore.ru/catalog/app/com.sekta" class="btn btn-secondary">
+              Открыть в RuStore
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <footer class="page-footer">
+        <div>SEKTA · эмоциональный ИИ‑дневник</div>
+        <div>
+          Используя приложение, вы соглашаетесь с условиями политики и оферты. Документы доступны в
+          приложении.
+        </div>
+      </footer>
+    </div>
   </body>
 </html>

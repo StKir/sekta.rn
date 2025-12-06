@@ -12,6 +12,7 @@ import CheckInPage from '@/pages/CheckInPage';
 import AiQuestionPage from '@/pages/AiQuestionPage';
 import AiPlayListPage from '@/pages/AiPlayListPage';
 import AiPlans from '@/pages/AiPlans';
+import AiChatPage from '@/pages/AiChatPage';
 import AIResultPage from '@/pages/AIResultPage';
 import AIResultCheckPage from '@/pages/AIResultCheckPage';
 
@@ -82,7 +83,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={userName ? 'TabNavigator' : 'Register'}
+        initialRouteName={userName ? 'TabNavigator' : 'OnboardingPage'}
         screenOptions={{
           headerShown: false,
           ...TransitionPresets.ModalSlideFromBottomIOS,
@@ -94,7 +95,7 @@ const AppNavigator = () => {
         <Stack.Screen component={CheckInPage} name='CheckInPage' />
         <Stack.Screen component={AiPlayListPage} name='AiPlayListPage' />
         <Stack.Screen component={AiQuestionPage} name='AiQuestionPage' />
-
+        <Stack.Screen component={AiChatPage} name='AiChatPage' />
         <Stack.Screen component={AiPlans} name='AiPlans' />
         <Stack.Screen component={MomentPage} name='MomentPage' />
         <Stack.Screen component={NotePage} name='NotePage' />

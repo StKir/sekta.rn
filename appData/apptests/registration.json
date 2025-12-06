@@ -8,8 +8,7 @@
           "id": 1011,
           "name": "title_basic_info",
           "type": "title",
-          "title": "Основная информация",
-          "step": true
+          "title": "Основная информация"
         },
         {
           "id": 1001,
@@ -56,8 +55,7 @@
           "id": 1012,
           "name": "title_details",
           "type": "title",
-          "title": "Детали о тебе",
-          "step": true
+          "title": "Детали о тебе"
         },
         {
           "id": 1004,
@@ -90,46 +88,6 @@
           ]
         },
         {
-          "id": 1005,
-          "name": "stress_level",
-          "type": "select",
-          "question": "Есть ли у тебя ощущение тревоги, стресса или усталости в повседневной жизни?",
-          "options": [
-            {
-              "id": 1,
-              "name": "Часто"
-            },
-            {
-              "id": 2,
-              "name": "Иногда"
-            },
-            {
-              "id": 3,
-              "name": "Редко"
-            },
-            {
-              "id": 4,
-              "name": "Никогда"
-            }
-          ]
-        },
-        {
-          "id": 1006,
-          "name": "bad_habits",
-          "type": "select",
-          "question": "Имеешь ли ты вредные привычки?",
-          "options": [
-            {
-              "id": 1,
-              "name": "Да"
-            },
-            {
-              "id": 2,
-              "name": "Нет"
-            }
-          ]
-        },
-        {
           "id": 1007,
           "name": "tracking_goals",
           "type": "multi_select",
@@ -150,6 +108,14 @@
             {
               "id": 4,
               "name": "Сон"
+            },
+            {
+              "id": 5,
+              "name": "Здоровье"
+            },
+            {
+              "id": 6,
+              "name": "Другое"
             }
           ]
         }
@@ -161,22 +127,6 @@
           "type": "title",
           "title": "Персонализация",
           "description": "Настрой приложение под себя"
-        },
-        {
-          "id": 1009,
-          "name": "app_experience",
-          "type": "select",
-          "question": "Пользовался ли похожими приложениями?",
-          "options": [
-            {
-              "id": 1,
-              "name": "Да"
-            },
-            {
-              "id": 2,
-              "name": "Нет"
-            }
-          ]
         },
         {
           "id": 1010,
