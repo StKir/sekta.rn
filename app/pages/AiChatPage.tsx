@@ -13,8 +13,6 @@ import {
   Keyboard,
 } from 'react-native';
 import React, { useRef, useEffect } from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
 
 import { calculateAge } from '@/shared/utils/dateUtils';
 import Text from '@/shared/ui/Text';
@@ -25,7 +23,6 @@ import { useSubscription } from '@/shared/hooks/useSubscription';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { sendChatMessage, pollForResultWithCallback } from '@/shared/api/AIActions';
-import { RootStackParamList } from '@/navigation/types';
 import { useUserStore } from '@/entities/user/store/userStore';
 import { useChatStore, ChatMessage } from '@/entities/ai/store/chatStore';
 import ChatMessageComponent from '@/entities/ai/components/ChatMessage';
@@ -33,7 +30,6 @@ import ChatMessageComponent from '@/entities/ai/components/ChatMessage';
 const AiChatPage = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { minusAiToken } = useUserStore();
   const insets = useSafeAreaInsets();
   const { messages, addMessage, updateMessage, getLastMessages, clearMessages } = useChatStore();
@@ -205,7 +201,7 @@ ${JSON.stringify(contextPosts)}
   };
 
   const handleClearChat = () => {
-    Alert.alert('Очистить чат', 'Вы уверены, что хотите очистить историю чата?', [
+    Alert.alert('Новый чат', 'Вы уверены, что хотите начать новый чат?', [
       {
         text: 'Отмена',
         style: 'cancel',
@@ -225,16 +221,14 @@ ${JSON.stringify(contextPosts)}
   };
 
   return (
-    <SafeAreaView edges={['top']} style={styles.safeArea}>
+    <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Icon color={colors.TEXT_PRIMARY} name='arrow-back' size={24} />
-        </TouchableOpacity>
+        <></>
         <Text style={styles.pageTitle} variant='h2'>
           AI Чат
         </Text>
         <TouchableOpacity style={styles.clearButton} onPress={handleClearChat}>
-          <Icon color={colors.TEXT_PRIMARY} name='trash-outline' size={24} />
+          <Icon color={colors.TEXT_PRIMARY} name='add-circle-outline' size={24} />
         </TouchableOpacity>
       </View>
 
@@ -425,6 +419,7 @@ const createStyles = (colors: ThemeColors) =>
     safeArea: {
       flex: 1,
       backgroundColor: colors.BACKGROUND_PRIMARY,
+      marginBottom: 50,
     },
     header: {
       flexDirection: 'row',

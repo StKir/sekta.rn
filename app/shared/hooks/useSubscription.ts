@@ -159,6 +159,12 @@ export const useSubscription = (): UseSubscriptionReturn => {
         return false;
       }
     } catch (error) {
+      if (tariffInfo?.status === 'TRIAL') {
+        navigation.navigate('PaywallPage', {
+          onSuccess: () => {},
+        });
+        return null;
+      }
       Alert.alert('Ошибка', error instanceof Error ? error.message : 'Неизвестная ошибка');
       return null;
     }

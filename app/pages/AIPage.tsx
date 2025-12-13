@@ -114,18 +114,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     }
   };
 
-  const handleOpenChat = () => {
-    navigation.navigate('AiChatPage');
-  };
-
   const baseAiBlocks: AIBlock[] = [
-    {
-      id: '5',
-      title: 'Чат',
-      description:
-        'Общайся с AI-помощником в режиме реального времени. Задавай вопросы и получай ответы в формате диалога 💬',
-      action: handleOpenChat,
-    },
     {
       id: '1',
       title: 'Анализ недели',
@@ -176,9 +165,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         break;
       case '4':
         icon = <Icon color={colors.PRIMARY} name='calendar-outline' size={24} />;
-        break;
-      case '5':
-        icon = <Icon color={colors.PRIMARY} name='chatbubbles-outline' size={24} />;
         break;
     }
 

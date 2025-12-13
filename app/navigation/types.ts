@@ -32,5 +32,5 @@ export type TabParamList = {
   Profile: undefined;
   Calendar: undefined;
   Events: undefined;
-  CheckIn: undefined;
+  AiChatPage: undefined;
 };
