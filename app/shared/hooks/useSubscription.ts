@@ -159,7 +159,7 @@ export const useSubscription = (): UseSubscriptionReturn => {
         return false;
       }
     } catch (error) {
-      if (tariffInfo?.status === 'TRIAL') {
+      if (tariffInfo?.status === 'TRIAL' || !tariffInfo) {
         navigation.navigate('PaywallPage', {
           onSuccess: () => {},
         });

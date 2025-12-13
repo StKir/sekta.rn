@@ -207,7 +207,7 @@ ${JSON.stringify(contextPosts)}
         style: 'cancel',
       },
       {
-        text: 'Очистить',
+        text: 'Начать',
         style: 'destructive',
         onPress: () => {
           clearMessages();
