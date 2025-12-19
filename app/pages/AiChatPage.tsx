@@ -419,7 +419,7 @@ const createStyles = (colors: ThemeColors) =>
     safeArea: {
       flex: 1,
       backgroundColor: colors.BACKGROUND_PRIMARY,
-      marginBottom: 50,
+      paddingBottom: 50,
     },
     header: {
       flexDirection: 'row',

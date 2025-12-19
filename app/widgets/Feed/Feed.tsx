@@ -24,6 +24,20 @@ const Feed = () => {
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Пока нет записей</Text>
         <Text style={styles.emptySubtext}>Начните с создания первой записи</Text>
+
+        <Button
+          fullWidth
+          icon='add-circle-outline'
+          style={{ marginTop: 20, height: 70 }}
+          title='Добавить запись'
+          variant='outline'
+          onPress={() => {
+            BottomSheetManager.show(<AddRecordContent navigation={navigation} />, {
+              snapPoints: ['40%', '90%'],
+              detached: true,
+            });
+          }}
+        />
       </View>
     );
   }
@@ -40,7 +54,7 @@ const Feed = () => {
         <Button
           fullWidth
           icon='add-circle-outline'
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 20, height: 70 }}
           title='Добавить запись'
           variant='outline'
           onPress={() => {
