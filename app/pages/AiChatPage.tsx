@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import React, { useRef, useEffect } from 'react';
 
+import { Metrics } from '@/shared/utils/metrics';
 import { calculateAge } from '@/shared/utils/dateUtils';
 import Text from '@/shared/ui/Text';
 import { ThemeColors } from '@/shared/theme/types';
@@ -23,14 +24,12 @@ import { useSubscription } from '@/shared/hooks/useSubscription';
 import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { sendChatMessage, pollForResultWithCallback } from '@/shared/api/AIActions';
-import { useUserStore } from '@/entities/user/store/userStore';
 import { useChatStore, ChatMessage } from '@/entities/ai/store/chatStore';
 import ChatMessageComponent from '@/entities/ai/components/ChatMessage';
 
 const AiChatPage = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { minusAiToken } = useUserStore();
   const insets = useSafeAreaInsets();
   const { messages, addMessage, updateMessage, getLastMessages, clearMessages } = useChatStore();
   const { checkSubscription } = useSubscription();
@@ -40,6 +39,7 @@ const AiChatPage = () => {
   const [selectedDays, setSelectedDays] = React.useState<number>(1);
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
   const flatListRef = useRef<FlatList>(null);
+  const scrollToMessageIdRef = useRef<string | null>(null);
   const { postsData } = useDaysPosts(selectedDays);
 
   useEffect(() => {
@@ -72,6 +72,30 @@ const AiChatPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (scrollToMessageIdRef.current) {
+      const messageId = scrollToMessageIdRef.current;
+      scrollToMessageIdRef.current = null;
+
+      setTimeout(() => {
+        const index = messages.findIndex((msg) => msg.id === messageId);
+        if (index !== -1 && flatListRef.current) {
+          try {
+            flatListRef.current.scrollToIndex({
+              index,
+              animated: true,
+              viewPosition: 0,
+            });
+          } catch {
+            setTimeout(() => {
+              flatListRef.current?.scrollToEnd({ animated: true });
+            }, 200);
+          }
+        }
+      }, 500);
+    }
+  }, [messages]);
 
   const getContextPrompt = (days: number, contextPosts: any[], userData: any) => {
     JSON.stringify(contextPosts);
@@ -107,6 +131,7 @@ ${JSON.stringify(contextPosts)}
     setIsLoading(true);
     const messageText = inputText.trim();
     setInputText('');
+    Keyboard.dismiss();
 
     const hasAccess = await checkSubscription();
     if (!hasAccess) {
@@ -155,7 +180,7 @@ ${JSON.stringify(contextPosts)}
 
     try {
       const requestId = await sendChatMessage(messagesToSend);
-      minusAiToken();
+      Metrics.aiUsed('chat');
 
       const assistantId = addMessage({
         role: 'assistant',
@@ -181,6 +206,7 @@ ${JSON.stringify(contextPosts)}
             ],
           });
           setIsLoading(false);
+          scrollToMessageIdRef.current = assistantId;
         } else if (status === 'error') {
           updateMessage(assistantId, {
             status: 'error',
@@ -254,6 +280,16 @@ ${JSON.stringify(contextPosts)}
             ref={flatListRef}
             renderItem={renderMessage}
             showsVerticalScrollIndicator={false}
+            onScrollToIndexFailed={(info) => {
+              const wait = new Promise((resolve) => setTimeout(resolve, 500));
+              wait.then(() => {
+                flatListRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: true,
+                  viewPosition: 0.5,
+                });
+              });
+            }}
           />
 
           <View style={[styles.inputContainer, { paddingBottom: insets.bottom + SPACING.MEDIUM }]}>
@@ -335,6 +371,16 @@ ${JSON.stringify(contextPosts)}
             ref={flatListRef}
             renderItem={renderMessage}
             showsVerticalScrollIndicator={false}
+            onScrollToIndexFailed={(info) => {
+              const wait = new Promise((resolve) => setTimeout(resolve, 500));
+              wait.then(() => {
+                flatListRef.current?.scrollToIndex({
+                  index: info.index,
+                  animated: true,
+                  viewPosition: 0.5,
+                });
+              });
+            }}
           />
 
           <View

@@ -19,6 +19,7 @@ import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
+import { Metrics } from '@/shared/utils/metrics';
 import Text from '@/shared/ui/Text/Text';
 import Input from '@/shared/ui/Input/Input';
 import Button from '@/shared/ui/Button/Button';
@@ -169,6 +170,10 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
   const route = useRoute();
   const onSuccessParam = (route as any)?.params?.onSuccess as (() => void) | undefined;
 
+  React.useEffect(() => {
+    Metrics.paywallOpened();
+  }, []);
+
   const cardScales = {
     '1month': useSharedValue(selectedTariff === '1month' ? 1.04 : 0.98),
     '3months': useSharedValue(selectedTariff === '3months' ? 1.06 : 1),
@@ -188,6 +193,8 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
       );
 
       if (success) {
+        const selectedTariffData = TARIFFS.find((t) => t.id === selectedTariff);
+        Metrics.subscriptionPurchased(selectedTariff, selectedTariffData?.price || '');
         await new Promise((resolve) => setTimeout(resolve, 300));
         onSuccessParam?.();
         navigation.goBack();

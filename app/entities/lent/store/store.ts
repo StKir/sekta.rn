@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 import { CheckInPost, Post, CustomPost, AIPost, AiResult } from '@/types/lentTypes';
 import { StorageService } from '@/shared/utils/storage';
+import { Metrics } from '@/shared/utils/metrics';
 
 interface LentState {
   posts: Post[];
@@ -87,6 +88,7 @@ export const useLentStore = create<LentStore>()(
             total: state.total + 1,
           }));
         }
+        Metrics.recordCreated(['check-in']);
       },
 
       addCustomPost: (customData: CustomPost) => {
@@ -106,6 +108,9 @@ export const useLentStore = create<LentStore>()(
             total: state.total + 1,
           }));
         }
+        const recordType =
+          customData.type === 'moment' ? 'moment' : customData.type === 'note' ? 'note' : 'custom';
+        Metrics.recordCreated([recordType]);
       },
 
       changePost: (id: string, data: CustomPost | CheckInPost | AIPost) => {

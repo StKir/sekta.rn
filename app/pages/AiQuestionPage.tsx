@@ -14,6 +14,7 @@ import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import { useLentStore } from '@/entities/lent/store/store';
 import { questionPrompt } from '@/entities/assiatent/promts';
+import { Metrics } from '@/shared/utils/metrics';
 
 const AiQuestionPage = () => {
   const formData = transformJsonToFormData(jsonData);
@@ -56,6 +57,7 @@ const AiQuestionPage = () => {
             result: '',
           },
         });
+        Metrics.aiUsed('question');
       }
 
       navigation.goBack();

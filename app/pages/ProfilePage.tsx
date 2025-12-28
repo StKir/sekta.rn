@@ -2,7 +2,7 @@
 /* eslint-disable react-native/no-unused-styles */
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeviceInfo from 'react-native-device-info';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View, Linking } from 'react-native';
 import React from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +23,7 @@ import { SPACING, SIZES } from '@/shared/constants';
 import { authApi } from '@/shared/api/authApi';
 import { apiClient } from '@/shared/api/apiClient';
 import { RootStackParamList } from '@/navigation/types';
+import { FORM_URL } from '@/env';
 import { useUserStore } from '@/entities/user';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 import { useLentStore } from '@/entities/lent/store/store';
@@ -64,6 +65,14 @@ const ProfilePage = () => {
 
   const handleReRegister = () => {
     navigation.navigate('Register');
+  };
+
+  const handleFeedback = async () => {
+    try {
+      await Linking.openURL(FORM_URL);
+    } catch {
+      Alert.alert('Ошибка', 'Не удалось открыть ссылку');
+    }
   };
 
   const handleLogout = () => {
@@ -242,9 +251,6 @@ const ProfilePage = () => {
                 <Text style={styles.buttonText}>Отправить тестовое уведомление</Text>
                 </TouchableOpacity> */}
 
-          {/* <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
-            <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
-          </TouchableOpacity> */}
           <SubscriptionBanner
             subtitle='Получите персонального AI-ассистента'
             title='Разблокируйте PRO функции'
@@ -268,7 +274,9 @@ const ProfilePage = () => {
           >
             <Text style={[styles.buttonText, styles.logoutButtonText]}>Настроить аккаунт</Text>
           </TouchableOpacity>
-
+          <TouchableOpacity style={[styles.button, styles.feedbackButton]} onPress={handleFeedback}>
+            <Text style={[styles.buttonText, styles.logoutButtonText]}>Связь с разработчиком</Text>
+          </TouchableOpacity>
           <Text variant='body2'>
             Версия: {DeviceInfo.getVersion() + '.' + version.state.version}
           </Text>

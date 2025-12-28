@@ -4,6 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { removeAllReminders, setReminders } from '@/shared/utils/reminder';
+import { Metrics } from '@/shared/utils/metrics';
 import { transformJsonToFormData, formatAnswersToTestResult } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { RootStackParamList } from '@/navigation/types';
@@ -36,7 +37,8 @@ const NewRegisterPage = () => {
         await setReminders(new Date(answers.notification.time));
       }
 
-      setAiTokens(5);
+      setAiTokens(50);
+      Metrics.registrationCompleted();
       navigation.replace('TabNavigator');
     } catch (error) {
       console.log(error);

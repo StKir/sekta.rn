@@ -23,6 +23,7 @@ import { useLentStore } from '@/entities/lent/store/store';
 import { weekAnalysisPrompt } from '@/entities/assiatent/promts';
 import ModelSelector, { getModelDisplayName } from '@/entities/ai/ModelSelector';
 import { AICard } from '@/entities/ai/AiCard';
+import { Metrics } from '@/shared/utils/metrics';
 
 type AIBlock = {
   id: string;
@@ -83,6 +84,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
             result: '',
           },
         });
+        Metrics.aiUsed('week_analysis');
         const today = new Date().toISOString().slice(0, 10);
         StorageService.setItem('week_analysis_last_date', today);
         setCanShowWeekAnalysis(false);

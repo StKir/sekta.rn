@@ -12,6 +12,7 @@
     "export-ios": "mkdir -p ios/output && react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/output/main.jsbundle --assets-dest ios/output --sourcemap-output ios/sourcemap.js && cd ios && find output -type f | zip main.jsbundle.zip -@ && zip sourcemap.zip sourcemap.js && cd .. && rm -rf ios/output && rm -rf ios/sourcemap.js"
   },
   "dependencies": {
+    "@appmetrica/react-native-analytics": "^3.5.0",
     "@gorhom/bottom-sheet": "^5.1.6",
     "@notifee/react-native": "^9.1.8",
     "@react-native-camera-roll/camera-roll": "7.10.0",
