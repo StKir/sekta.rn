@@ -1,7 +1,7 @@
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
@@ -43,23 +43,23 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { ai_tokens, selectedAIModel, tariffInfo, token, setAiTokens } = useUserStore();
   const insets = useSafeAreaInsets();
   const { loadAd, showAd, isLoading: isAdLoading, isLoaded: isAdLoaded } = useTokenAd();
-  const [canShowWeekAnalysis, setCanShowWeekAnalysis] = React.useState(() => {
+  const [canShowWeekAnalysis, setCanShowWeekAnalysis] = useState(() => {
     const lastDate = StorageService.getItem('week_analysis_last_date');
     const today = new Date().toISOString().slice(0, 10);
     return lastDate !== today;
   });
-  const checkCanShowAdButton = React.useCallback(() => {
+  const checkCanShowAdButton = useCallback(() => {
     const lastAdTime = StorageService.getItem('ad_tokens_last_time');
     if (!lastAdTime) {
       return true;
     }
     const lastTime = new Date(lastAdTime).getTime();
     const now = new Date().getTime();
-    const sixHours = 6 * 60 * 60 * 1000;
-    return now - lastTime >= sixHours;
+    const oneHour = 60 * 60 * 1000;
+    return now - lastTime >= oneHour;
   }, []);
 
-  const [canShowAdButton, setCanShowAdButton] = React.useState(checkCanShowAdButton);
+  const [canShowAdButton, setCanShowAdButton] = useState(checkCanShowAdButton);
   const isNotAuthorized = !token;
 
   useEffect(() => {
@@ -71,12 +71,11 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   }, [checkCanShowAdButton]);
 
   useEffect(() => {
-    if (isNotAuthorized && !isAdLoaded && !isAdLoading) {
-      console.log('load ad');
+    if (isNotAuthorized && canShowAdButton && !isAdLoaded && !isAdLoading) {
       loadAd();
     }
   }, [isNotAuthorized, canShowAdButton, isAdLoaded, isAdLoading, loadAd]);
-  const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({
     '1': false,
     '2': false,
     '3': false,
@@ -270,7 +269,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                   <Text style={styles.subscribeButtonText}>{tokensText}</Text>
                 </TouchableOpacity>
               )}
-              {isNotAuthorized && showPayButton && (
+              {isNotAuthorized && showPayButton && canShowAdButton && (
                 <TouchableOpacity
                   disabled={isAdLoading}
                   style={styles.getTokensButton}
