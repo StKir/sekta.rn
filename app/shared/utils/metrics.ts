@@ -68,4 +68,11 @@ export const Metrics = {
       ...additionalData,
     });
   },
+
+  adRewardedViewed: (adUnitId: string) => {
+    AppMetrica.reportEvent('ad_rewarded_viewed', {
+      ad_type: 'rewarded',
+      ad_unit_id: adUnitId,
+    });
+  },
 };

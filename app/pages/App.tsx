@@ -7,6 +7,7 @@
 
 import 'react-native-reanimated';
 import '@/shared/ui/CustomAlert/AlertOverride';
+import { MobileAds } from 'yandex-mobile-ads';
 import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
@@ -36,6 +37,11 @@ const App = (): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      // Configure the user privacy data policy before init sdk
+      await MobileAds.initialize();
+    })();
+
     AppMetrica.activate({
       apiKey: APP_METRICA_KEY,
       sessionTimeout: 120,

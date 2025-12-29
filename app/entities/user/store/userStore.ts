@@ -52,7 +52,7 @@ export const useUserStore = create<UserStore>()(
       isLoading: false,
       theme: 'light',
       ai_tokens: 0,
-      selectedAIModel: AIModel.GEMINI_2_5_FLASH,
+      selectedAIModel: AIModel.GEMINI_2_5_FLASH_LITE,
       notification: {
         active: false,
         time: null,

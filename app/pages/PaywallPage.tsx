@@ -251,6 +251,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
     { name: 'Чат', value: '2' },
     { name: 'Анализ записей', value: '3' },
     { name: 'Самые новые нейросети', value: '4' },
+    { name: 'Никакой рекламы', value: '11' },
     { name: 'GPT 5', value: '5' },
     { name: 'gemini 2.5 flash', value: '6' },
     { name: 'DeepSeek', value: '7' },

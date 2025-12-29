@@ -37,7 +37,7 @@ const NewRegisterPage = () => {
         await setReminders(new Date(answers.notification.time));
       }
 
-      setAiTokens(50);
+      setAiTokens(20);
       Metrics.registrationCompleted();
       navigation.replace('TabNavigator');
     } catch (error) {
