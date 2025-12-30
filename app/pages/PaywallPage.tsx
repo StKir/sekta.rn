@@ -19,7 +19,7 @@ import React, { useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { AIModel } from '@/types/aiTypes';
+import { Metrics } from '@/shared/utils/metrics';
 import Text from '@/shared/ui/Text/Text';
 import Input from '@/shared/ui/Input/Input';
 import Button from '@/shared/ui/Button/Button';
@@ -47,8 +47,8 @@ const TARIFFS: TariffOption[] = [
     id: '1month',
     title: '1 месяц',
     price: '349₽',
-    description: 'Попробуйте все возможности',
-    features: [],
+    description: 'Гибкая подписка на пробу',
+    features: ['Все функции', 'Отмена в любой момент'],
   },
   {
     id: '3months',
@@ -56,29 +56,17 @@ const TARIFFS: TariffOption[] = [
     price: '799₽',
     originalPrice: '999₽',
     discount: '20%',
-    description: 'Лучшее предложение',
-    features: [],
+    description: 'Лучшее предложение для старта',
+    features: ['Максимальная выгода'],
     popular: true,
   },
   {
     id: '1year',
     title: '1 год',
     price: '1999₽',
-    description: 'Максимальная экономия',
-    features: [],
+    description: 'Для тех, кто всерьез и надолго',
+    features: ['Минимальная цена в месяц'],
   },
-];
-
-const AI_MODELS = [
-  { name: 'GPT-5', value: AIModel.GPT_5 },
-  { name: 'GPT-4.1', value: AIModel.GPT_4_1 },
-  { name: 'GPT-4o', value: AIModel.GPT_4o },
-  { name: 'Grok-4', value: AIModel.GROK_4 },
-  { name: 'DeepSeek R1', value: AIModel.DEEPSEEK_R1 },
-  { name: 'DeepSeek V3', value: AIModel.DEEPSEEK_V3 },
-  { name: 'Claude 3.7 Sonnet', value: AIModel.CLAUDE_3_7_SONNET },
-  { name: 'Gemini 2.5 Flash', value: AIModel.GEMINI_2_5_FLASH },
-  { name: 'Gemini 2.5 Flash Lite', value: AIModel.GEMINI_2_5_FLASH_LITE },
 ];
 
 type Nav = StackNavigationProp<RootStackParamList, 'PaywallPage'>;
@@ -95,6 +83,12 @@ type TariffCardProps = {
 
 const TariffCard: React.FC<TariffCardProps> = ({ tariff, isSelected, scale, onPress, styles }) => {
   const isPopular = tariff.popular;
+  const periodLabel =
+    tariff.id === '1month'
+      ? 'за 1 месяц'
+      : tariff.id === '3months'
+      ? 'за 3 месяца'
+      : 'за 12 месяцев';
 
   const animatedCardStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -106,22 +100,13 @@ const TariffCard: React.FC<TariffCardProps> = ({ tariff, isSelected, scale, onPr
         activeOpacity={0.9}
         style={[
           styles.tariffCard,
-          isSelected && styles.selectedTariff,
           isPopular && styles.popularTariff,
+          isSelected && styles.selectedTariff,
           animatedCardStyle,
         ]}
         onPress={() => onPress(tariff.id)}
       >
-        {isPopular && (
-          <Animated.View
-            entering={FadeInDown.duration(300).springify()}
-            style={styles.popularBadge}
-          >
-            <Text style={styles.popularText}>Популярный</Text>
-          </Animated.View>
-        )}
-
-        <View style={styles.tariffHeader}>
+        <View style={styles.tariffTopRow}>
           <Text style={[styles.tariffTitle, isSelected && styles.selectedText]}>
             {tariff.title}
           </Text>
@@ -132,15 +117,39 @@ const TariffCard: React.FC<TariffCardProps> = ({ tariff, isSelected, scale, onPr
           )}
         </View>
 
-        <View style={styles.priceContainer}>
-          <Text style={[styles.price, isSelected && styles.selectedText]}>{tariff.price}</Text>
-          {tariff.originalPrice && <Text style={styles.originalPrice}>{tariff.originalPrice}</Text>}
+        <View style={styles.priceSection}>
+          <View style={styles.priceRow}>
+            <Text style={[styles.price, isSelected && styles.selectedText]}>{tariff.price}</Text>
+            {tariff.originalPrice && (
+              <Text style={styles.originalPrice}>{tariff.originalPrice}</Text>
+            )}
+          </View>
+          <Text style={[styles.periodLabel, isSelected && styles.selectedText]}>{periodLabel}</Text>
         </View>
 
-        {tariff.description && (
+        {tariff.description ? (
           <Text style={[styles.description, isSelected && styles.selectedText]}>
             {tariff.description}
           </Text>
+        ) : null}
+
+        {tariff.features?.length ? (
+          <View style={styles.tariffFeaturesRow}>
+            {tariff.features.map((feature) => (
+              <View key={feature} style={styles.tariffFeaturePill}>
+                <Text style={styles.tariffFeatureText}>{feature}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
+
+        {isPopular && (
+          <Animated.View
+            entering={FadeInDown.duration(300).springify()}
+            style={styles.popularBadge}
+          >
+            <Text style={styles.popularText}>Лучший выбор</Text>
+          </Animated.View>
         )}
       </AnimatedTouchableOpacity>
     </Animated.View>
@@ -155,16 +164,20 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
   const hasTariffInfo = !!tariffInfo;
   const isAuthorized = !!token;
 
-  const [selectedTariff, setSelectedTariff] = useState<string>('3months');
+  const [selectedTariff, setSelectedTariff] = useState<'1month' | '3months' | '1year'>('3months');
   const [promoCode, setPromoCode] = useState('');
   const navigation = useNavigation<Nav>();
   const route = useRoute();
   const onSuccessParam = (route as any)?.params?.onSuccess as (() => void) | undefined;
 
+  React.useEffect(() => {
+    Metrics.paywallOpened();
+  }, []);
+
   const cardScales = {
-    '1month': useSharedValue(1),
-    '3months': useSharedValue(1),
-    '1year': useSharedValue(1),
+    '1month': useSharedValue(selectedTariff === '1month' ? 1.04 : 0.98),
+    '3months': useSharedValue(selectedTariff === '3months' ? 1.06 : 1),
+    '1year': useSharedValue(selectedTariff === '1year' ? 1.04 : 0.98),
   };
 
   const handleSelectTariff = async () => {
@@ -180,6 +193,8 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
       );
 
       if (success) {
+        const selectedTariffData = TARIFFS.find((t) => t.id === selectedTariff);
+        Metrics.subscriptionPurchased(selectedTariff, selectedTariffData?.price || '');
         await new Promise((resolve) => setTimeout(resolve, 300));
         onSuccessParam?.();
         navigation.goBack();
@@ -191,20 +206,15 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
 
   const handleTariffPress = (tariffId: string) => {
     Object.keys(cardScales).forEach((key) => {
-      if (key === tariffId) {
-        cardScales[key as keyof typeof cardScales].value = withSpring(0.95, {
-          damping: 15,
-          stiffness: 300,
-        });
-        setTimeout(() => {
-          cardScales[key as keyof typeof cardScales].value = withSpring(1, {
-            damping: 15,
-            stiffness: 300,
-          });
-        }, 100);
-      }
+      const isCurrent = key === tariffId;
+      const baseScale = key === '3months' ? (isCurrent ? 1.08 : 1) : isCurrent ? 1.04 : 0.97;
+
+      cardScales[key as keyof typeof cardScales].value = withSpring(baseScale, {
+        damping: 16,
+        stiffness: 260,
+      });
     });
-    setSelectedTariff(tariffId);
+    setSelectedTariff(tariffId as '1month' | '3months' | '1year');
   };
 
   const handleActivatePromo = async () => {
@@ -238,12 +248,17 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
 
   const benefits = [
     { name: 'Подробная статистика', value: '1' },
-    { name: 'Весь новый функционал', value: '2' },
+    { name: 'Чат', value: '2' },
     { name: 'Анализ записей', value: '3' },
-    { name: 'Выбор нейросетей', value: '4' },
+    { name: 'Самые новые нейросети', value: '4' },
+    { name: 'Никакой рекламы', value: '11' },
+    { name: 'GPT 5', value: '5' },
+    { name: 'gemini 2.5 flash', value: '6' },
+    { name: 'DeepSeek', value: '7' },
+    { name: 'Grok 4', value: '8' },
   ];
 
-  const featues = [...benefits, ...AI_MODELS];
+  const featues = [...benefits];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -451,41 +466,42 @@ const createStyles = (colors: ThemeColors) =>
     },
     tariffsContainer: {
       marginBottom: 24,
-      gap: 16,
+      gap: 12,
     },
     tariffCard: {
       backgroundColor: colors.BACKGROUND_SECONDARY,
-      borderRadius: 24,
-      padding: 24,
-      borderWidth: 2,
-      borderColor: 'transparent',
+      borderRadius: 20,
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      borderWidth: 1.5,
+      borderColor: colors.BORDER + '40',
       position: 'relative',
       shadowColor: '#000',
       shadowOffset: {
         width: 0,
         height: 2,
       },
-      shadowOpacity: 0.05,
-      shadowRadius: 8,
-      elevation: 2,
+      shadowOpacity: 0.06,
+      shadowRadius: 10,
+      elevation: 3,
     },
     selectedTariff: {
       borderColor: colors.PRIMARY,
-      shadowOpacity: 0.1,
-      shadowRadius: 12,
-      elevation: 4,
+      shadowOpacity: 0.14,
+      shadowRadius: 14,
+      elevation: 5,
     },
     popularTariff: {
-      borderColor: colors.DANGER_ALPHA,
+      borderColor: colors.PRIMARY,
     },
     popularBadge: {
       position: 'absolute',
-      top: -10,
-      right: 24,
+      top: -14,
+      right: 18,
       backgroundColor: colors.PRIMARY,
-      paddingHorizontal: 14,
+      paddingHorizontal: 16,
       paddingVertical: 6,
-      borderRadius: 16,
+      borderRadius: 999,
       shadowColor: colors.PRIMARY,
       shadowOffset: {
         width: 0,
@@ -497,9 +513,15 @@ const createStyles = (colors: ThemeColors) =>
     },
     popularText: {
       color: colors.BACKGROUND_PRIMARY,
-      fontSize: 11,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 0.5,
+    },
+    tariffTopRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 10,
     },
     tariffHeader: {
       flexDirection: 'row',
@@ -526,6 +548,14 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 11,
       fontWeight: '700',
     },
+    priceSection: {
+      marginBottom: 10,
+    },
+    priceRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      gap: 8,
+    },
     priceContainer: {
       flexDirection: 'row',
       alignItems: 'baseline',
@@ -547,7 +577,30 @@ const createStyles = (colors: ThemeColors) =>
     description: {
       fontSize: 15,
       color: colors.TEXT_SECONDARY,
-      marginTop: 4,
+      marginTop: 6,
+      marginBottom: 8,
+    },
+    periodLabel: {
+      fontSize: 13,
+      color: colors.TEXT_SECONDARY,
+      marginTop: 2,
+    },
+    tariffFeaturesRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 6,
+      marginTop: 2,
+    },
+    tariffFeaturePill: {
+      borderRadius: 999,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      backgroundColor: colors.BACKGROUND_PRIMARY,
+    },
+    tariffFeatureText: {
+      fontSize: 12,
+      color: colors.TEXT_PRIMARY,
+      fontWeight: '500',
     },
     featuresContainer: {
       gap: 8,

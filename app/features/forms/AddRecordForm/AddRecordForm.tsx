@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 
 import { createStyles } from './AddRecordForm.styles';
 
+import { Metrics } from '@/shared/utils/metrics';
 import Title from '@/shared/ui/Title/Title';
 import Input from '@/shared/ui/Input/Input';
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
@@ -81,6 +82,7 @@ const AddRecordForm = ({ type }: AddRecordFormProps) => {
 
     try {
       addRecord(type, textToSave);
+      Metrics.recordCreated([type]);
       setSelectedTag(textToSave);
       setValue(textToSave);
       BottomSheetManager.hide();

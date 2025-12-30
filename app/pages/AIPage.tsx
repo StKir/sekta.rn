@@ -1,14 +1,14 @@
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { StorageService } from '@/shared/utils/storage';
+import { Metrics } from '@/shared/utils/metrics';
 import { formatDateRange } from '@/shared/utils/date';
 import Text from '@/shared/ui/Text';
-import Button from '@/shared/ui/Button/Button';
 import BottomSheetManager from '@/shared/ui/BottomSheet/BottomSheetManager';
 import { SubscriptionBanner } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
@@ -19,6 +19,7 @@ import { useDaysPosts } from '@/shared/hooks/useDaysPosts';
 import { SPACING } from '@/shared/constants';
 import { sendToAI } from '@/shared/api/AIActions';
 import { RootStackParamList } from '@/navigation/types';
+import { useTokenAd } from '@/features/ad/hooks/useTokenAd';
 import { useUserStore } from '@/entities/user/store/userStore';
 import { useLentStore } from '@/entities/lent/store/store';
 import { weekAnalysisPrompt } from '@/entities/assiatent/promts';
@@ -39,18 +40,47 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
   const { addCustomPost } = useLentStore();
   const user = useUser();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const { ai_tokens, selectedAIModel, tariffInfo } = useUserStore();
+  const { ai_tokens, selectedAIModel, tariffInfo, token, setAiTokens } = useUserStore();
   const insets = useSafeAreaInsets();
-  const [canShowWeekAnalysis, setCanShowWeekAnalysis] = React.useState(() => {
+  const { loadAd, showAd, isLoading: isAdLoading, isLoaded: isAdLoaded } = useTokenAd();
+  const [canShowWeekAnalysis, setCanShowWeekAnalysis] = useState(() => {
     const lastDate = StorageService.getItem('week_analysis_last_date');
     const today = new Date().toISOString().slice(0, 10);
     return lastDate !== today;
   });
-  const [loadingStates, setLoadingStates] = React.useState<Record<string, boolean>>({
-    '1': false, // Анализ недели
-    '2': false, // Задать вопрос
-    '3': false, // Составить плейлист
-    '4': false, // Придумать планы
+  const checkCanShowAdButton = useCallback(() => {
+    const lastAdTime = StorageService.getItem('ad_tokens_last_time');
+    if (!lastAdTime) {
+      return true;
+    }
+    const lastTime = new Date(lastAdTime).getTime();
+    const now = new Date().getTime();
+    const oneHour = 60 * 60 * 1000;
+    return now - lastTime >= oneHour;
+  }, []);
+
+  const [canShowAdButton, setCanShowAdButton] = useState(checkCanShowAdButton);
+  const isNotAuthorized = !token;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCanShowAdButton(checkCanShowAdButton());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [checkCanShowAdButton]);
+
+  useEffect(() => {
+    if (isNotAuthorized && canShowAdButton && !isAdLoaded && !isAdLoading) {
+      loadAd();
+    }
+  }, [isNotAuthorized, canShowAdButton, isAdLoaded, isAdLoading, loadAd]);
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({
+    '1': false,
+    '2': false,
+    '3': false,
+    '4': false,
+    '5': false,
   });
 
   const { checkSubscription } = useSubscription();
@@ -83,6 +113,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
             result: '',
           },
         });
+        Metrics.aiUsed('week_analysis');
         const today = new Date().toISOString().slice(0, 10);
         StorageService.setItem('week_analysis_last_date', today);
         setCanShowWeekAnalysis(false);
@@ -122,7 +153,6 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         'Расскажем нейросети о твоей неделе — и вернём вдохновляющие советы, которые помогут почувствовать себя лучше 💛',
       action: handleWeekAnalysis,
     },
-
     {
       id: '2',
       title: 'Задать вопрос',
@@ -195,6 +225,26 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
     navigation.navigate('PaywallPage', {});
   };
 
+  const handleGetTokens = async () => {
+    try {
+      if (!isAdLoaded) {
+        await loadAd();
+      }
+
+      const rewardCallback = () => {
+        const currentTokens = ai_tokens || 0;
+        setAiTokens(currentTokens + 5);
+        StorageService.setItem('ad_tokens_last_time', new Date().toISOString());
+        setCanShowAdButton(false);
+        Alert.alert('Успешно!', 'Вы получили 5 токенов за просмотр рекламы');
+      };
+
+      await showAd(rewardCallback);
+    } catch {
+      Alert.alert('Ошибка', 'Не удалось загрузить рекламу. Попробуйте позже.');
+    }
+  };
+
   const tokensText = ai_tokens !== 0 ? `${ai_tokens} ⭐` : '⭐ PRO функции';
 
   return (
@@ -211,16 +261,24 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
         ListHeaderComponent={
           <View style={{ marginBottom: SPACING.LARGE }}>
             <View style={styles.headerRow}>
-              <>
-                {showPayButton && (
-                  <Button
-                    style={styles.subscribeButton}
-                    title={tokensText}
-                    variant='primary-light'
-                    onPress={handleActivateSubscription}
-                  />
-                )}
-              </>
+              {showPayButton && (
+                <TouchableOpacity
+                  style={styles.subscribeButton}
+                  onPress={handleActivateSubscription}
+                >
+                  <Text style={styles.subscribeButtonText}>{tokensText}</Text>
+                </TouchableOpacity>
+              )}
+              {isNotAuthorized && showPayButton && canShowAdButton && (
+                <TouchableOpacity
+                  disabled={isAdLoading}
+                  style={styles.getTokensButton}
+                  onPress={handleGetTokens}
+                >
+                  <Icon color={colors.PRIMARY} name='add-circle-outline' size={20} />
+                  <Text style={styles.getTokensButtonText}>Получить токены</Text>
+                </TouchableOpacity>
+              )}
               {!showPayButton && (
                 <TouchableOpacity style={styles.modelSelector} onPress={showModelSelector}>
                   <Text style={styles.modelSelectorText}>
@@ -230,15 +288,12 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                 </TouchableOpacity>
               )}
             </View>
-            {showPayButton && (
+            {showPayButton && !isNotAuthorized && (
               <SubscriptionBanner
                 subtitle='Получите персонального AI-ассистента'
                 title='Разблокируйте PRO функции'
               />
             )}
-            {/* <Text color='textSecondary' variant='body2'>
-              Получайте токены каждый день за вход в приложение
-            </Text> */}
           </View>
         }
         renderItem={renderAIBlock}
@@ -286,7 +341,30 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
     },
     subscribeButton: {
-      height: 40,
+      backgroundColor: colors.PRIMARY,
+      paddingHorizontal: SPACING.MEDIUM,
+      paddingVertical: SPACING.SMALL,
+      borderRadius: 8,
+    },
+    subscribeButtonText: {
+      color: '#FFFFFF',
+      fontSize: 14,
+    },
+    getTokensButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.BACKGROUND_SECONDARY,
+      paddingHorizontal: SPACING.MEDIUM,
+      paddingVertical: SPACING.SMALL,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.PRIMARY,
+    },
+    getTokensButtonText: {
+      color: colors.PRIMARY,
+      marginLeft: SPACING.SMALL,
+      fontSize: 14,
+      fontWeight: '500',
     },
   });
 

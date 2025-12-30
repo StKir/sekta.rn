@@ -15,6 +15,7 @@ export type RootStackParamList = {
   AiPlans: undefined;
   NotePage: undefined;
   AiQuestionPage: undefined;
+  AiChatPage: undefined;
   OnboardingPage: undefined;
   AIResultPage: {
     requestId: string;
@@ -31,5 +32,5 @@ export type TabParamList = {
   Profile: undefined;
   Calendar: undefined;
   Events: undefined;
-  CheckIn: undefined;
+  AiChatPage: undefined;
 };

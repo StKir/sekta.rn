@@ -132,7 +132,12 @@ const LoginScreen = () => {
               onChangeText={(value) => setFormData((prev) => ({ ...prev, password: value }))}
             />
 
-            <Button fullWidth loading={isLoading} title='Войти' onPress={handleSubmit} />
+            <Button
+              fullWidth
+              loading={isLoading}
+              title='Войти / Регистрация'
+              onPress={handleSubmit}
+            />
           </View>
         </View>
       </ScrollView>

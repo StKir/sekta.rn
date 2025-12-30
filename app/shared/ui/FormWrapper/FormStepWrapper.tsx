@@ -91,7 +91,7 @@ const createStyles = (colors: ThemeColors) =>
       paddingVertical: SPACING.LARGE,
       borderRadius: SPACING.LARGE,
       backgroundColor: colors.BACKGROUND_SECONDARY,
-      gap: SPACING.LARGE,
+      gap: SPACING.XLARGE,
     },
   });
 

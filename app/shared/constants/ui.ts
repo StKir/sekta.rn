@@ -17,7 +17,7 @@ export const Z_INDEX = {
 };
 
 export const SIZES = {
-  TAB_BAR_HEIGHT: 80,
+  TAB_BAR_HEIGHT: 70,
   CARD_WIDTH_RATIO: 0.9,
   CARD_HEIGHT: SCREEN_HEIGHT * 0.7,
   TEXT_CONTAINER_HEIGHT: 'auto',

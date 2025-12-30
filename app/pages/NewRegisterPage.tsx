@@ -4,11 +4,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import { removeAllReminders, setReminders } from '@/shared/utils/reminder';
+import { Metrics } from '@/shared/utils/metrics';
 import { transformJsonToFormData, formatAnswersToTestResult } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
-import HelloScreen from '@/features/auth/Register/HelloScreen/HelloScreen';
 import { useUserStore } from '@/entities/user/store/userStore';
 import { useTestResultsStore } from '@/entities/tests/store/testResultsStore';
 
@@ -37,21 +37,15 @@ const NewRegisterPage = () => {
         await setReminders(new Date(answers.notification.time));
       }
 
-      setAiTokens(5);
-      navigation.replace('OnboardingPage');
+      setAiTokens(20);
+      Metrics.registrationCompleted();
+      navigation.replace('TabNavigator');
     } catch (error) {
       console.log(error);
     }
   };
 
-  return (
-    <DynamicForm
-      customFirstStep={HelloScreen}
-      formData={formData}
-      showBackButton={true}
-      onComplete={handleFormComplete}
-    />
-  );
+  return <DynamicForm formData={formData} showBackButton={true} onComplete={handleFormComplete} />;
 };
 
 export default NewRegisterPage;

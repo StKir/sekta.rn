@@ -1,15 +1,20 @@
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 import React from 'react';
 
+import { BottomSheetManager } from '@/shared/ui/BottomSheet';
+import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
+import { useAppNavigation } from '@/shared/hooks/useAppNavigation';
 import { SPACING } from '@/shared/constants';
 import DateWrapper from '@/features/lent/components/DateWrapper/DateWrapper';
 import Post from '@/features/lent/Post';
+import AddRecordContent from '@/features/forms/AddRecordContent/AddRecordContent';
 import { useLentStore } from '@/entities/lent/store/store';
 
 const Feed = () => {
   const { posts } = useLentStore();
+  const navigation = useAppNavigation();
 
   const { colors } = useTheme();
   const styles = createStyles(colors);
@@ -19,15 +24,47 @@ const Feed = () => {
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Пока нет записей</Text>
         <Text style={styles.emptySubtext}>Начните с создания первой записи</Text>
+
+        <Button
+          fullWidth
+          icon='add-circle-outline'
+          style={{ marginTop: 20, height: 70 }}
+          title='Добавить запись'
+          variant='outline'
+          onPress={() => {
+            BottomSheetManager.show(<AddRecordContent navigation={navigation} />, {
+              snapPoints: ['40%', '90%'],
+              detached: true,
+            });
+          }}
+        />
       </View>
     );
   }
 
   return (
     <FlatList
+      contentContainerStyle={{
+        gap: 25,
+      }}
       data={posts}
       keyExtractor={(item) => item.id.toString()}
       ListFooterComponent={<View style={{ height: 100 }} />}
+      ListHeaderComponent={
+        <Button
+          fullWidth
+          icon='add-circle-outline'
+          style={{ marginTop: 20, height: 70 }}
+          title='Добавить запись'
+          variant='outline'
+          onPress={() => {
+            BottomSheetManager.show(<AddRecordContent navigation={navigation} />, {
+              snapPoints: ['40%', '90%'],
+              detached: true,
+            });
+          }}
+        />
+      }
       renderItem={({ item }) => (
         <DateWrapper date={item.date}>
           <Post post={item} />

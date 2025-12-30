@@ -14,6 +14,7 @@ import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import { useLentStore } from '@/entities/lent/store/store';
 import { playlistPrompt } from '@/entities/assiatent/promts';
+import { Metrics } from '@/shared/utils/metrics';
 
 const AiPlayListPage = () => {
   const formData = transformJsonToFormData(jsonData);
@@ -48,6 +49,7 @@ const AiPlayListPage = () => {
             result: '',
           },
         });
+        Metrics.aiUsed('playlist');
       }
       navigation.goBack();
     } catch {

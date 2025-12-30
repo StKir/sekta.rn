@@ -14,6 +14,7 @@ import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import { useLentStore } from '@/entities/lent/store/store';
 import { plansPrompt } from '@/entities/assiatent/promts';
+import { Metrics } from '@/shared/utils/metrics';
 
 const AiPlans = () => {
   const formData = transformJsonToFormData(jsonData);
@@ -47,6 +48,7 @@ const AiPlans = () => {
           result: '',
         },
       });
+      Metrics.aiUsed('plans');
       navigation.goBack();
     } catch {
       console.log('Пользователь отменил ввод вопроса');
