@@ -273,7 +273,7 @@ ${JSON.stringify(contextPosts)}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Text color='textSecondary' variant='body1'>
-                  Начните диалог с AI-помощником
+                  Начните диалог с AI ассистентом
                 </Text>
               </View>
             }
@@ -363,8 +363,12 @@ ${JSON.stringify(contextPosts)}
             keyExtractor={(item) => item.id}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text color='textSecondary' variant='body1'>
-                  Начните диалог с AI-помощником
+                <Text color='textSecondary' variant='h2'>
+                  Начните диалог с ассистентом AI
+                </Text>
+
+                <Text color='textSecondary' style={{ textAlign: 'center' }} variant='body1'>
+                  Чем больше записей вы добавите, тем точнее будет ответ ассистента.
                 </Text>
               </View>
             }

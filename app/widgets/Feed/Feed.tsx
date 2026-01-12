@@ -1,6 +1,7 @@
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet } from 'react-native';
 import React from 'react';
 
+import Text from '@/shared/ui/Text';
 import { BottomSheetManager } from '@/shared/ui/BottomSheet';
 import { Button } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
@@ -24,19 +25,15 @@ const Feed = () => {
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Пока нет записей</Text>
         <Text style={styles.emptySubtext}>Начните с создания первой записи</Text>
+        <Text.Body1 style={{ fontSize: 40, lineHeight: 40 }}>⬇</Text.Body1>
 
         <Button
           fullWidth
           icon='add-circle-outline'
           style={{ marginTop: 20, height: 70 }}
           title='Добавить запись'
-          variant='outline'
-          onPress={() => {
-            BottomSheetManager.show(<AddRecordContent navigation={navigation} />, {
-              snapPoints: ['40%', '90%'],
-              detached: true,
-            });
-          }}
+          variant='primary'
+          onPress={() => navigation?.navigate('CheckInPage')}
         />
       </View>
     );

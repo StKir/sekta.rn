@@ -74,7 +74,7 @@ const DateInput = ({
           style={styles.inputText}
           variant='body1'
         >
-          {placeholder || value ? formatValue() : placeholder}
+          {formatValue() || placeholder}
         </Text>
       </TouchableOpacity>
       {error && (

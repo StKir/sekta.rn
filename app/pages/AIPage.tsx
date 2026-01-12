@@ -276,7 +276,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                   onPress={handleGetTokens}
                 >
                   <Icon color={colors.PRIMARY} name='add-circle-outline' size={20} />
-                  <Text style={styles.getTokensButtonText}>Получить токены</Text>
+                  <Text style={styles.getTokensButtonText}>Получить токены за рекламу</Text>
                 </TouchableOpacity>
               )}
               {!showPayButton && (

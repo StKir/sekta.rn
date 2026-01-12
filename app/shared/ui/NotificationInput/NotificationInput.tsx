@@ -30,8 +30,10 @@ const NotificationInput = ({ label, value, onChange, style }: NotificationInputP
     if (res) {
       setPermissionStatus('granted');
       handleToggleNotification(true);
+      setIsEnabled(true);
     } else {
       setPermissionStatus('denied');
+      setIsEnabled(false);
     }
   };
 
