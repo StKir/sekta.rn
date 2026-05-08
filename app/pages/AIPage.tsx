@@ -269,7 +269,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                   <Text style={styles.subscribeButtonText}>{tokensText}</Text>
                 </TouchableOpacity>
               )}
-              {isNotAuthorized && showPayButton && canShowAdButton && (
+              {isNotAuthorized && showPayButton && canShowAdButton && isAdLoaded && (
                 <TouchableOpacity
                   disabled={isAdLoading}
                   style={styles.getTokensButton}

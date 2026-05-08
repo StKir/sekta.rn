@@ -7,7 +7,7 @@ import { GEN_API_TOKEN, GEN_API_URL } from '@/env';
 
 export async function sendToAI(
   prompt: string,
-  response_format: AIModelResponseFormat = AIModelResponseFormat.TEXT
+  response_format: AIModelResponseFormat = AIModelResponseFormat.TEXT,
 ): Promise<number> {
   const payload: GPTRequest = {
     messages: [
@@ -44,7 +44,7 @@ export async function sendToAI(
           'Content-Type': 'application/json',
           Authorization: `Bearer ${GEN_API_TOKEN}`,
         },
-      }
+      },
     );
 
     console.log('==== Первоначальный ответ ====');
@@ -70,7 +70,7 @@ export async function sendChatMessage(
       text: string;
     }>;
   }>,
-  response_format: AIModelResponseFormat = AIModelResponseFormat.TEXT
+  response_format: AIModelResponseFormat = AIModelResponseFormat.TEXT,
 ): Promise<number> {
   const payload: GPTRequest = {
     messages: messages.map((msg) => ({
@@ -99,7 +99,7 @@ export async function sendChatMessage(
           'Content-Type': 'application/json',
           Authorization: `Bearer ${GEN_API_TOKEN}`,
         },
-      }
+      },
     );
 
     if (initialResponse.data.status === 'error') {
@@ -132,7 +132,7 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
           headers: {
             Authorization: `Bearer ${GEN_API_TOKEN}`,
           },
-        }
+        },
       );
 
       if (statusResponse.data.status === 'success') {
@@ -168,7 +168,7 @@ export const pollForResult = async (requestId: number): Promise<GPTResponseResul
 
 export const pollForResultWithCallback = async (
   requestId: number,
-  onUpdate: (status: 'processing' | 'starting' | 'success' | 'error', result?: string) => void
+  onUpdate: (status: 'processing' | 'starting' | 'success' | 'error', result?: string) => void,
 ): Promise<GPTResponseResult> => {
   const maxAttempts = 60;
   const delayMs = 2000;
@@ -188,7 +188,7 @@ export const pollForResultWithCallback = async (
           headers: {
             Authorization: `Bearer ${GEN_API_TOKEN}`,
           },
-        }
+        },
       );
 
       if (statusResponse.data.status === 'success') {

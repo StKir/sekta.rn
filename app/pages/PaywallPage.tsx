@@ -189,7 +189,7 @@ const PaywallPage: React.FC<PaywallPageProps> = () => {
 
       const success = await activateSubscription(
         selectedTariff as '1month' | '3months' | '1year',
-        `payment_${Date.now()}`
+        `payment_${Date.now()}`,
       );
 
       if (success) {
@@ -564,12 +564,14 @@ const createStyles = (colors: ThemeColors) =>
     price: {
       fontSize: 32,
       fontWeight: '700',
+      lineHeight: 40,
       color: colors.TEXT_PRIMARY,
       letterSpacing: -0.5,
     },
     originalPrice: {
       fontSize: 18,
       color: colors.TEXT_SECONDARY,
+      lineHeight: 24,
       textDecorationLine: 'line-through',
       fontWeight: '500',
     },

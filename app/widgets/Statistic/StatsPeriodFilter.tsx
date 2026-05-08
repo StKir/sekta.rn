@@ -20,15 +20,10 @@ const StatsPeriodFilter = ({ selectedPeriod, onPeriodChange }: StatsPeriodFilter
   const { colors } = useTheme();
   const styles = createStyles();
 
-  const getCurrentDay = () => {
-    return new Date().getDate();
-  };
-
   const periods: PeriodOption[] = [
     { id: '3', label: '3 дня', days: 3 },
     { id: '7', label: '7 дней', days: 7 },
     { id: '10', label: '10 дней', days: 10 },
-    { id: 'current', label: `${getCurrentDay()} дней`, days: getCurrentDay() },
   ];
 
   const renderPeriodButton = ({ item }: { item: PeriodOption }) => {
