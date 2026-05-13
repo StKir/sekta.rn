@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles, react-native/no-unused-styles */
 import { View, StyleSheet, FlatList } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 
@@ -22,7 +23,6 @@ const DayStreak = ({ days, longestStreak }: DayStreakProps) => {
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
-    // Скроллим к концу списка (текущий день) с небольшой задержкой
     const timer = setTimeout(() => {
       if (flatListRef.current && days.length > 0) {
         flatListRef.current.scrollToEnd({ animated: true });

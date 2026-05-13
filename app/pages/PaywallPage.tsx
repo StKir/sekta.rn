@@ -47,8 +47,8 @@ const TARIFFS: TariffOption[] = [
     id: '1month',
     title: '1 месяц',
     price: '349₽',
-    description: 'Гибкая подписка на пробу',
-    features: ['Все функции', 'Отмена в любой момент'],
+    description: 'Все функции PRO',
+    features: ['Вся статистика', 'Безлимитный ИИ чат', '200 токенов для ИИ'],
   },
   {
     id: '3months',
@@ -57,7 +57,7 @@ const TARIFFS: TariffOption[] = [
     originalPrice: '999₽',
     discount: '20%',
     description: 'Лучшее предложение для старта',
-    features: ['Максимальная выгода'],
+    features: ['Максимальная выгода', '600 токенов для ИИ'],
     popular: true,
   },
   {
@@ -65,7 +65,7 @@ const TARIFFS: TariffOption[] = [
     title: '1 год',
     price: '1999₽',
     description: 'Для тех, кто всерьез и надолго',
-    features: ['Минимальная цена в месяц'],
+    features: ['Минимальная цена в месяц', '1500 токенов для ИИ'],
   },
 ];
 

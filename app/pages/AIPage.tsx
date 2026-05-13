@@ -288,7 +288,7 @@ const AIPage = ({ changeTab }: { changeTab: (tab: number) => void }) => {
                 </TouchableOpacity>
               )}
             </View>
-            {showPayButton && !isNotAuthorized && (
+            {showPayButton && (
               <SubscriptionBanner
                 subtitle='Получите персонального AI-ассистента'
                 title='Разблокируйте PRO функции'

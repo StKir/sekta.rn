@@ -108,10 +108,10 @@ const LoginScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <Text style={styles.title} variant='h2'>
-            Вход
+            Создай аккаунт и начни пользоваться всеми возможностями
           </Text>
           <Text style={styles.subtitle} variant='body1'>
-            Войдите в свой аккаунт
+            Мы запомним тебя в следующий раз
           </Text>
 
           <View style={styles.form}>

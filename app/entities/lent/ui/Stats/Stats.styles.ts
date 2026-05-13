@@ -18,6 +18,17 @@ export const styles = (color: ThemeColors) =>
       justifyContent: 'center',
       gap: SPACING.SMALL,
     },
+    lockedStat: {
+      flex: 1,
+      minWidth: 0,
+      height: 90,
+      flexDirection: 'column',
+      paddingHorizontal: SPACING.MEDIUM,
+      justifyContent: 'center',
+      gap: SPACING.SMALL,
+      alignItems: 'center',
+      opacity: 0.45,
+    },
     text: { fontSize: 40, fontWeight: 400, lineHeight: 50 },
     power_color: {
       color: color.PRIMARY,
@@ -34,5 +45,8 @@ export const styles = (color: ThemeColors) =>
       borderTopRightRadius: 25,
       borderBottomLeftRadius: 25,
       backgroundColor: color.DANGER_ALPHA,
+    },
+    statFullWidth: {
+      width: '100%',
     },
   });

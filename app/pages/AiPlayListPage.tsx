@@ -4,6 +4,7 @@ import jsonData from 'appData/apptests/playlist.json';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+import { Metrics } from '@/shared/utils/metrics';
 import { transformJsonToFormData } from '@/shared/utils/formUtils';
 import { FormAnswers } from '@/shared/types/form.types';
 import { useUser } from '@/shared/hooks/useUser';
@@ -14,7 +15,6 @@ import { RootStackParamList } from '@/navigation/types';
 import DynamicForm from '@/features/forms/DynamicForm/DynamicForm';
 import { useLentStore } from '@/entities/lent/store/store';
 import { playlistPrompt } from '@/entities/assiatent/promts';
-import { Metrics } from '@/shared/utils/metrics';
 
 const AiPlayListPage = () => {
   const formData = transformJsonToFormData(jsonData);

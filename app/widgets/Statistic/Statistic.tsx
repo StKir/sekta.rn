@@ -5,13 +5,16 @@ import React, { useState } from 'react';
 
 import { useStatistics, useDayStreakData } from './useStatistics';
 import StatsPeriodFilter from './StatsPeriodFilter';
+import { MoodEmotionInsights } from './MoodEmotionInsights';
 import DayStreak from './DayStreak';
 
 import Text from '@/shared/ui/Text';
 import Tag from '@/shared/ui/Tag/Tag';
+import { SubscriptionBanner } from '@/shared/ui';
 import { ThemeColors } from '@/shared/theme/types';
 import { useTheme } from '@/shared/theme';
 import { SPACING } from '@/shared/constants';
+import { useUserStore } from '@/entities/user';
 import Stats from '@/entities/lent/ui/Stats/Stats';
 
 const Statistic = () => {
@@ -19,18 +22,22 @@ const Statistic = () => {
   const { bottom } = useSafeAreaInsets();
   const [selectedPeriod, setSelectedPeriod] = useState(7);
   const stats = useStatistics(selectedPeriod);
+  const { tariffInfo } = useUserStore();
+
   const dayStreakStats = useDayStreakData();
+
+  const isTrial = tariffInfo?.status !== 'PRO';
 
   const styles = createStyles(colors);
 
   const StatCard = ({
+    subtitle,
     title,
     value,
-    subtitle,
   }: {
+    subtitle?: string;
     title: string;
     value: string | number;
-    subtitle?: string;
   }) => (
     <View style={styles.statCard}>
       <Text style={styles.statTitle} variant='body2'>
@@ -39,11 +46,11 @@ const Statistic = () => {
       <Text style={styles.statValue} variant='h2'>
         {value}
       </Text>
-      {subtitle && (
+      {subtitle ? (
         <Text style={styles.statSubtitle} variant='body2'>
           {subtitle}
         </Text>
-      )}
+      ) : null}
     </View>
   );
 
@@ -60,6 +67,12 @@ const Statistic = () => {
 
       <StatsPeriodFilter selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
 
+      {isTrial && (
+        <SubscriptionBanner
+          subtitle='Получите подробную статистику по вашим постам'
+          title='Разблокируйте PRO функции'
+        />
+      )}
       <DayStreak days={dayStreakStats.dayStreakData} longestStreak={dayStreakStats.longestStreak} />
 
       <View style={styles.section}>
@@ -79,53 +92,103 @@ const Statistic = () => {
         </View>
       </View>
 
-      <View style={styles.section}>
+      {isTrial && (
         <Text style={styles.sectionTitle} variant='h3'>
-          Средние показатели
+          Доступно с PRO ⭐
         </Text>
-        <Stats power={stats.averagePower} stress={stats.averageStress} />
-      </View>
+      )}
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle} variant='h3'>
-          Самые частые ответы
-        </Text>
+      <View style={isTrial ? { opacity: 0.5 } : {}}>
+        <View style={styles.section}>
+          <MoodEmotionInsights locked={isTrial} periodDays={selectedPeriod} />
+        </View>
 
-        {stats.mostFrequentMood && (
-          <View style={styles.frequentItem}>
-            <Text style={styles.frequentLabel} variant='body1'>
-              Настроение:
-            </Text>
-            <Tag text={stats.mostFrequentMood} variant='small' />
-          </View>
-        )}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle} variant='h3'>
+            Средние показатели
+          </Text>
+          <Stats locked={isTrial} power={stats.averagePower} stress={stats.averageStress} />
+        </View>
 
-        {stats.favoriteColor && (
-          <View style={styles.frequentItem}>
-            <Text style={styles.frequentLabel} variant='body1'>
-              Любимый цвет:
-            </Text>
-            <Tag text={stats.favoriteColor} variant='small' />
-          </View>
-        )}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle} variant='h3'>
+            Самые частые ответы
+          </Text>
+          {isTrial ? (
+            <>
+              <View style={styles.frequentItem}>
+                <Text style={styles.frequentLabel} variant='body1'>
+                  Настроение:
+                </Text>
+                <Text style={styles.frequentLocked} variant='h2'>
+                  —
+                </Text>
+              </View>
+              <View style={styles.frequentItem}>
+                <Text style={styles.frequentLabel} variant='body1'>
+                  Любимый цвет:
+                </Text>
+                <Text style={styles.frequentLocked} variant='h2'>
+                  —
+                </Text>
+              </View>
+              <View style={styles.frequentItem}>
+                <Text style={styles.frequentLabel} variant='body1'>
+                  Любимое занятие:
+                </Text>
+                <Text style={styles.frequentLocked} variant='h2'>
+                  —
+                </Text>
+              </View>
+              <View style={styles.frequentItem}>
+                <Text style={styles.frequentLabel} variant='body1'>
+                  Частая эмоция:
+                </Text>
+                <Text style={styles.frequentLocked} variant='h2'>
+                  —
+                </Text>
+              </View>
+            </>
+          ) : (
+            <>
+              {stats.mostFrequentMood && (
+                <View style={styles.frequentItem}>
+                  <Text style={styles.frequentLabel} variant='body1'>
+                    Настроение:
+                  </Text>
+                  <Tag text={stats.mostFrequentMood} variant='small' />
+                </View>
+              )}
 
-        {stats.favoriteActivity && (
-          <View style={styles.frequentItem}>
-            <Text style={styles.frequentLabel} variant='body1'>
-              Любимое занятие:
-            </Text>
-            <Tag text={stats.favoriteActivity} variant='small' />
-          </View>
-        )}
+              {stats.favoriteColor && (
+                <View style={styles.frequentItem}>
+                  <Text style={styles.frequentLabel} variant='body1'>
+                    Любимый цвет:
+                  </Text>
+                  <Tag text={stats.favoriteColor} variant='small' />
+                </View>
+              )}
 
-        {stats.favoriteEmotion && (
-          <View style={styles.frequentItem}>
-            <Text style={styles.frequentLabel} variant='body1'>
-              Частая эмоция:
-            </Text>
-            <Tag text={stats.favoriteEmotion} variant='small' />
-          </View>
-        )}
+              {stats.favoriteActivity && (
+                <View style={styles.frequentItem}>
+                  <Text style={styles.frequentLabel} variant='body1'>
+                    Любимое занятие:
+                  </Text>
+                  <Tag text={stats.favoriteActivity} variant='small' />
+                </View>
+              )}
+
+              {stats.favoriteEmotion && (
+                <View style={styles.frequentItem}>
+                  <Text style={styles.frequentLabel} variant='body1'>
+                    Частая эмоция:
+                  </Text>
+                  <Tag text={stats.favoriteEmotion} variant='small' />
+                </View>
+              )}
+            </>
+          )}
+        </View>
       </View>
       <View style={{ height: bottom }} />
     </ScrollView>
@@ -194,6 +257,9 @@ const createStyles = (colors: ThemeColors) =>
     frequentLabel: {
       flex: 1,
       color: colors.TEXT_PRIMARY,
+    },
+    frequentLocked: {
+      color: colors.TEXT_TERTIARY,
     },
   });
 

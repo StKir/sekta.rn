@@ -24,7 +24,9 @@ const Feed = () => {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>Пока нет записей</Text>
-        <Text style={styles.emptySubtext}>Начните с создания первой записи</Text>
+        <Text style={styles.emptySubtext}>
+          Добавьте первую запись чтобы искуственный интеллект понимал контекст вашей жизни
+        </Text>
         <Text.Body1 style={{ fontSize: 40, lineHeight: 40 }}>⬇</Text.Body1>
 
         <Button

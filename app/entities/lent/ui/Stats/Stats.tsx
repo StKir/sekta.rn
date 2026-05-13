@@ -7,11 +7,12 @@ import Text from '@/shared/ui/Text';
 import { useTheme } from '@/shared/theme';
 
 type StatsProps = {
+  locked?: boolean;
   power?: number;
   stress?: number;
 };
 
-const Stats = ({ power, stress }: StatsProps) => {
+const Stats = ({ locked, power, stress }: StatsProps) => {
   const { colors } = useTheme();
   const style = styles(colors);
 
@@ -44,26 +45,51 @@ const Stats = ({ power, stress }: StatsProps) => {
     }
   };
 
+  if (locked) {
+    return (
+      <View style={style.container}>
+        <View style={[style.power_background, style.lockedStat]}>
+          <Text style={style.power_color}>Силы</Text>
+          <Text style={[style.text, style.power_color]}>—</Text>
+        </View>
+        <View style={[style.stress_background, style.lockedStat]}>
+          <Text style={style.stress_color}>Стресс</Text>
+          <Text style={[style.text, style.stress_color]}>—</Text>
+        </View>
+      </View>
+    );
+  }
+
   const width = getWidth();
 
   return (
     <View style={style.container}>
-      {power && (
+      {power ? (
         <View
-          style={[style.stat, width?.power, style.power_background, !stress && { width: '100%' }]}
+          style={[
+            style.stat,
+            width?.power,
+            style.power_background,
+            !stress ? style.statFullWidth : null,
+          ]}
         >
-          <Text style={style.power_color}>Cилы</Text>
+          <Text style={style.power_color}>Силы</Text>
           <Text style={[style.text, style.power_color]}>{power}%</Text>
         </View>
-      )}
-      {stress && (
+      ) : null}
+      {stress ? (
         <View
-          style={[style.stat, width?.stress, style.stress_background, !power && { width: '100%' }]}
+          style={[
+            style.stat,
+            width?.stress,
+            style.stress_background,
+            !power ? style.statFullWidth : null,
+          ]}
         >
           <Text style={style.stress_color}>Стресс</Text>
           <Text style={[style.text, style.stress_color]}>{stress}%</Text>
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
